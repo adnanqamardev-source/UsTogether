@@ -9,13 +9,7 @@ const nextConfig: NextConfig = {
     ignoreBuildErrors: true,
   },
   transpilePackages: ['motion'],
-
-  // --- Crucial settings for GitHub Pages ---
-  output: 'export', 
-  basePath: '/UsTogether', // Must match your exact URL repository capitalization!
-  images: {
-    unoptimized: true, 
-  },
+  // Ensure basePath and output: 'export' are completely removed!
 };
 
 export default nextConfig;
