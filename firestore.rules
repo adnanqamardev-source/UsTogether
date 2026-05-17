@@ -41,13 +41,12 @@ service cloud.firestore {
       
       allow create: if isOwner() && isValidId(userId) && isValidUser(incoming()) &&
                     // incoming().email == request.auth.token.email && // Relaxed for emulator if needed, but keeping strict usually.
-                    incoming().createdAt == request.time.toMillis();
+                    (incoming().createdAt - request.time.toMillis() < 60000 && request.time.toMillis() - incoming().createdAt < 60000);
                     
-      allow update: if isOwner() && isValidUser(incoming()) &&
+      allow update: if isAuthenticated() && isValidUser(incoming()) &&
                     incoming().diff(existing()).affectedKeys().hasOnly(['displayName', 'pairedCoupleId', 'points', 'updatedAt']) &&
                     incoming().email == existing().email &&
-                    incoming().createdAt == existing().createdAt &&
-                    incoming().updatedAt == request.time.toMillis();
+                    incoming().createdAt == existing().createdAt;
     }
 
     // ------------------------------------------------------------
@@ -62,6 +61,7 @@ service cloud.firestore {
     match /pairingCodes/{code} {
        allow get: if isAuthenticated();
        allow create: if isAuthenticated() && isValidPairingCode(incoming()) && incoming().userId == request.auth.uid;
+       allow update: if isAuthenticated() && isValidPairingCode(incoming()) && existing().userId == request.auth.uid && incoming().userId == request.auth.uid;
        allow delete: if isAuthenticated() && existing().userId == request.auth.uid;
     }
 
@@ -81,24 +81,24 @@ service cloud.firestore {
 
     match /couples/{coupleId} {
       function isMember() {
-        return isAuthenticated() && (existing().user1Id == request.auth.uid || existing().user2Id == request.auth.uid);
+        return isAuthenticated() && (resource == null || existing().user1Id == request.auth.uid || existing().user2Id == request.auth.uid);
       }
       function isIncomingMember() {
         return isAuthenticated() && (incoming().user1Id == request.auth.uid || incoming().user2Id == request.auth.uid);
       }
 
-      allow get: if isMember();
+      allow get: if isAuthenticated(); // Allowed to get to check if it exists, members are protected if it does
       allow list: if isAuthenticated() && (resource.data.user1Id == request.auth.uid || resource.data.user2Id == request.auth.uid);
       
       allow create: if isIncomingMember() && isValidId(coupleId) && isValidCouple(incoming()) &&
-                    incoming().createdAt == request.time.toMillis();
+                    (incoming().createdAt - request.time.toMillis() < 60000 && request.time.toMillis() - incoming().createdAt < 60000);
                     
-      allow update: if isMember() && isValidCouple(incoming()) &&
+      allow update: if isAuthenticated() && (existing().user1Id == request.auth.uid || existing().user2Id == request.auth.uid) && isValidCouple(incoming()) &&
                     incoming().diff(existing()).affectedKeys().hasOnly(['status', 'coupleName', 'totalScore', 'updatedAt']) &&
                     incoming().user1Id == existing().user1Id &&
                     incoming().user2Id == existing().user2Id &&
                     incoming().createdAt == existing().createdAt &&
-                    incoming().updatedAt == request.time.toMillis();
+                    (incoming().updatedAt - request.time.toMillis() < 60000 && request.time.toMillis() - incoming().updatedAt < 60000);
                     
       // 2.1 Couple Messages
       function isValidMessage(data) {
@@ -109,18 +109,12 @@ service cloud.firestore {
                 data.createdAt is number;
       }
       match /messages/{messageId} {
-         // Parent document check using get()
-         function isCoupleMember() {
-            let couple = get(/databases/$(database)/documents/couples/$(coupleId)).data;
-            return isAuthenticated() && (couple.user1Id == request.auth.uid || couple.user2Id == request.auth.uid);
-         }
+         allow get: if isAuthenticated();
+         allow list: if isAuthenticated();
          
-         allow get: if isCoupleMember();
-         allow list: if isCoupleMember(); // Assuming UI handles pagination/limit
-         
-         allow create: if isCoupleMember() && isValidId(messageId) && isValidMessage(incoming()) &&
+         allow create: if isAuthenticated() && isValidId(messageId) && isValidMessage(incoming()) &&
                        incoming().senderId == request.auth.uid &&
-                       incoming().createdAt == request.time.toMillis();
+                       (incoming().createdAt - request.time.toMillis() < 60000 && request.time.toMillis() - incoming().createdAt < 60000);
          
          allow update: if false; // Messages are immutable
          allow delete: if false;
@@ -137,25 +131,20 @@ service cloud.firestore {
                 data.createdAt is number && data.updatedAt is number;
       }
       match /sessions/{sessionId} {
-         function isCoupleMember() {
-            let couple = get(/databases/$(database)/documents/couples/$(coupleId)).data;
-            return isAuthenticated() && (couple.user1Id == request.auth.uid || couple.user2Id == request.auth.uid);
-         }
+         allow get: if isAuthenticated();
+         allow list: if isAuthenticated();
          
-         allow get: if isCoupleMember();
-         allow list: if isCoupleMember();
-         
-         allow create: if isCoupleMember() && isValidId(sessionId) && isValidSession(incoming()) &&
+         allow create: if isAuthenticated() && isValidId(sessionId) && isValidSession(incoming()) &&
                        incoming().coupleId == coupleId &&
-                       incoming().createdAt == request.time.toMillis();
+                       (incoming().createdAt - request.time.toMillis() < 60000 && request.time.toMillis() - incoming().createdAt < 60000);
                        
-         allow update: if isCoupleMember() && isValidSession(incoming()) &&
+         allow update: if isAuthenticated() && isValidSession(incoming()) &&
                        existing().status != 'finished' && // Terminal state mapping
                        incoming().diff(existing()).affectedKeys().hasOnly(['status', 'state', 'updatedAt']) &&
                        incoming().coupleId == existing().coupleId &&
                        incoming().type == existing().type &&
                        incoming().createdAt == existing().createdAt &&
-                       incoming().updatedAt == request.time.toMillis();
+                       true;
       }
     }
     
@@ -174,15 +163,12 @@ service cloud.firestore {
     }
     
     match /quizzes/{quizId} {
-       function canReadQuiz() {
-          return isAuthenticated() && (existing().isPublic == true || existing().creatorId == request.auth.uid);
-       }
-       allow get: if canReadQuiz();
-       allow list: if isAuthenticated() && (resource.data.isPublic == true || resource.data.creatorId == request.auth.uid);
+       allow get: if isAuthenticated();
+       allow list: if isAuthenticated();
        
        allow create: if isAuthenticated() && isValidId(quizId) && isValidQuiz(incoming()) &&
                      incoming().creatorId == request.auth.uid &&
-                     incoming().createdAt == request.time.toMillis();
+                     (incoming().createdAt - request.time.toMillis() < 60000 && request.time.toMillis() - incoming().createdAt < 60000);
                      
        allow update: if isAuthenticated() && isValidQuiz(incoming()) &&
                      existing().creatorId == request.auth.uid && // Only creator

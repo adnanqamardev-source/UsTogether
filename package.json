@@ -9,18 +9,21 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@google/genai": "^2.3.0",
     "@hookform/resolvers": "^5.2.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "firebase": "^11.0.0",
     "lucide-react": "^0.553.0",
     "motion": "^12.23.24",
     "next": "^15.4.9",
     "react": "^19.2.1",
     "react-dom": "^19.2.1",
-    "tailwind-merge": "^3.3.1",
-    "firebase": "^11.0.0"
+    "react-markdown": "^10.1.0",
+    "tailwind-merge": "^3.3.1"
   },
   "devDependencies": {
+    "@firebase/eslint-plugin-security-rules": "^0.0.2",
     "@tailwindcss/postcss": "4.1.11",
     "@types/node": "^20",
     "@types/react": "^19",

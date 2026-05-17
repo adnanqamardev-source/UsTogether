@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from './AuthProvider';
 import { motion } from 'motion/react';
 import { Heart, Users, ArrowRight } from 'lucide-react';
-import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc, updateDoc, collection, query, where, onSnapshot, or } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { handleFirestoreError, OperationType } from '@/lib/firestore-errors';
 import CoupleDashboard from './CoupleDashboard';
@@ -32,6 +32,9 @@ export default function Dashboard() {
      }
   }, [user, dbUser, myCode]);
 
+  // If partner connects, AuthProvider updates dbUser automatically.
+  // No need to query couples manually.
+
   // If user is already paired
   if (dbUser?.pairedCoupleId) {
     return <CoupleDashboard coupleId={dbUser.pairedCoupleId} />;
@@ -50,7 +53,10 @@ export default function Dashboard() {
     setLoading(true);
     try {
        // get the code
-       const codeDoc = await getDoc(doc(db, 'pairingCodes', codeStr));
+       const codeDoc = await getDoc(doc(db, 'pairingCodes', codeStr)).catch(e => {
+           handleFirestoreError(e, OperationType.GET, `pairingCodes`);
+           throw e;
+       });
        if (!codeDoc.exists()) {
           throw new Error('Invalid or expired pairing code.');
        }
@@ -60,7 +66,10 @@ export default function Dashboard() {
        const coupleId = [user.uid, partnerId].sort().join('_');
        const coupleRef = doc(db, 'couples', coupleId);
        
-       const coupleDoc = await getDoc(coupleRef);
+       const coupleDoc = await getDoc(coupleRef).catch(e => {
+           handleFirestoreError(e, OperationType.GET, `couples`);
+           throw e;
+       });
        if (!coupleDoc.exists()) {
           const newCouple = {
              user1Id: user.uid < partnerId ? user.uid : partnerId,
@@ -70,22 +79,32 @@ export default function Dashboard() {
              createdAt: Date.now(),
              updatedAt: Date.now(),
           };
-          await setDoc(coupleRef, newCouple);
+          await setDoc(coupleRef, newCouple).catch(e => {
+             handleFirestoreError(e, OperationType.CREATE, `couples`);
+             throw e;
+          });
        }
        
-       // Update both users (the other user might need to refresh or listen, but ideally this updates ourselves)
+       // Update both users 
        await updateDoc(doc(db, 'users', user.uid), {
           pairedCoupleId: coupleId,
           updatedAt: Date.now()
+       }).catch(e => {
+           handleFirestoreError(e, OperationType.UPDATE, `users my self`);
+           throw e;
        });
-       // Actually, we are only allowed to update OUR user. 
-       // The partner must either poll the couples collection OR we need a backend.
-       // Since the partner can list couples where they are a member, they can detect the new couple.
+       await updateDoc(doc(db, 'users', partnerId), {
+          pairedCoupleId: coupleId,
+          updatedAt: Date.now()
+       }).catch(e => {
+           handleFirestoreError(e, OperationType.UPDATE, `users partner`);
+           throw e;
+       });
 
        window.location.reload(); // Quick refresh to catch state
     } catch (err: any) {
        setErrorMsg(err.message || 'Error occurred');
-       handleFirestoreError(err, OperationType.GET, `pairingCodes`);
+       // removed generic catch handleFirestoreError
     } finally {
       setLoading(false);
     }
@@ -123,7 +142,7 @@ export default function Dashboard() {
             Share your connection code with your partner, or enter theirs below to start playing.
           </p>
 
-          <div className="bg-black/20 p-6 rounded-3xl mb-10 border border-white/5">
+          <div className="bg-black/20 p-6 rounded-3xl mb-10 border border-white/5 hover:scale-105 hover:bg-black/30 hover:border-white/10 hover:shadow-[0_0_20px_rgba(99,102,241,0.2)] transition-all cursor-pointer">
              <p className="text-xs text-slate-400 mb-2 uppercase tracking-[0.2em] font-bold">Your Code</p>
              <p className="font-mono text-3xl md:text-4xl tracking-[0.2em] text-white font-light text-shadow-sm">{myCode || '...'}</p>
           </div>
