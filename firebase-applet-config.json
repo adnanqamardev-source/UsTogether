@@ -1,10 +1,10 @@
 {
-  "projectId": "elaborate-will-wcff3",
-  "appId": "1:542769618782:web:e90e277cc0bf812b51f9cf",
-  "apiKey": "AIzaSyDZK5osaZKAoKFFBzhLPHQt0QVxmU99S9A",
-  "authDomain": "elaborate-will-wcff3.firebaseapp.com",
+  "projectId": "ustogether-5bd5e",
+  "appId": "1:97929147009:web:5dfc51fd8d8d3696ced380",
+  "apiKey": "AIzaSyAEwugGhthZl7QmBWobn5hLRKikhFpKMMM",
+  "authDomain": "ustogether-5bd5e.firebaseapp.com",
   "firestoreDatabaseId": "(default)",
-  "storageBucket": "elaborate-will-wcff3.firebasestorage.app",
-  "messagingSenderId": "542769618782",
-  "measurementId": ""
+  "storageBucket": "ustogether-5bd5e.firebasestorage.app",
+  "messagingSenderId": "97929147009",
+  "measurementId": "G-JGJZD8C367"
 }
