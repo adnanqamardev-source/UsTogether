@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useEffect, useState } from 'react';
 import { User, signInWithPopup, GoogleAuthProvider, signOut } from 'firebase/auth';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc, onSnapshot } from 'firebase/firestore';
 import { auth, db } from '@/lib/firebase';
 import { handleFirestoreError, OperationType } from '@/lib/firestore-errors';
 
@@ -28,36 +28,52 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged(async (u) => {
+    let unsubscribeUser: (() => void) | null = null;
+    const unsubscribeAuth = auth.onAuthStateChanged(async (u) => {
       setUser(u);
+      if (unsubscribeUser) {
+        unsubscribeUser();
+        unsubscribeUser = null;
+      }
+      
       if (u) {
         try {
           const userRef = doc(db, 'users', u.uid);
-          const docSnap = await getDoc(userRef);
-          if (docSnap.exists()) {
-            setDbUser(docSnap.data());
-          } else {
-             // Create if doesn't exist
-             const newUser = {
+          
+          unsubscribeUser = onSnapshot(userRef, async (docSnap) => {
+            if (docSnap.exists()) {
+              setDbUser(docSnap.data());
+            } else {
+              // Create if doesn't exist
+              const newUser = {
                 email: u.email || '',
                 points: 0,
-                createdAt: Date.now(), // Server rule requires request.time
+                createdAt: Date.now(),
                 updatedAt: Date.now(),
                 displayName: u.displayName || '',
-             };
-             await setDoc(userRef, newUser);
-             setDbUser(newUser);
-          }
+              };
+              await setDoc(userRef, newUser);
+              // snapshot will catch it on next tick
+            }
+            setLoading(false);
+          }, (error) => {
+            setLoading(false);
+            console.error("Auth snapshot error:", error);
+          });
+          
         } catch (error) {
-          handleFirestoreError(error, OperationType.GET, `users/${u?.uid}`, u);
+          setLoading(false);
         }
       } else {
         setDbUser(null);
+        setLoading(false);
       }
-      setLoading(false);
     });
 
-    return () => unsubscribe();
+    return () => {
+       unsubscribeAuth();
+       if (unsubscribeUser) unsubscribeUser();
+    };
   }, []);
 
   const signIn = async () => {
@@ -66,6 +82,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       await signInWithPopup(auth, provider);
     } catch (error) {
        console.error("Sign in failed", error);
+       throw error;
     }
   };
 

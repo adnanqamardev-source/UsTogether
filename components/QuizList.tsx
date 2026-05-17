@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import { collection, query, where, onSnapshot, addDoc, doc, setDoc } from 'firebase/firestore';
+import { collection, query, where, onSnapshot, addDoc, doc, setDoc, deleteDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useAuth } from './AuthProvider';
-import { Play } from 'lucide-react';
+import { Play, Sparkles, Trash2 } from 'lucide-react';
 import { handleFirestoreError, OperationType } from '@/lib/firestore-errors';
 
 // A component to list quizzes and active sessions
@@ -11,56 +11,62 @@ export default function QuizList({ coupleId }: { coupleId: string }) {
   const [quizzes, setQuizzes] = useState<any[]>([]);
   const [sessions, setSessions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [seeded, setSeeded] = useState(false);
 
   useEffect(() => {
     const qb = query(collection(db, 'quizzes'), where('isPublic', '==', true));
     const unsubQ = onSnapshot(qb, (snapshot) => {
-      setQuizzes(snapshot.docs.map(d => ({ id: d.id, ...d.data() })));
+      const q = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+      setQuizzes(q);
+      
+      // Auto seed if empty and we haven't tried yet
+      if (q.length === 0 && !seeded) {
+         setSeeded(true);
+         // Do not auto-generate via API right away to save costs, wait for user click.
+      }
     }, err => {
-       handleFirestoreError(err, OperationType.LIST, 'quizzes', user);
+       handleFirestoreError(err, OperationType.LIST, 'quizzes');
     });
 
-    const qs = query(collection(db, 'sessions'), where('coupleId', '==', coupleId));
+    const qs = query(collection(db, `couples/${coupleId}/sessions`));
     const unsubS = onSnapshot(qs, (snapshot) => {
        setSessions(snapshot.docs.map(d => ({ id: d.id, ...d.data() })));
        setLoading(false);
     }, err => {
-       handleFirestoreError(err, OperationType.LIST, 'sessions', user);
+       handleFirestoreError(err, OperationType.LIST, `couples/${coupleId}/sessions`);
     });
 
     return () => { unsubQ(); unsubS(); };
-  }, [coupleId]);
+  }, [coupleId, seeded]);
 
-  const createDummyQuizIfNone = async () => {
-     if (user) { // Always allow generating these specific ones for the demo
-        try {
+  const [generatingQuiz, setGeneratingQuiz] = useState(false);
+
+  const fetchNewQuiz = async () => {
+     if (!user) return;
+     setGeneratingQuiz(true);
+     try {
+       const res = await fetch('/api/generate-quiz', {
+         method: 'POST',
+       });
+       const data = await res.json();
+       
+       if (data.title && data.questions) {
            await addDoc(collection(db, 'quizzes'), {
               creatorId: user.uid,
-              title: "The Great Indian Shaadi Debate",
-              description: "Let's see if we agree on the chaos and magic of an Indian wedding.",
+              title: data.title,
+              description: data.description || 'A brand new AI generated quiz.',
               isPublic: true,
-              questions: [
-                 { q: "If we had to elope tomorrow, where in India would we go?", options: ["Goa Beach", "Manali Mountains", "Udaipur Palace", "Kerala Houseboat"], a: 1 },
-                 { q: "Which wedding function are you most excited to rock?", options: ["Sangeet/Haldi", "The Pheras", "The Reception Party", "Food Tasting"], a: 0 },
-                 { q: "What's our ultimate comfort street food?", options: ["Pani Puri / Golgappa", "Vada Pav", "Chole Bhature", "Momos"], a: 0 },
-              ],
+              questions: data.questions,
               createdAt: Date.now()
            });
-           await addDoc(collection(db, 'quizzes'), {
-              creatorId: user.uid,
-              title: "Future & Finances",
-              description: "Getting serious about our goals, desi style.",
-              isPublic: true,
-              questions: [
-                 { q: "What is your main financial priority right now?", options: ["Buying a house", "Traveling the world", "Starting a business", "Investing for early retirement"], a: 3 },
-                 { q: "How do you feel about living in a joint family in the future?", options: ["Love it, the more the merier", "Needs clear boundaries", "Nuclear family only", "Open to trying it out"], a: 1 },
-                 { q: "What's the ideal weekend plan?", options: ["Binge-watching on Netflix", "Long drive outside the city", "Visiting relatives/parents", "Exploring a new cafe"], a: 3 },
-              ],
-              createdAt: Date.now()
-           });
-        } catch(e) {
-           handleFirestoreError(e, OperationType.CREATE, 'quizzes', user);
-        }
+       } else {
+           // Fallback if AI fails
+           console.log("AI Failed to generate, falling back.", data);
+       }
+     } catch (e) {
+       console.error("Failed to fetch new quiz", e);
+     } finally {
+       setGeneratingQuiz(false);
      }
   };
 
@@ -72,7 +78,7 @@ export default function QuizList({ coupleId }: { coupleId: string }) {
           return;
        }
 
-       const sessionRef = doc(collection(db, 'sessions'));
+      const sessionRef = doc(collection(db, `couples/${coupleId}/sessions`));
        await setDoc(sessionRef, {
           coupleId,
           type: 'quiz',
@@ -88,11 +94,31 @@ export default function QuizList({ coupleId }: { coupleId: string }) {
        });
        window.location.hash = `#session/${sessionRef.id}`;
      } catch (e) {
-        handleFirestoreError(e, OperationType.CREATE, 'sessions', user);
+        handleFirestoreError(e, OperationType.CREATE, `couples/${coupleId}/sessions`);
      }
   };
 
   if (loading) return <div className="text-indigo-200 animate-pulse">Loading games...</div>;
+
+  const deleteQuiz = async (e: React.MouseEvent, quizId: string) => {
+    e.stopPropagation();
+    if (!window.confirm("Delete this quiz?")) return;
+    try {
+      await deleteDoc(doc(db, 'quizzes', quizId));
+    } catch(e: any) {
+      handleFirestoreError(e, OperationType.DELETE, 'quizzes');
+    }
+  };
+
+  const deleteSession = async (e: React.MouseEvent, sessionId: string) => {
+    e.stopPropagation();
+    if (!window.confirm("Delete this active session?")) return;
+    try {
+      await deleteDoc(doc(db, `couples/${coupleId}/sessions`, sessionId));
+    } catch(e: any) {
+      handleFirestoreError(e, OperationType.DELETE, `couples/${coupleId}/sessions`);
+    }
+  };
 
   return (
     <div className="space-y-8">
@@ -104,8 +130,13 @@ export default function QuizList({ coupleId }: { coupleId: string }) {
           </h2>
           <div className="grid gap-4 md:grid-cols-2">
              {sessions.filter(s => s.status !== 'finished').map(s => (
-                <div key={s.id} onClick={() => window.location.hash = `#session/${s.id}`} className="bg-rose-500/10 border border-rose-500/30 p-5 rounded-3xl cursor-pointer hover:bg-rose-500/20 transition-all shadow-[0_0_15px_rgba(244,63,94,0.1)] group">
-                   <h3 className="font-bold text-rose-300 mb-1 flex items-center justify-between">
+                <div key={s.id} onClick={() => window.location.hash = `#session/${s.id}`} className="relative bg-rose-500/10 border border-rose-500/30 p-5 rounded-3xl cursor-pointer hover:bg-rose-500/20 hover:scale-[1.02] transition-all duration-300 shadow-[0_0_15px_rgba(244,63,94,0.1)] hover:shadow-[0_0_25px_rgba(244,63,94,0.3)] group">
+                   <div className="absolute top-4 right-4 z-10 transition-opacity">
+                    <button onClick={(e) => deleteSession(e, s.id)} className="p-2 text-white/30 hover:text-rose-400 focus:outline-none transition-colors">
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                   </div>
+                   <h3 className="font-bold text-rose-300 mb-1 flex items-center justify-between pr-8">
                      Game in Progress
                      <span className="opacity-0 group-hover:opacity-100 transition-opacity">→</span>
                    </h3>
@@ -119,22 +150,37 @@ export default function QuizList({ coupleId }: { coupleId: string }) {
       <section>
         <div className="flex items-center justify-between mb-6">
            <h2 className="text-xs font-bold uppercase tracking-[0.2em] text-indigo-300">Featured Quizzes</h2>
-           <button onClick={createDummyQuizIfNone} className="text-xs font-bold uppercase tracking-[0.2em] text-rose-400 hover:text-rose-300 transition-colors">
-             Generate Examples
+           <button onClick={fetchNewQuiz} disabled={generatingQuiz} className="text-xs font-bold uppercase tracking-[0.2em] text-rose-400 hover:text-rose-300 transition-colors flex items-center gap-2">
+             <Sparkles className="w-3 h-3" /> {generatingQuiz ? '...' : 'Fetch New'}
            </button>
         </div>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {quizzes.map(q => (
-             <div key={q.id} className="bg-white/5 p-6 rounded-[2rem] border border-white/10 shadow-lg hover:bg-white/10 transition-all flex flex-col h-full group backdrop-blur-md">
-                <h3 className="font-serif italic text-xl mb-3 text-[#F8FAFC]">{q.title}</h3>
-                <p className="text-indigo-200/60 text-sm mb-6 flex-1">{q.description}</p>
-                <button onClick={() => startQuiz(q)} className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl bg-indigo-500/20 text-indigo-100 font-bold hover:bg-indigo-500/40 border border-indigo-500/30 transition-all group-hover:border-indigo-400/50">
-                  <Play className="w-4 h-4" />
-                  Start Quiz
-                </button>
-             </div>
-          ))}
-        </div>
+        
+        {quizzes.length === 0 ? (
+           <div className="text-center p-10 border border-white/10 rounded-3xl bg-white/5">
+             <p className="text-indigo-200 mb-4 font-light">Loading quizzes or no quizzes available...</p>
+             <button onClick={fetchNewQuiz} disabled={generatingQuiz} className="bg-indigo-500 hover:bg-indigo-400 text-white font-bold py-2 px-6 rounded-full text-sm uppercase tracking-widest transition-all">{generatingQuiz ? 'Generating...' : 'Reload Quizzes'}</button>
+           </div>
+        ) : (
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {quizzes.map(q => (
+               <div key={q.id} className="relative bg-white/5 p-6 rounded-[2rem] border border-white/10 shadow-lg hover:shadow-[0_0_30px_rgba(244,63,94,0.3)] hover:scale-105 hover:bg-rose-500/10 hover:border-rose-500/30 transition-all duration-300 flex flex-col h-full group backdrop-blur-md">
+                  <div className="absolute top-4 right-4 z-10 transition-opacity">
+                    <button onClick={(e) => deleteQuiz(e, q.id)} className="p-2 text-white/30 hover:text-rose-400 focus:outline-none transition-colors">
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                  <div className="flex-1 cursor-pointer flex flex-col h-full" onClick={() => startQuiz(q)}>
+                    <h3 className="font-serif italic text-xl mb-3 text-[#F8FAFC] group-hover:text-rose-300 transition-colors pr-8">{q.title}</h3>
+                    <p className="text-indigo-200/60 text-sm mb-6 flex-1 line-clamp-3">{q.description}</p>
+                    <button className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl bg-indigo-500/20 text-indigo-100 font-bold group-hover:bg-rose-500/50 border border-indigo-500/30 transition-all group-hover:border-rose-400/80 group-hover:text-white">
+                      <Play className="w-4 h-4" />
+                      Start Quiz
+                    </button>
+                  </div>
+               </div>
+            ))}
+          </div>
+        )}
       </section>
     </div>
   );

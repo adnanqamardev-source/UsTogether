@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from 'react';
 import { useAuth } from '@/components/AuthProvider';
 import { motion } from 'motion/react';
 import { LogIn } from 'lucide-react';
@@ -7,6 +8,20 @@ import Dashboard from '@/components/Dashboard';
 
 export default function Home() {
   const { user, loading, signIn } = useAuth();
+  const [error, setError] = useState<string | null>(null);
+
+  const handleSignIn = async () => {
+    setError(null);
+    try {
+      await signIn();
+    } catch (err: any) {
+      if (err?.code === 'auth/popup-blocked') {
+        setError("Sign in popup was blocked. Please click the 'Open in new tab' button at the top right of the preview window to sign in.");
+      } else {
+        setError(err?.message || "Failed to sign in.");
+      }
+    }
+  };
 
   if (loading) {
     return (
@@ -59,12 +74,21 @@ export default function Home() {
             transition={{ delay: 0.2 }}
           >
             <button 
-              onClick={signIn}
+              onClick={handleSignIn}
               className="py-5 px-10 rounded-3xl bg-rose-500 text-white font-bold text-lg inline-flex items-center gap-3 hover:bg-rose-600 ring-2 ring-rose-500/50 ring-offset-4 ring-offset-[#0F0A1F] transition-all cursor-pointer"
             >
               <LogIn className="w-6 h-6" />
               Sign in to Connect
             </button>
+            {error && (
+              <motion.div 
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mt-6 p-4 bg-rose-500/10 border border-rose-500/30 rounded-2xl text-rose-300 text-sm max-w-lg mx-auto"
+              >
+                {error}
+              </motion.div>
+            )}
           </motion.div>
         </div>
       </main>

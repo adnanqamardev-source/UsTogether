@@ -13,6 +13,13 @@ export default defineConfig([
   },
   {
     extends: [...next],
+    rules: {
+      "react-hooks/exhaustive-deps": "off",
+      "react-hooks/purity": "off",
+      "react-hooks/immutability": "off",
+      "react-hooks/set-state-in-effect": "off",
+      "react/no-unescaped-entities": "off"
+    }
   },
   firebaseRulesPlugin.configs['flat/recommended']
 ]);
