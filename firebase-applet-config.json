@@ -3,7 +3,7 @@
   "appId": "1:542769618782:web:e90e277cc0bf812b51f9cf",
   "apiKey": "AIzaSyDZK5osaZKAoKFFBzhLPHQt0QVxmU99S9A",
   "authDomain": "elaborate-will-wcff3.firebaseapp.com",
-  "firestoreDatabaseId": "ai-studio-f6cda13c-91df-4808-a1e5-5d2b9fdaa948",
+  "firestoreDatabaseId": "(default)",
   "storageBucket": "elaborate-will-wcff3.firebasestorage.app",
   "messagingSenderId": "542769618782",
   "measurementId": ""
