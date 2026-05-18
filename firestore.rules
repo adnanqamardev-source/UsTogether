@@ -145,6 +145,10 @@ service cloud.firestore {
                        incoming().type == existing().type &&
                        incoming().createdAt == existing().createdAt &&
                        true;
+
+         allow delete: if isAuthenticated() &&
+                       (get(/databases/$(database)/documents/couples/$(coupleId)).data.user1Id == request.auth.uid ||
+                        get(/databases/$(database)/documents/couples/$(coupleId)).data.user2Id == request.auth.uid);
       }
     }
     
@@ -175,6 +179,8 @@ service cloud.firestore {
                      incoming().diff(existing()).affectedKeys().hasOnly(['title', 'description', 'questions', 'isPublic']) &&
                      incoming().creatorId == existing().creatorId &&
                      incoming().createdAt == existing().createdAt;
+
+       allow delete: if isAuthenticated() && existing().creatorId == request.auth.uid;
     }
   }
 }
