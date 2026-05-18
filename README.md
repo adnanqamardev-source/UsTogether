@@ -13,6 +13,13 @@ A real-time platform designed to bring couples closer together through interacti
 *   **Interactive Quizzes**: Answer insightful relationship questions. (e.g. "Future & Finances", "The Great Indian Shaadi Debate").
 *   **Real-time Gaming Engine**: Status tracking so both users see the current question and finish the quiz together.
 
+### ⚠️ In Progress / Known Issues
+- **Quiz Sync Not Working Properly** - Partners don't properly sync during quiz completion
+- **Homepage Feels Bland** - Lacks engaging design and visual appeal
+- **Memory Feature Missing** - No photo/memory storage functionality
+- **Chat UI Needs Polish** - Basic messaging works but UX is incomplete
+- **Production Deployment Issue** - Published site still running cached version (see below)
+
 ## Tech Stack
 *   **Frontend**: Next.js (App Router), React, Tailwind CSS, Lucide Icons, Framer Motion.
 *   **Backend & Live Sync**: Firebase Firestore.
@@ -20,9 +27,9 @@ A real-time platform designed to bring couples closer together through interacti
 
 ---
 
-## ⚠️ Known Issues & Deployment Status
+## ⚠️ Deployment Status
 
-### Current Production Issue
+### Known Issue on Live Website
 If you encounter the following error on the **live published website**:
 ```
 Firestore Error: {"error":"Missing or insufficient permissions.","operationType":"list","path":"sessions"}
@@ -72,4 +79,11 @@ To run or deploy this application:
 
 ## 📝 Notes for Contributors
 
-This project is actively being developed. The main challenge currently is syncing the deployed version with the latest studio changes. Always test locally before committing changes that involve Firestore interactions.
+This project is actively being developed with several priority items:
+
+1. **Debug Quiz Synchronization** - The real-time quiz system needs debugging
+2. **Redesign UI** - Homepage and overall UI needs visual improvements
+3. **Add Memory Feature** - Implement photo/memory storage and gallery
+4. **Improve Chat** - Enhance the messaging interface and features
+
+Always test locally before committing changes that involve Firestore interactions. See `Goals.md` for the full roadmap.
