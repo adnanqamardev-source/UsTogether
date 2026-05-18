@@ -13,12 +13,17 @@ A real-time platform designed to bring couples closer together through interacti
 *   **Interactive Quizzes**: Answer insightful relationship questions. (e.g. "Future & Finances", "The Great Indian Shaadi Debate").
 *   **Real-time Gaming Engine**: Status tracking so both users see the current question and finish the quiz together.
 
-### ⚠️ In Progress / Known Issues
-- **Quiz Sync Not Working Properly** - Partners don't properly sync during quiz completion
-- **Homepage Feels Bland** - Lacks engaging design and visual appeal
-- **Memory Feature Missing** - No photo/memory storage functionality
-- **Chat UI Needs Polish** - Basic messaging works but UX is incomplete
-- **Production Deployment Issue** - Published site still running cached version (see below)
+### ⚠️ Critical Issues & Active Development
+
+#### 🔴 Critical Issues
+- **Quiz Sync Not Working Properly** - Sessions fail to synchronize between partners during quiz completion. Points calculation may not persist correctly.
+- **Homepage Feels Bland & Empty** - Lacks visual appeal, engaging hero section, and user engagement elements.
+- **UI Needs Polish** - Dashboard appears plain, missing visual hierarchy and animations.
+
+#### 🟡 Missing Features
+- **Memory/Gallery Feature** - No way to store or view couple memories, photos, or shared moments.
+- **Chat Implementation Incomplete** - Basic messaging exists but lacks proper UI, message history, typing indicators, and read receipts.
+- **Stats/Leaderboard** - No way to track couple scores or progress over time.
 
 ## Tech Stack
 *   **Frontend**: Next.js (App Router), React, Tailwind CSS, Lucide Icons, Framer Motion.
@@ -27,25 +32,24 @@ A real-time platform designed to bring couples closer together through interacti
 
 ---
 
-## ⚠️ Deployment Status
+## ⚠️ Production Deployment Issue
 
-### Known Issue on Live Website
+### Firestore Permissions Error
 If you encounter the following error on the **live published website**:
 ```
 Firestore Error: {"error":"Missing or insufficient permissions.","operationType":"list","path":"sessions"}
 ```
 
-**What is happening?**
-The online published website is running a cached version of the frontend code. The studio code has been updated to query the correct nested Firestore path (`couples/${coupleId}/sessions`), but the deployment hasn't synced the latest changes yet.
+**Status**: The code has been fixed locally. The online version is running a cached/outdated deployment.
 
-**What has been fixed:**
-- The frontend code now correctly queries nested paths (`couples/${coupleId}/sessions`) instead of the root `sessions` collection
-- Firestore security rules are properly configured to enforce this structure
+**What's been fixed:**
+- Frontend code now correctly queries nested paths (`couples/${coupleId}/sessions`)
+- Firestore security rules are properly configured
 - Local development and preview modes work correctly
 
 **What needs to be done:**
-- Click the **Share / Publish** button in the AI Studio dashboard to redeploy and clear the cached version
-- This will push the latest frontend code to the production environment
+- Click the **Share / Publish** button in the AI Studio dashboard to redeploy with the latest code
+- This will clear the cached version and push the corrected frontend to production
 
 ---
 
@@ -73,17 +77,18 @@ To run or deploy this application:
 
 5. **Deploy to Production**
    - For Vercel: Push to the main branch to trigger auto-deployment
-   - Make sure to republish through AI Studio if using Google AI Studio
+   - For AI Studio: Click **Share / Publish** button to redeploy
 
 ---
 
 ## 📝 Notes for Contributors
 
-This project is actively being developed with several priority items:
+This project is actively being developed with focus on:
+1. Fixing quiz synchronization between partners
+2. Redesigning the homepage and dashboard UI
+3. Implementing memory/gallery features
+4. Enhancing chat functionality
 
-1. **Debug Quiz Synchronization** - The real-time quiz system needs debugging
-2. **Redesign UI** - Homepage and overall UI needs visual improvements
-3. **Add Memory Feature** - Implement photo/memory storage and gallery
-4. **Improve Chat** - Enhance the messaging interface and features
+Always test locally before committing changes, especially those involving Firestore interactions and real-time synchronization.
 
-Always test locally before committing changes that involve Firestore interactions. See `Goals.md` for the full roadmap.
+See `Goals.md` for the full roadmap and priority issues.
