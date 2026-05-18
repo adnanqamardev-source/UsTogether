@@ -105,8 +105,9 @@ export default function QuizList({ coupleId }: { coupleId: string }) {
     if (!window.confirm("Delete this quiz?")) return;
     try {
       await deleteDoc(doc(db, 'quizzes', quizId));
-    } catch(e: any) {
-      handleFirestoreError(e, OperationType.DELETE, 'quizzes');
+    } catch (e: any) {
+      window.alert('Could not delete this quiz. You can only delete quizzes you created.');
+      handleFirestoreError(e, OperationType.DELETE, 'quizzes', user);
     }
   };
 
@@ -115,8 +116,12 @@ export default function QuizList({ coupleId }: { coupleId: string }) {
     if (!window.confirm("Delete this active session?")) return;
     try {
       await deleteDoc(doc(db, `couples/${coupleId}/sessions`, sessionId));
-    } catch(e: any) {
-      handleFirestoreError(e, OperationType.DELETE, `couples/${coupleId}/sessions`);
+      if (window.location.hash === `#session/${sessionId}`) {
+        window.location.hash = '';
+      }
+    } catch (e: any) {
+      window.alert('Could not delete this session. Please try again.');
+      handleFirestoreError(e, OperationType.DELETE, `couples/${coupleId}/sessions`, user);
     }
   };
 
@@ -164,11 +169,13 @@ export default function QuizList({ coupleId }: { coupleId: string }) {
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {quizzes.map(q => (
                <div key={q.id} className="relative bg-white/5 p-6 rounded-[2rem] border border-white/10 shadow-lg hover:shadow-[0_0_30px_rgba(244,63,94,0.3)] hover:scale-105 hover:bg-rose-500/10 hover:border-rose-500/30 transition-all duration-300 flex flex-col h-full group backdrop-blur-md">
-                  <div className="absolute top-4 right-4 z-10 transition-opacity">
-                    <button onClick={(e) => deleteQuiz(e, q.id)} className="p-2 text-white/30 hover:text-rose-400 focus:outline-none transition-colors">
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  </div>
+                  {q.creatorId === user?.uid && (
+                    <div className="absolute top-4 right-4 z-10 transition-opacity">
+                      <button onClick={(e) => deleteQuiz(e, q.id)} className="p-2 text-white/30 hover:text-rose-400 focus:outline-none transition-colors">
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  )}
                   <div className="flex-1 cursor-pointer flex flex-col h-full" onClick={() => startQuiz(q)}>
                     <h3 className="font-serif italic text-xl mb-3 text-[#F8FAFC] group-hover:text-rose-300 transition-colors pr-8">{q.title}</h3>
                     <p className="text-indigo-200/60 text-sm mb-6 flex-1 line-clamp-3">{q.description}</p>
