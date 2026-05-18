@@ -1,6 +1,8 @@
 import { GoogleGenAI } from '@google/genai';
 import { NextRequest, NextResponse } from "next/server";
 
+export const maxDuration = 60;
+
 export async function POST(req: NextRequest) {
   try {
     const { history } = await req.json();
