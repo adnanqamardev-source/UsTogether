@@ -5,6 +5,13 @@
  * This file mirrors the settings from the TypeScript config.
  */
 
+/**
+ * Next.js configuration file (JavaScript version).
+ * The project originally used a TypeScript config (next.config.ts),
+ * but Next.js only reads a .js file during the build process.
+ * This file mirrors the settings from the TypeScript config.
+ */
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
