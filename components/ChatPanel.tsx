@@ -105,7 +105,7 @@ export default function ChatPanel({ coupleId, onClose }: { coupleId: string; onC
             return (
               <div key={m.id} className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}>
                 <div
-                  className={`max-w-[80%] rounded-2xl px-4 py-2 ${isMe ? 'bg-rose-500 text-white rounded-tr-sm' : 'bg-gray-100 text-slate-800 rounded-tl-sm'}`}
+                  className={`max-w-[80%] rounded-2xl px-4 py-2 ${isMe ? 'bg-indigo-600 text-white rounded-tr-sm' : 'bg-gray-100 text-slate-800 rounded-tl-sm'}`}
                 >
                   <p className="text-sm break-words">{m.text}</p>
                 </div>
@@ -123,12 +123,12 @@ export default function ChatPanel({ coupleId, onClose }: { coupleId: string; onC
               value={text}
               onChange={(e) => setText(e.target.value)}
               placeholder="Type a message..."
-              className="w-full border border-gray-200 rounded-full py-3 pl-4 pr-12 focus:outline-none focus:ring-2 focus:ring-rose-500/50"
+              className="w-full bg-slate-100 text-slate-800 border border-gray-200 rounded-full py-3 pl-4 pr-12 focus:outline-none focus:ring-2 focus:ring-indigo-500 placeholder:text-slate-400"
             />
             <button
               type="submit"
               disabled={!text.trim()}
-              className="absolute right-2 top-2 p-1.5 bg-rose-500 text-white rounded-full disabled:opacity-50"
+              className="absolute right-2 top-2 p-1.5 bg-indigo-600 text-white rounded-full disabled:opacity-50"
             >
               <Send className="w-4 h-4" />
             </button>
