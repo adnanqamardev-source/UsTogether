@@ -43,10 +43,9 @@ service cloud.firestore {
                     // incoming().email == request.auth.token.email && // Relaxed for emulator if needed, but keeping strict usually.
                     (incoming().createdAt - request.time.toMillis() < 60000 && request.time.toMillis() - incoming().createdAt < 60000);
                     
+      // Allow updates that only modify allowed fields. No need to re‑assert email or createdAt values.
       allow update: if isAuthenticated() && isValidUser(incoming()) &&
-                    incoming().diff(existing()).affectedKeys().hasOnly(['displayName', 'pairedCoupleId', 'points', 'updatedAt']) &&
-                    incoming().email == existing().email &&
-                    incoming().createdAt == existing().createdAt;
+            incoming().diff(existing()).affectedKeys().hasOnly(['displayName', 'pairedCoupleId', 'points', 'updatedAt']);
     }
 
     // ------------------------------------------------------------
