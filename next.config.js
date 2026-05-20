@@ -17,10 +17,6 @@ const nextConfig = {
   },
   transpilePackages: ['motion'],
   // Ensure basePath and output: 'export' are completely removed!
-  experimental: {
-    // Enable the App Router (app directory) explicitly for Next.js 13+.
-    appDir: true,
-  },
 };
 
 module.exports = nextConfig;
