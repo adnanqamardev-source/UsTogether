@@ -1,6 +1,3 @@
-<img width="2560" height="1440" alt="image" src="https://github.com/user-attachments/assets/425a0720-3eb9-421d-93b6-56fdac57b758" />
-
-Delete not working, Card Respawns.
 Chat WIndow Looks Bad.
 
 <img width="2560" height="1440" alt="image" src="https://github.com/user-attachments/assets/fa891329-f042-4713-b9fd-528400448242" />
@@ -245,44 +242,6 @@ ci @ 4bd1b696-c023c6e3521b1417.js:1
 
 ---
 
-When i click on Delete on Featured Quiz Cards
-this Error Happens
-
-```
-page-1ff17a6eb801cb60.js:1 Firestore Error:  {"error":"Missing or insufficient permissions.","authInfo":{"providerInfo":[]},"operationType":"delete","path":"quizzes"}
-h @ page-1ff17a6eb801cb60.js:1
-k @ page-1ff17a6eb801cb60.js:1
-await in k
-onClick @ page-1ff17a6eb801cb60.js:1
-i8 @ 4bd1b696-c023c6e3521b1417.js:1
-(anonymous) @ 4bd1b696-c023c6e3521b1417.js:1
-nz @ 4bd1b696-c023c6e3521b1417.js:1
-sn @ 4bd1b696-c023c6e3521b1417.js:1
-cc @ 4bd1b696-c023c6e3521b1417.js:1
-ci @ 4bd1b696-c023c6e3521b1417.js:1
-page-1ff17a6eb801cb60.js:1 Uncaught (in promise) Error: {"error":"Missing or insufficient permissions.","authInfo":{"providerInfo":[]},"operationType":"delete","path":"quizzes"}
-    at h (page-1ff17a6eb801cb60.js:1:913)
-    at k (page-1ff17a6eb801cb60.js:1:5306)
-h @ page-1ff17a6eb801cb60.js:1
-k @ page-1ff17a6eb801cb60.js:1
-await in k
-onClick @ page-1ff17a6eb801cb60.js:1
-i8 @ 4bd1b696-c023c6e3521b1417.js:1
-(anonymous) @ 4bd1b696-c023c6e3521b1417.js:1
-nz @ 4bd1b696-c023c6e3521b1417.js:1
-sn @ 4bd1b696-c023c6e3521b1417.js:1
-cc @ 4bd1b696-c023c6e3521b1417.js:1
-ci @ 4bd1b696-c023c6e3521b1417.js:1
-477-755b9eafc7dd292c.js:1  POST https://firestore.googleapis.com/google.firestore.v1.Firestore/Write/channel?VER=8&database=projects%2Fustogether-5bd5e%2Fdatabases%2F(default)&gsessionid=EJa8j8JedBKjCk-_GWj_bvgGPKF6kWZ_5gcW2PVSXyG6bJQsJKTT3Q&SID=vBxqB-LchNO98RKH0-jd8A&RID=84128&TYPE=terminate&zx=wip629bgkohs net::ERR_BLOCKED_BY_CLIENT
-ez @ 477-755b9eafc7dd292c.js:1
-e7.close @ 477-755b9eafc7dd292c.js:1
-(anonymous) @ bc9e92e6-6890911736898689.js:6
-(anonymous) @ bc9e92e6-6890911736898689.js:6
-tc @ 477-755b9eafc7dd292c.js:1
-tu @ 477-755b9eafc7dd292c.js:1
-re.ta @ 477-755b9eafc7dd292c.js:1
-tQ @ 477-755b9eafc7dd292c.js:1
-tF.Y @ 477-755b9eafc7dd292c.js:1
 tF.ca @ 477-755b9eafc7dd292c.js:1
 tc @ 477-755b9eafc7dd292c.js:1
 tu @ 477-755b9eafc7dd292c.js:1
