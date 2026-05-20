@@ -1,0 +1,10 @@
+- [ ] Add request‑body interfaces to generate‑quiz/route.ts and generate‑challenge/route.ts
+- [ ] Guard against null `user` in CoupleDashboard, ActiveSession, Dashboard
+- [ ] Narrow catch‑block errors with `instanceof Error`
+- [ ] Add explicit prop interfaces to QuizList, MemoryBoard, ChatDrawer
+- [ ] Import `NextConfig` and type‑annotate next.config.ts
+- [ ] Run `npm install next@latest react@latest react-dom@latest`
+- [ ] Upgrade vulnerable packages (postcss, loader-utils, jsonwebtoken, rimraf, uuid, webpack)
+- [ ] Run `npm audit fix` (no --force) then address remaining high‑severity items
+- [ ] Re‑run `npx tsc --noEmit` and fix any new TS errors
+- [ ] Manual UI testing (auth flow, API routes, component rendering)

@@ -184,35 +184,3 @@ service cloud.firestore {
     }
   }
 }
-
-import { doc, getDoc, updateDoc } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
-import { handleFirestoreError, OperationType } from '@/lib/firestore-errors';
-
-const handleUnpair = async () => {
-  if (!window.confirm(
-        'Are you sure you want to disconnect from your partner? You will need to pair again to see your shared history.'
-      )) return;
-
-  try {
-    if (!user) return;
-
-    // 1️⃣ Fetch the current user document (once)
-    const userRef = doc(db, 'users', user.uid);
-    const snap = await getDoc(userRef);
-    const existing = snap.data();
-
-    // 2️⃣ Include the required immutable fields
-    await updateDoc(userRef, {
-      email: existing?.email,               // keep the same email
-      createdAt: existing?.createdAt,       // keep the same timestamp
-      pairedCoupleId: null,
-      updatedAt: Date.now()
-    });
-
-    // 3️⃣ Reload the page (now the update succeeds)
-    window.location.reload();
-  } catch (e: any) {
-    handleFirestoreError(e, OperationType.UPDATE, `users`);
-  }
-};
