@@ -5,9 +5,9 @@ import { useAuth } from './AuthProvider';
 import { Heart, MessageCircle, LogOut, CheckCircle2, Play, Users, UserMinus } from 'lucide-react';
 import { doc, getDoc, collection, query, where, onSnapshot, updateDoc, deleteDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
-import { motion, AnimatePresence } from 'motion/react';
+// Removed unused motion imports
 import { handleFirestoreError, OperationType } from '@/lib/firestore-errors';
-import ChatPanel from './ChatPanel';
+import ChatDrawer from './ChatDrawer';
 import QuizList from './QuizList';
 import ActiveSession from './ActiveSession';
 import MemoryBoard from './MemoryBoard';
@@ -138,9 +138,10 @@ export default function CoupleDashboard({ coupleId }: { coupleId: string }) {
         )}
       </main>
 
-      <AnimatePresence>
-        {isChatOpen && <ChatPanel coupleId={coupleId} onClose={() => setIsChatOpen(false)} />}
-      </AnimatePresence>
+      {/* Floating chat widget */}
+      {isChatOpen && (
+        <ChatDrawer coupleId={coupleId} onClose={() => setIsChatOpen(false)} />
+      )}
     </div>
   );
 }

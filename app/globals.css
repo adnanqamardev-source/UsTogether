@@ -5,3 +5,7 @@
 @source "../components";
 @source "../hooks";
 @source "../lib";
+
+/* Tailwind utility classes for the floating chat widget are applied directly in the component.
+	No additional global CSS is required, but you can adjust the responsive sizing here if needed.
+*/

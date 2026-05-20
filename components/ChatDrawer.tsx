@@ -40,57 +40,57 @@ export default function ChatDrawer({ coupleId, onClose }: { coupleId: string, on
   };
 
   return (
-    <>
-      <motion.div 
-        initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-        className="fixed inset-0 bg-slate-900/20 backdrop-blur-sm z-40 md:hidden"
-        onClick={onClose}
-      />
-      <motion.div 
-        initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }}
-        transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-        className="fixed right-0 top-0 bottom-0 w-full md:w-96 bg-white shadow-2xl z-50 flex flex-col border-l border-gray-100"
-      >
-        <div className="p-4 border-b border-gray-100 flex items-center justify-between">
-          <h3 className="font-semibold text-lg">Partner Chat</h3>
-          <button onClick={onClose} className="p-2 text-gray-500 hover:bg-gray-100 rounded-full transition-colors">
-            <X className="w-5 h-5" />
+    <motion.div
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.95 }}
+      transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+      className="fixed bottom-6 right-6 w-80 h-96 bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden z-50"
+    >
+      {/* Header */}
+      <div className="p-4 border-b border-slate-200 flex items-center justify-between pb-3">
+        <h3 className="font-semibold text-lg text-slate-800">Partner Chat</h3>
+        <button onClick={onClose} className="p-2 text-gray-500 hover:bg-gray-100 rounded-full transition-colors">
+          <X className="w-5 h-5" />
+        </button>
+      </div>
+
+      {/* Message list */}
+      <div className="flex-1 overflow-y-auto bg-slate-50 px-4 py-2 space-y-4">
+        {messages.map((m) => {
+          const isMe = m.senderId === user?.uid;
+          return (
+            <div key={m.id} className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}>
+              <div
+                className={`max-w-[80%] rounded-2xl px-4 py-2 ${isMe ? 'bg-rose-500 text-white rounded-br-none' : 'bg-gray-100 text-slate-800'}`}
+              >
+                <p className="text-sm break-words">{m.text}</p>
+              </div>
+            </div>
+          );
+        })}
+        <div ref={bottomRef} />
+      </div>
+
+      {/* Input area */}
+      <form onSubmit={handleSend} className="border-t border-slate-200 pt-3 px-4">
+        <div className="relative">
+          <input
+            type="text"
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            placeholder="Type a message..."
+            className="w-full border border-gray-200 rounded-full py-3 pl-4 pr-12 focus:outline-none focus:ring-2 focus:ring-rose-500/50 placeholder:text-slate-400"
+          />
+          <button
+            type="submit"
+            disabled={!text.trim()}
+            className="absolute right-2 top-2 p-1.5 bg-rose-500 text-white rounded-full disabled:opacity-50"
+          >
+            <Send className="w-4 h-4" />
           </button>
         </div>
-        
-        <div className="flex-1 overflow-y-auto p-4 space-y-4">
-          {messages.map((m) => {
-            const isMe = m.senderId === user?.uid;
-            return (
-              <div key={m.id} className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}>
-                <div className={`max-w-[80%] rounded-2xl px-4 py-2 ${isMe ? 'bg-rose-500 text-white rounded-tr-sm' : 'bg-gray-100 text-slate-800 rounded-tl-sm'}`}>
-                  <p className="text-sm">{m.text}</p>
-                </div>
-              </div>
-            );
-          })}
-          <div ref={bottomRef} />
-        </div>
-
-        <form onSubmit={handleSend} className="p-4 border-t border-gray-100">
-          <div className="relative">
-            <input 
-              type="text" 
-              value={text}
-              onChange={(e) => setText(e.target.value)}
-              placeholder="Type a message..."
-              className="w-full border border-gray-200 rounded-full py-3 pl-4 pr-12 focus:outline-none focus:ring-2 focus:ring-rose-500/50"
-            />
-            <button 
-              type="submit" 
-              disabled={!text.trim()}
-              className="absolute right-2 top-2 p-1.5 bg-rose-500 text-white rounded-full disabled:opacity-50"
-            >
-              <Send className="w-4 h-4" />
-            </button>
-          </div>
-        </form>
-      </motion.div>
-    </>
+      </form>
+    </motion.div>
   );
 }
