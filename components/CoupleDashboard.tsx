@@ -3,11 +3,11 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from './AuthProvider';
 import { Heart, MessageCircle, LogOut, CheckCircle2, Play, Users, UserMinus } from 'lucide-react';
-import { doc, getDoc, collection, query, where, onSnapshot, updateDoc } from 'firebase/firestore';
+import { doc, getDoc, collection, query, where, onSnapshot, updateDoc, deleteDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { motion, AnimatePresence } from 'motion/react';
 import { handleFirestoreError, OperationType } from '@/lib/firestore-errors';
-import ChatDrawer from './ChatDrawer';
+import ChatPanel from './ChatPanel';
 import QuizList from './QuizList';
 import ActiveSession from './ActiveSession';
 import MemoryBoard from './MemoryBoard';
@@ -41,12 +41,45 @@ export default function CoupleDashboard({ coupleId }: { coupleId: string }) {
 
   const handleUnpair = async () => {
     if (!window.confirm('Are you sure you want to disconnect from your partner? You will need to pair again to see your shared history.')) return;
+    if (!user) return;
     try {
-      if (!user) return;
+      // Fetch the couple document to identify the partner ID
+      const coupleRef = doc(db, 'couples', coupleId);
+      const coupleSnap = await getDoc(coupleRef);
+      const partnerId = coupleSnap.exists() ?
+        (coupleSnap.data().user1Id === user.uid ? coupleSnap.data().user2Id : coupleSnap.data().user1Id)
+        : null;
+
+      // Clear pairedCoupleId for the current user
       await updateDoc(doc(db, 'users', user.uid), {
         pairedCoupleId: null,
-        updatedAt: Date.now()
+        updatedAt: Date.now(),
       });
+
+      // Also clear for the partner if we have the ID
+      if (partnerId) {
+        await updateDoc(doc(db, 'users', partnerId), {
+          pairedCoupleId: null,
+          updatedAt: Date.now(),
+        });
+      }
+
+      // Delete the couple document to fully terminate the session
+      if (coupleSnap.exists()) {
+        await deleteDoc(coupleRef);
+      }
+
+      // Optionally clean up any pairing codes (best‑effort, ignore errors)
+      try {
+        await deleteDoc(doc(db, 'pairingCodes', user.uid.substring(0, 8).toUpperCase()));
+      } catch {}
+      if (partnerId) {
+        try {
+          // Assuming partner's code is derived similarly from UID
+          await deleteDoc(doc(db, 'pairingCodes', partnerId.substring(0, 8).toUpperCase()));
+        } catch {}
+      }
+
       window.location.reload();
     } catch (e: any) {
       handleFirestoreError(e, OperationType.UPDATE, `users`);
@@ -106,7 +139,7 @@ export default function CoupleDashboard({ coupleId }: { coupleId: string }) {
       </main>
 
       <AnimatePresence>
-        {isChatOpen && <ChatDrawer coupleId={coupleId} onClose={() => setIsChatOpen(false)} />}
+        {isChatOpen && <ChatPanel coupleId={coupleId} onClose={() => setIsChatOpen(false)} />}
       </AnimatePresence>
     </div>
   );
