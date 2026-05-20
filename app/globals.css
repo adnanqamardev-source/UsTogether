@@ -1,1 +1,7 @@
 @import "tailwindcss";
+
+/* Force the scanner to look at these specific folders */
+@source "../app";
+@source "../components";
+@source "../hooks";
+@source "../lib";
