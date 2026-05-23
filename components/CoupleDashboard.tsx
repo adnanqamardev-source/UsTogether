@@ -2,7 +2,8 @@
 
 import { useState, useEffect, Suspense } from 'react';
 import { useAuth } from './AuthProvider';
-import { Heart, MessageCircle, LogOut, CheckCircle2, Play, Users, UserMinus, Loader } from 'lucide-react';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { Heart, MessageCircle, LogOut, CheckCircle2, Play, Users, UserMinus, Loader, Menu, X } from 'lucide-react';
 import { doc, getDoc, collection, query, where, onSnapshot, updateDoc, deleteDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { handleFirestoreError, OperationType } from '@/lib/firestore-errors';
@@ -19,6 +20,8 @@ export default function CoupleDashboard({ coupleId }: { coupleId: string }) {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [activeHash, setActiveHash] = useState('');
   const [couple, setCouple] = useState<any>(null);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     setActiveHash(window.location.hash);
@@ -122,7 +125,34 @@ export default function CoupleDashboard({ coupleId }: { coupleId: string }) {
             <div className="w-10 h-10 rounded-full border-2 border-[#0F0A1F] bg-indigo-500 flex items-center justify-center text-xs font-bold text-white shadow-lg">{user?.email?.[0].toUpperCase()}</div>
           </div>
         </div>
+        {/* Mobile menu button */}
+        <button
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          className="md:hidden p-2 text-white/50 hover:bg-white/10 hover:text-white rounded-full transition-colors"
+          aria-label="Open mobile menu"
+        >
+          {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+        </button>
       </nav>
+
+      {/* Mobile menu */}
+      {isMobile && isMobileMenuOpen && (
+        <div className="absolute top-[80px] left-0 right-0 bg-[#0F0A1F]/90 backdrop-blur-sm border-t border-white/5 z-20">
+          <div className="space-y-1 px-4 py-6">
+            <a href="#" onClick={() => {
+              window.location.hash = '';
+              setIsMobileMenuOpen(false);
+            }} className={`block text-sm uppercase tracking-[0.2em] font-medium text-slate-400 hover:text-white transition-colors ${!sessionId && !isMemories ? 'text-rose-400 border-b border-rose-400 pb-1' : ''}`}>Quizzes</a>
+            <a href="#memories" onClick={() => setIsMobileMenuOpen(false)} className={`block text-sm uppercase tracking-[0.2em] font-medium text-slate-400 hover:text-white transition-colors ${isMemories ? 'text-rose-400 border-b border-rose-400 pb-1' : ''}`}>Memories</a>
+            <button onClick={() => {
+              setIsChatOpen(true);
+              setIsMobileMenuOpen(false);
+            }} className="block text-sm uppercase tracking-[0.2em] font-medium text-slate-400 flex items-center gap-2 hover:text-white transition-colors text-indigo-300">
+              <MessageCircle className="w-4 h-4" /> Chat
+            </button>
+          </div>
+        </div>
+      )}
 
       <main className="flex-1 rounded-[40px] flex flex-col p-6 sm:p-10 relative z-10 w-full backdrop-blur-sm bg-white/5 border border-white/10 shadow-2xl">
         {isMemories ? (
