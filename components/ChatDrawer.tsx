@@ -99,8 +99,8 @@ export default function ChatDrawer({ coupleId, onClose }: ChatDrawerProps) {
           <div ref={bottomRef} />
         </div>
 
-        {/* Input area */}
-        <form onSubmit={handleSend} className="p-4 border-t border-white/10">
+      {/* Input area */}
+      <form onSubmit={handleSend} className="p-4 border-t border-white/10 pb-6 sm:pb-4">
           <div className="relative">
             <input
               type="text"

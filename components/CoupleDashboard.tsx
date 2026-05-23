@@ -96,43 +96,44 @@ export default function CoupleDashboard({ coupleId }: { coupleId: string }) {
   return (
     <div className="flex-1 flex flex-col font-sans p-2 sm:p-6 relative w-full min-h-screen max-w-7xl mx-auto text-[#F8FAFC]">
       <nav className="flex flex-col md:flex-row justify-between items-center mb-6 relative z-10 gap-4 mt-2 sm:mt-6">
-        <div
-          className="flex items-center space-x-3 cursor-pointer"
-          onClick={() => window.location.hash = ''}
-        >
-          <div className="w-10 h-10 bg-gradient-to-br from-rose-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-rose-500/20">
-            <span className="font-bold text-xl text-white">U</span>
-          </div>
-          <span className="text-2xl font-light tracking-tight">Us<span className="font-bold">Together</span></span>
-        </div>
-        <div className="hidden md:flex space-x-8 text-sm uppercase tracking-[0.2em] font-medium text-slate-400">
-          <a href="#" onClick={() => window.location.hash = ''} className={`transition-colors ${!sessionId && !isMemories ? 'text-rose-400 border-b border-rose-400 pb-1' : 'hover:text-white'}`}>Quizzes</a>
-          <a href="#memories" className={`transition-colors ${isMemories ? 'text-rose-400 border-b border-rose-400 pb-1' : 'hover:text-white'} flex items-center gap-2`}>
-            Memories
-          </a>
-          <button onClick={() => setIsChatOpen(true)} className="hover:text-white transition-colors flex items-center gap-2 text-indigo-300">
-            <MessageCircle className="w-4 h-4" /> Chat
-          </button>
-        </div>
+        {/* Left: Hamburger menu (mobile) or nav links (desktop) */}
         <div className="flex items-center space-x-4">
-          <button onClick={handleUnpair} className="text-xs uppercase tracking-widest text-slate-500 hover:text-rose-400 transition-colors flex items-center gap-1">
-            <UserMinus className="w-3 h-3" /> Disconnect
+          {/* Hamburger menu - mobile only */}
+          <button
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="md:hidden p-2 text-white/50 hover:bg-white/10 hover:text-white rounded-full transition-colors"
+            aria-label="Open menu"
+          >
+            {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
-          <button onClick={logOut} className="text-xs uppercase tracking-widest text-slate-500 hover:text-rose-400 transition-colors">
-            Log Out
-          </button>
+          
+          {/* Logo - centered */}
+          <div className="flex-1 flex items-center justify-center">
+            <div className="w-10 h-10 bg-gradient-to-br from-rose-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-rose-500/20">
+              <span className="font-bold text-xl text-white">U</span>
+            </div>
+            <span className="text-2xl font-light tracking-tight">Us<span className="font-bold">Together</span></span>
+          </div>
+        </div>
+        
+        {/* Right: Profile avatar and desktop nav links */}
+        <div className="flex items-center space-x-4">
+          {/* Desktop nav links - hidden on mobile */}
+          <div className="hidden md:flex space-x-8 text-sm uppercase tracking-[0.2em] font-medium text-slate-400">
+            <a href="#" onClick={() => window.location.hash = ''} className={`transition-colors ${!sessionId && !isMemories ? 'text-rose-400 border-b border-rose-400 pb-1' : 'hover:text-white'}`}>Quizzes</a>
+            <a href="#memories" className={`transition-colors ${isMemories ? 'text-rose-400 border-b border-rose-400 pb-1' : 'hover:text-white'} flex items-center gap-2`}>
+              Memories
+            </a>
+            <button onClick={() => setIsChatOpen(true)} className="hover:text-white transition-colors flex items-center gap-2 text-indigo-300">
+              <MessageCircle className="w-4 h-4" /> Chat
+            </button>
+          </div>
+          
+          {/* Profile avatar */}
           <div className="flex -space-x-3">
             <div className="w-10 h-10 rounded-full border-2 border-[#0F0A1F] bg-indigo-500 flex items-center justify-center text-xs font-bold text-white shadow-lg">{user?.email?.[0].toUpperCase()}</div>
           </div>
         </div>
-        {/* Mobile menu button */}
-        <button
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          className="md:hidden p-2 text-white/50 hover:bg-white/10 hover:text-white rounded-full transition-colors"
-          aria-label="Open mobile menu"
-        >
-          {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-        </button>
       </nav>
 
       {/* Mobile menu */}
@@ -149,6 +150,13 @@ export default function CoupleDashboard({ coupleId }: { coupleId: string }) {
               setIsMobileMenuOpen(false);
             }} className="block text-sm uppercase tracking-[0.2em] font-medium text-slate-400 flex items-center gap-2 hover:text-white transition-colors text-indigo-300">
               <MessageCircle className="w-4 h-4" /> Chat
+            </button>
+            <div className="border-t border-white/5 my-4"></div>
+            <button onClick={handleUnpair} className="block w-full text-left text-xs uppercase tracking-widest text-slate-500 hover:text-rose-400 transition-colors flex items-center gap-2 px-4 py-2">
+              <UserMinus className="w-4 h-4" /> Disconnect
+            </button>
+            <button onClick={logOut} className="block w-full text-left text-xs uppercase tracking-widest text-slate-500 hover:text-rose-400 transition-colors flex items-center gap-2 px-4 py-2">
+              Log Out
             </button>
           </div>
         </div>

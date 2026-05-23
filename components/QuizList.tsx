@@ -168,7 +168,7 @@ export default function QuizList({ coupleId }: { coupleId: string }) {
         ) : (
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {quizzes.map(q => (
-               <div key={q.id} className="relative bg-white/5 p-6 rounded-[2rem] border border-white/10 shadow-lg hover:shadow-[0_0_30px_rgba(244,63,94,0.3)] hover:scale-105 hover:bg-rose-500/10 hover:border-rose-500/30 transition-all duration-300 flex flex-col h-full group backdrop-blur-md">
+               <div key={q.id} className="relative bg-white/5 px-8 py-6 rounded-[2rem] border border-white/10 shadow-lg hover:shadow-[0_0_30px_rgba(244,63,94,0.3)] hover:scale-105 hover:bg-rose-500/10 hover:border-rose-500/30 transition-all duration-300 flex flex-col h-full group backdrop-blur-md">
                   {q.creatorId === user?.uid && (
                     <div className="absolute top-4 right-4 z-10 transition-opacity">
                       <button onClick={(e) => deleteQuiz(e, q.id)} className="p-2 text-white/30 hover:text-rose-400 focus:outline-none transition-colors">
