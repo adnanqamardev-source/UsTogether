@@ -3,7 +3,7 @@
 import { useAuth } from './AuthProvider';
 import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
-import { signOut, onAuthStateChanged } from 'firebase/auth';
+import { onAuthStateChanged } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { auth, db } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
