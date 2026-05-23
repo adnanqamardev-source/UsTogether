@@ -1,11 +1,7 @@
 @import "tailwindcss";
 
-/* Force the scanner to look at these specific folders */
-@source "../app";
-@source "../components";
-@source "../hooks";
-@source "../lib";
-
-/* Tailwind utility classes for the floating chat widget are applied directly in the component.
-	No additional global CSS is required, but you can adjust the responsive sizing here if needed.
-*/
+@layer base {
+  body {
+    @apply bg-[#0F0A1F] text-slate-100 selection:bg-rose-500/30;
+  }
+}
