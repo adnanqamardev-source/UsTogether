@@ -1,7 +1,9 @@
+"use client";
+
 import { useAuth } from './AuthProvider';
 import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
-import { signIn, signOut, getAuth, onAuthStateChanged } from 'firebase/auth';
+import { signOut, getAuth, onAuthStateChanged } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { auth, db } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
@@ -117,7 +119,7 @@ export default function AuthWrapper({ children }: { children: React.ReactNode })
   // User is authenticated, show the children (Dashboard or other protected routes) with code splitting
   return (
     <div className="min-h-screen">
-      {children instanceof Function ? children() : children}
+      {children}
       {/* Optionally show a sign out button in some layout */}
     </div>
   );

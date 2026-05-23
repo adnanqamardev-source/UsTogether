@@ -1,12 +1,15 @@
 import { GoogleGenAI } from '@google/genai';
 import { NextRequest, NextResponse } from "next/server";
+import { unstable_cache } from "next/cache";
 
 export const maxDuration = 60;
 
-export async function POST(req: NextRequest) {
-  try {
+// Cache the AI quiz generation to reduce API costs and latency.
+// The prompt is static, so we can safely cache the response.
+const getCachedQuiz = unstable_cache(
+  async () => {
     if (!process.env.GEMINI_API_KEY) {
-      return NextResponse.json({ error: "Missing Gemini API Key. Please set GEMINI_API_KEY in your environment." }, { status: 500 });
+      throw new Error("Missing Gemini API Key. Please set GEMINI_API_KEY in your environment.");
     }
 
     const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
@@ -42,12 +45,21 @@ Make sure exactly one JSON object is returned, with no markdown code blocks arou
     let parsed;
     try {
       // Clean up markdown wrapping if present
-      const cleaned = text.replace(/```json\n?/, '').replace(/```\n?/, '');
+      const cleaned = text.replace(/\`\`\`json\n?/, '').replace(/\`\`\`\n?/, '');
       parsed = JSON.parse(cleaned);
     } catch (e) {
-      return NextResponse.json({ error: "Failed to parse AI response as JSON." }, { status: 500 });
+      throw new Error("Failed to parse AI response as JSON.");
     }
 
+    return parsed;
+  },
+  ['quiz-generation-cache'],
+  { revalidate: 3600, tags: ['quiz'] } // Cache for 1 hour
+);
+
+export async function POST(req: NextRequest) {
+  try {
+    const parsed = await getCachedQuiz();
     return NextResponse.json(parsed);
   } catch (err: any) {
     console.error(err);

@@ -1,16 +1,18 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useAuth } from './AuthProvider';
-import { Heart, MessageCircle, LogOut, CheckCircle2, Play, Users, UserMinus } from 'lucide-react';
+import { Heart, MessageCircle, LogOut, CheckCircle2, Play, Users, UserMinus, Loader } from 'lucide-react';
 import { doc, getDoc, collection, query, where, onSnapshot, updateDoc, deleteDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
-// Removed unused motion imports
 import { handleFirestoreError, OperationType } from '@/lib/firestore-errors';
-import ChatDrawer from './ChatDrawer';
+import dynamic from 'next/dynamic';
 import QuizList from './QuizList';
-import ActiveSession from './ActiveSession';
-import MemoryBoard from './MemoryBoard';
+
+// Dynamically import heavy interactive components to reduce initial bundle size
+const ChatDrawer = dynamic(() => import('./ChatDrawer'), { ssr: false, loading: () => <div className="fixed bottom-6 right-6 w-80 h-96 bg-[#0F0A1F] border border-white/10 rounded-2xl shadow-2xl flex items-center justify-center z-50"><Loader className="w-6 h-6 text-white animate-spin" /></div> });
+const MemoryBoard = dynamic(() => import('./MemoryBoard'), { ssr: false, loading: () => <div className="flex items-center justify-center h-full"><Loader className="w-8 h-8 text-indigo-400 animate-spin" /></div> });
+const ActiveSession = dynamic(() => import('./ActiveSession'), { ssr: false, loading: () => <div className="flex items-center justify-center h-full"><Loader className="w-8 h-8 text-indigo-400 animate-spin" /></div> });
 
 export default function CoupleDashboard({ coupleId }: { coupleId: string }) {
   const { user, logOut } = useAuth();
@@ -29,7 +31,7 @@ export default function CoupleDashboard({ coupleId }: { coupleId: string }) {
     if (!coupleId) return;
     const unsub = onSnapshot(doc(db, 'couples', coupleId), (snap) => {
       if (snap.exists()) {
-         setCouple(snap.data());
+        setCouple(snap.data());
       }
     });
     return () => unsub();
@@ -91,7 +93,7 @@ export default function CoupleDashboard({ coupleId }: { coupleId: string }) {
   return (
     <div className="flex-1 flex flex-col font-sans p-2 sm:p-6 relative w-full min-h-screen max-w-7xl mx-auto text-[#F8FAFC]">
       <nav className="flex flex-col md:flex-row justify-between items-center mb-6 relative z-10 gap-4 mt-2 sm:mt-6">
-        <div 
+        <div
           className="flex items-center space-x-3 cursor-pointer"
           onClick={() => window.location.hash = ''}
         >
@@ -124,23 +126,25 @@ export default function CoupleDashboard({ coupleId }: { coupleId: string }) {
 
       <main className="flex-1 rounded-[40px] flex flex-col p-6 sm:p-10 relative z-10 w-full backdrop-blur-sm bg-white/5 border border-white/10 shadow-2xl">
         {isMemories ? (
-           <MemoryBoard coupleId={coupleId} />
+          <MemoryBoard coupleId={coupleId} />
         ) : !sessionId ? (
-           <>
-              <header className="mb-12">
-                <h1 className="text-4xl md:text-5xl font-serif italic mb-4 text-transparent bg-clip-text bg-gradient-to-r from-white to-indigo-200">Hi, {user?.displayName || user?.email?.split('@')[0]} 👋</h1>
-                <p className="text-indigo-200/60 font-light">Pick a quiz or game to challenge your partner.</p>
-              </header>
-              <QuizList coupleId={coupleId} />
-           </>
+          <>
+            <header className="mb-12">
+              <h1 className="text-4xl md:text-5xl font-serif italic mb-4 text-transparent bg-clip-text bg-gradient-to-r from-white to-indigo-200">Hi, {user?.displayName || user?.email?.split('@')[0]} 👋</h1>
+              <p className="text-indigo-200/60 font-light">Pick a quiz or game to challenge your partner.</p>
+            </header>
+            <QuizList coupleId={coupleId} />
+          </>
         ) : (
-           <ActiveSession coupleId={coupleId} sessionId={sessionId} />
+          <ActiveSession coupleId={coupleId} sessionId={sessionId} />
         )}
       </main>
 
       {/* Floating chat widget */}
       {isChatOpen && (
-        <ChatDrawer coupleId={coupleId} onClose={() => setIsChatOpen(false)} />
+        <Suspense fallback={<div className="fixed bottom-6 right-6 w-80 h-96 bg-[#0F0A1F] border border-white/10 rounded-2xl shadow-2xl flex items-center justify-center z-50"><Loader className="w-6 h-6 text-white animate-spin" /></div>}>
+          <ChatDrawer coupleId={coupleId} onClose={() => setIsChatOpen(false)} />
+        </Suspense>
       )}
     </div>
   );
