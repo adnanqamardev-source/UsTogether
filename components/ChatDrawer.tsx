@@ -1,41 +1,62 @@
-import { useState, useEffect, useRef } from 'react';
-import { motion } from 'motion/react';
+import React, { useState, useRef, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import { X, Send } from 'lucide-react';
-import { collection, query, orderBy, onSnapshot, addDoc, limit } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
 import { useAuth } from './AuthProvider';
+import { collection, query, orderBy, onSnapshot, addDoc, serverTimestamp } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
 import { handleFirestoreError, OperationType } from '@/lib/firestore-errors';
 
-export default function ChatDrawer({ coupleId, onClose }: { coupleId: string, onClose: () => void }) {
+interface Message {
+  id: string;
+  text: string;
+  senderId: string;
+  timestamp: Date;
+}
+
+interface ChatDrawerProps {
+  coupleId: string;
+  onClose: () => void;
+}
+
+export default function ChatDrawer({ coupleId, onClose }: ChatDrawerProps) {
   const { user } = useAuth();
-  const [messages, setMessages] = useState<any[]>([]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [text, setText] = useState('');
   const bottomRef = useRef<HTMLDivElement>(null);
 
+  // Auto-scroll to bottom when messages change
   useEffect(() => {
-    const q = query(collection(db, `couples/${coupleId}/messages`), orderBy('createdAt', 'asc'), limit(100));
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      setMessages(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-      setTimeout(() => bottomRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
-    }, (error) => {
-       handleFirestoreError(error, OperationType.LIST, `couples/${coupleId}/messages`, user);
+    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
+
+  // Fetch messages from Firestore
+  useEffect(() => {
+    if (!coupleId) return;
+    const q = query(collection(db, 'couples', coupleId, 'messages'), orderBy('timestamp'));
+    const unsub = onSnapshot(q, (snapshot) => {
+      const msgs: Message[] = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        text: doc.data().text,
+        senderId: doc.data().senderId,
+        timestamp: doc.data().timestamp?.toDate() || new Date(),
+      }));
+      setMessages(msgs);
     });
-    return () => unsubscribe();
+    return () => unsub();
   }, [coupleId]);
 
   const handleSend = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!text.trim() || !user) return;
-    const msg = text.trim();
-    setText('');
+    if (!text.trim() || !user || !coupleId) return;
     try {
-      await addDoc(collection(db, `couples/${coupleId}/messages`), {
+      await addDoc(collection(db, 'couples', coupleId, 'messages'), {
+        text: text.trim(),
         senderId: user.uid,
-        text: msg,
-        createdAt: Date.now()
+        timestamp: serverTimestamp(),
       });
+      setText('');
     } catch (err) {
-       handleFirestoreError(err, OperationType.CREATE, `couples/${coupleId}/messages`, user);
+      handleFirestoreError(err, OperationType.CREATE, `couples/${coupleId}/messages`);
     }
   };
 
@@ -45,12 +66,12 @@ export default function ChatDrawer({ coupleId, onClose }: { coupleId: string, on
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.95 }}
       transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-      className="fixed bottom-6 right-6 w-80 h-96 bg-background/95 backdrop-blur-md text-foreground border border-foreground/10 rounded-2xl shadow-2xl flex flex-col overflow-hidden z-50"
+      className="fixed bottom-6 right-6 w-80 h-96 bg-[#0F0A1F] border border-white/10 rounded-2xl shadow-2xl flex flex-col overflow-hidden z-50"
     >
       {/* Header */}
-      <div className="p-4 border-b border-foreground/10 flex items-center justify-between pb-3">
-        <h3 className="font-semibold text-lg">Partner Chat</h3>
-        <button onClick={onClose} className="p-2 text-foreground/50 hover:bg-foreground/10 hover:text-foreground rounded-full transition-colors">
+      <div className="p-4 border-b border-white/10 flex items-center justify-between pb-3">
+        <h3 className="font-semibold text-lg text-white">Partner Chat</h3>
+        <button onClick={onClose} className="p-2 text-white/50 hover:bg-white/10 hover:text-white rounded-full transition-colors">
           <X className="w-5 h-5" />
         </button>
       </div>
@@ -62,7 +83,7 @@ export default function ChatDrawer({ coupleId, onClose }: { coupleId: string, on
           return (
             <div key={m.id} className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}>
               <div
-                className={`max-w-[80%] rounded-2xl px-4 py-2 ${isMe ? 'bg-accent text-white rounded-br-none' : 'bg-foreground/10 text-foreground'}`}
+                className={`max-w-[80%] rounded-2xl px-4 py-2 ${isMe ? 'bg-indigo-600 text-white rounded-br-none' : 'bg-white/10 text-white'}`}
               >
                 <p className="text-sm break-words">{m.text}</p>
               </div>
@@ -73,22 +94,24 @@ export default function ChatDrawer({ coupleId, onClose }: { coupleId: string, on
       </div>
 
       {/* Input area */}
-      <form onSubmit={handleSend} className="p-4 border-t border-foreground/10">
+      <form onSubmit={handleSend} className="p-4 border-t border-white/10">
         <div className="relative">
-            <input
-              type="text"
-              value={text}
-              onChange={(e) => setText(e.target.value)}
-              placeholder="Type a message..."
-              className="w-full bg-foreground/5 text-foreground border border-foreground/10 rounded-full py-3 pl-4 pr-12 focus:outline-none focus:ring-2 focus:ring-accent placeholder:text-foreground/40"
-            />
-            <button
-              type="submit"
-              disabled={!text.trim()}
-              className="absolute right-2 top-2 p-1.5 bg-accent text-white rounded-full disabled:opacity-50 hover:opacity-80 transition-opacity"
-            >
-              <Send className="w-4 h-4" />
-            </button>
+           <input
+             type="text"
+             id="chat-message-input"
+             name="chat-message"
+             value={text}
+             onChange={(e) => setText(e.target.value)}
+             placeholder="Type a message..."
+             className="w-full bg-white/5 text-white border border-white/10 rounded-full py-3 pl-4 pr-12 focus:outline-none focus:ring-2 focus:ring-rose-500 placeholder:text-white/40"
+           />
+          <button
+            type="submit"
+            disabled={!text.trim()}
+            className="absolute right-2 top-2 p-1.5 bg-rose-500 text-white rounded-full disabled:opacity-50 hover:bg-rose-600 transition-colors"
+          >
+            <Send className="w-4 h-4" />
+          </button>
         </div>
       </form>
     </motion.div>
