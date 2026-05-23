@@ -6,22 +6,23 @@ export const maxDuration = 60;
 
 // Cache the AI challenge generation to reduce API costs and latency.
 // Cache key includes a hash of the history to serve cached results for identical requests.
-const getCachedChallenge = unstable_cache(
-  async (historyString: string) => {
-    if (!process.env.GEMINI_API_KEY) {
-      throw new Error("Missing Gemini API Key. Please set GEMINI_API_KEY in your environment.");
-    }
+const getCachedChallenge = async (historyString: string) => {
+  return unstable_cache(
+    async () => {
+      if (!process.env.GEMINI_API_KEY) {
+        throw new Error("Missing Gemini API Key. Please set GEMINI_API_KEY in your environment.");
+      }
 
-    const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
-    let history;
-    try {
-      history = JSON.parse(historyString);
-    } catch {
-      history = [];
-    }
+      let history;
+      try {
+        history = JSON.parse(historyString);
+      } catch {
+        history = [];
+      }
 
-    const prompt = `You are an AI relationship coach and creative companion for couples.
+      const prompt = `You are an AI relationship coach and creative companion for couples.
 Here is a summary of some of the answers a couple has given in past relationship quizzes:
 ${JSON.stringify(history).substring(0, 5000)}
 
@@ -29,16 +30,17 @@ Based exclusively on their answers, their vibe, and what they seem to value or f
 It should be fun, thoughtful, and reference their past answers loosely if possible (if they have past answers). If there's no past history, just generate a really fun universal couple challenge.
 Format the response cleanly in plain text or simple markdown. Do not include too much preamble. Start directly with the challenge or prompt. Keep it to max 3 paragraphs.`;
 
-    const response = await ai.models.generateContent({
-      model: "gemini-3-flash-preview",
-      contents: prompt,
-    });
+      const response = await ai.models.generateContent({
+        model: "gemini-3-flash-preview",
+        contents: prompt,
+      });
 
-    return response.text;
-  },
-  ['challenge-generation-cache'],
-  { revalidate: 86400, tags: ['challenge'] } // Cache for 24 hours
-);
+      return response.text;
+    },
+    ['challenge-generation-cache', historyString], // Dynamically cache based on the couple's history
+    { revalidate: 86400, tags: ['challenge'] } // Cache for 24 hours
+  )();
+};
 
 export async function POST(req: NextRequest) {
   try {

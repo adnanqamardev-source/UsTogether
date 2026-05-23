@@ -1,19 +1,17 @@
 import { GoogleGenAI } from '@google/genai';
 import { NextRequest, NextResponse } from "next/server";
-import { unstable_cache } from "next/cache";
 
 export const maxDuration = 60;
+export const dynamic = 'force-dynamic'; // Ensure the route runs dynamically for truly unique quizzes
 
-// Cache the AI quiz generation to reduce API costs and latency.
-// The prompt is static, so we can safely cache the response.
-const getCachedQuiz = unstable_cache(
-  async () => {
+export async function POST(req: NextRequest) {
+  try {
     if (!process.env.GEMINI_API_KEY) {
       throw new Error("Missing Gemini API Key. Please set GEMINI_API_KEY in your environment.");
     }
 
     const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-    
+
     const prompt = `You are a creative app generating fun relationship quizzes.
 Generate a completely new, unique, fun 5-question relationship quiz for a couple. Include a mix of multiple choice and text questions.
 Output format MUST be valid JSON matching this schema:
@@ -41,7 +39,7 @@ Make sure exactly one JSON object is returned, with no markdown code blocks arou
     });
 
     const text = response.text || '';
-    
+
     let parsed;
     try {
       // Clean up markdown wrapping if present
@@ -51,15 +49,6 @@ Make sure exactly one JSON object is returned, with no markdown code blocks arou
       throw new Error("Failed to parse AI response as JSON.");
     }
 
-    return parsed;
-  },
-  ['quiz-generation-cache'],
-  { revalidate: 3600, tags: ['quiz'] } // Cache for 1 hour
-);
-
-export async function POST(req: NextRequest) {
-  try {
-    const parsed = await getCachedQuiz();
     return NextResponse.json(parsed);
   } catch (err: any) {
     console.error(err);

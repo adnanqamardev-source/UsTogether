@@ -7,7 +7,14 @@ import { Heart, Users, ArrowRight } from 'lucide-react';
 import { doc, getDoc, setDoc, updateDoc, collection, query, where, onSnapshot, or } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { handleFirestoreError, OperationType } from '@/lib/firestore-errors';
-import CoupleDashboard from './CoupleDashboard';
+import dynamic from 'next/dynamic';
+
+// Dynamically import the heavy dashboard component
+const CoupleDashboard = dynamic(() => import('./CoupleDashboard'), {
+  ssr: false, // It relies heavily on Firebase client and window APIs
+  loading: () => <div className="animate-pulse flex items-center justify-center h-screen text-indigo-400">Loading your space...</div>
+});
+
 
 export default function Dashboard() {
   const { user, dbUser, logOut } = useAuth();
