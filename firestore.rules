@@ -100,20 +100,24 @@ service cloud.firestore {
                     (incoming().updatedAt - request.time.toMillis() < 60000 && request.time.toMillis() - incoming().updatedAt < 60000);
                     
       // 2.1 Couple Messages
+      // Updated to match client implementation which uses a Firestore timestamp field named 'timestamp'
       function isValidMessage(data) {
-         return data.keys().hasAll(['senderId', 'text', 'createdAt']) &&
+         return data.keys().hasAll(['senderId', 'text', 'timestamp']) &&
                 data.size() == 3 &&
                 data.senderId is string && data.senderId.size() <= 128 &&
                 data.text is string && data.text.size() > 0 && data.text.size() <= 1000 &&
-                data.createdAt is number;
+                data.timestamp is timestamp;
       }
       match /messages/{messageId} {
          allow get: if isAuthenticated();
          allow list: if isAuthenticated();
          
-         allow create: if isAuthenticated() && isValidId(messageId) && isValidMessage(incoming()) &&
-                       incoming().senderId == request.auth.uid &&
-                       (incoming().createdAt - request.time.toMillis() < 60000 && request.time.toMillis() - incoming().createdAt < 60000);
+          // Allow creation of a message if the user is authenticated, the message ID is valid,
+          // the payload matches the expected schema, and the sender matches the authenticated user.
+          // The timestamp check is simplified to ensure the field exists and is a valid timestamp.
+          allow create: if isAuthenticated() && isValidId(messageId) && isValidMessage(incoming()) &&
+                        incoming().senderId == request.auth.uid &&
+                        incoming().timestamp is timestamp;
          
          allow update: if false; // Messages are immutable
          allow delete: if false;
