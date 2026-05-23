@@ -86,13 +86,15 @@ export default function ChatPanel({ messages, user, onClose, onSendMessage }: Ch
       {/* Input form */}
       <form onSubmit={handleSend} className="p-4 border-t border-white/10">
         <div className="relative">
-          <input
-            type="text"
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-            placeholder="Type a message..."
-            className="w-full bg-white/5 text-white border border-white/10 rounded-full py-3 pl-4 pr-12 focus:outline-none focus:ring-2 focus:ring-rose-500 placeholder:text-white/40"
-          />
+           <input
+             type="text"
+             id="chat-message-input"
+             name="chat-message"
+             value={text}
+             onChange={(e) => setText(e.target.value)}
+             placeholder="Type a message..."
+             className="w-full bg-white/5 text-white border border-white/10 rounded-full py-3 pl-4 pr-12 focus:outline-none focus:ring-2 focus:ring-rose-500 placeholder:text-white/40"
+           />
           <button
             type="submit"
             disabled={!text.trim()}
