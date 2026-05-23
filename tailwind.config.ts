@@ -9,15 +9,14 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Adding your landing page brand colors for easy reuse
+        background: 'var(--color-background)',
+        foreground: 'var(--color-foreground)',
+        accent: 'var(--color-accent)',
+        // Keep existing colors for backward compatibility
         space: {
           bg: '#0F0A1F',
           dark: '#0a0715',
         },
-        accent: {
-          rose: '#f43f5e', // rose-500
-          indigo: '#4f46e5', // indigo-600
-        }
       }
     },
   },

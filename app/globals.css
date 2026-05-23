@@ -1,7 +1,13 @@
 @import "tailwindcss";
 
+@theme {
+  --color-background: #0F0A1F;
+  --color-foreground: #F8FAFC;
+  --color-accent: #f43f5e;
+}
+
 @layer base {
   body {
-    @apply bg-[#0F0A1F] text-slate-100 selection:bg-rose-500/30;
+    @apply bg-background text-foreground selection:bg-accent/30;
   }
 }
