@@ -3,7 +3,7 @@
 import { useAuth } from './AuthProvider';
 import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
-import { signOut, getAuth, onAuthStateChanged } from 'firebase/auth';
+import { signOut, onAuthStateChanged } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { auth, db } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
@@ -34,7 +34,7 @@ export default function AuthWrapper({ children }: { children: React.ReactNode })
         try {
           const userRef = doc(db, 'users', user.uid);
           const userSnap = await getDoc(userRef);
-          
+
           if (userSnap.exists()) {
             // User data exists in Firestore
             setAuthenticated(true);
@@ -105,7 +105,7 @@ export default function AuthWrapper({ children }: { children: React.ReactNode })
           <p className="text-lg md:text-xl text-indigo-200/80 max-w-2xl mx-auto font-light">
             Create personalized quizzes relevant to your journey together, compete on leaderboards, and share real-time memories with your partner.
           </p>
-          <button 
+          <button
             onClick={handleSignIn}
             className="py-4 px-8 rounded-3xl bg-rose-500 text-white font-bold text-lg inline-flex items-center gap-3 hover:bg-rose-600 ring-2 ring-rose-500/50 ring-offset-4 ring-offset-[#0F0A1F] transition-all cursor-pointer"
           >
@@ -116,11 +116,6 @@ export default function AuthWrapper({ children }: { children: React.ReactNode })
     );
   }
 
-  // User is authenticated, show the children (Dashboard or other protected routes) with code splitting
-  return (
-    <div className="min-h-screen">
-      {children}
-      {/* Optionally show a sign out button in some layout */}
-    </div>
-  );
+  // User is authenticated, show the Dashboard component
+  return <DashboardDynamic />;
 }
