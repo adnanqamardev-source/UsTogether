@@ -133,6 +133,16 @@ export default function CoupleDashboard({ coupleId }: { coupleId: string }) {
           <div className="flex -space-x-3">
             <div className="w-10 h-10 rounded-full border-2 border-[#0F0A1F] bg-indigo-500 flex items-center justify-center text-xs font-bold text-white shadow-lg">{user?.email?.[0].toUpperCase()}</div>
           </div>
+          
+          {/* Desktop: Disconnect and Log Out - always visible */}
+          <div className="hidden md:flex items-center space-x-4 border-l border-white/10 pl-4">
+            <button onClick={handleUnpair} className="text-xs uppercase tracking-widest text-slate-500 hover:text-rose-400 transition-colors flex items-center gap-2">
+              <UserMinus className="w-4 h-4" /> Disconnect
+            </button>
+            <button onClick={logOut} className="text-xs uppercase tracking-widest text-slate-500 hover:text-rose-400 transition-colors flex items-center gap-2">
+              Log Out
+            </button>
+          </div>
         </div>
       </nav>
 
