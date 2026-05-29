@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, Suspense } from 'react';
+import { useState, useEffect, Suspense, useRef } from 'react';
 import { useAuth } from './AuthProvider';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Heart, MessageCircle, LogOut, CheckCircle2, Play, Users, UserMinus, Loader, Menu, X } from 'lucide-react';
@@ -21,13 +21,31 @@ export default function CoupleDashboard({ coupleId }: { coupleId: string }) {
   const [activeHash, setActiveHash] = useState('');
   const [couple, setCouple] = useState<any>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  // New state for profile dropdown
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const isMobile = useIsMobile();
+  // Ref for dropdown to detect outside clicks
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setActiveHash(window.location.hash);
     const handleHash = () => setActiveHash(window.location.hash);
     window.addEventListener('hashchange', handleHash);
     return () => window.removeEventListener('hashchange', handleHash);
+  }, []);
+
+  // Click outside detection for profile dropdown
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(e.target as Node)
+      ) {
+        setIsDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   useEffect(() => {
@@ -129,20 +147,35 @@ export default function CoupleDashboard({ coupleId }: { coupleId: string }) {
             </button>
           </div>
           
-          {/* Profile avatar */}
-          <div className="flex -space-x-3">
-            <div className="w-10 h-10 rounded-full border-2 border-[#0F0A1F] bg-indigo-500 flex items-center justify-center text-xs font-bold text-white shadow-lg">{user?.email?.[0].toUpperCase()}</div>
+          {/* Profile avatar with dropdown */}
+          <div className="relative flex -space-x-3" ref={dropdownRef}>
+            <button
+              onClick={() => setIsDropdownOpen((prev) => !prev)}
+              className="w-10 h-10 rounded-full border-2 border-[#0F0A1F] bg-indigo-500 flex items-center justify-center text-xs font-bold text-white shadow-lg focus:outline-none"
+              aria-haspopup="true"
+              aria-expanded={isDropdownOpen}
+            >
+              {user?.email?.[0].toUpperCase()}
+            </button>
+            {isDropdownOpen && (
+              <div className="absolute right-0 mt-2 w-48 bg-[#0F0A1F] border border-white/10 rounded-xl shadow-lg z-50">
+                <button
+                  onClick={handleUnpair}
+                  className="w-full text-left px-4 py-2 text-xs uppercase tracking-widest text-slate-500 hover:text-rose-400 transition-colors flex items-center gap-2"
+                >
+                  <UserMinus className="w-4 h-4" /> Disconnect
+                </button>
+                <button
+                  onClick={logOut}
+                  className="w-full text-left px-4 py-2 text-xs uppercase tracking-widest text-slate-500 hover:text-rose-400 transition-colors flex items-center gap-2"
+                >
+                  Log Out
+                </button>
+              </div>
+            )}
           </div>
           
-          {/* Desktop: Disconnect and Log Out - always visible */}
-          <div className="hidden md:flex items-center space-x-4 border-l border-white/10 pl-4">
-            <button onClick={handleUnpair} className="text-xs uppercase tracking-widest text-slate-500 hover:text-rose-400 transition-colors flex items-center gap-2">
-              <UserMinus className="w-4 h-4" /> Disconnect
-            </button>
-            <button onClick={logOut} className="text-xs uppercase tracking-widest text-slate-500 hover:text-rose-400 transition-colors flex items-center gap-2">
-              Log Out
-            </button>
-          </div>
+          {/* Desktop: Disconnect and Log Out moved to profile dropdown */}
         </div>
       </nav>
 
@@ -153,20 +186,20 @@ export default function CoupleDashboard({ coupleId }: { coupleId: string }) {
             <a href="#" onClick={() => {
               window.location.hash = '';
               setIsMobileMenuOpen(false);
-            }} className={`block text-sm uppercase tracking-[0.2em] font-medium text-slate-400 hover:text-white transition-colors ${!sessionId && !isMemories ? 'text-rose-400 border-b border-rose-400 pb-1' : ''}`}>Quizzes</a>
-            <a href="#memories" onClick={() => setIsMobileMenuOpen(false)} className={`block text-sm uppercase tracking-[0.2em] font-medium text-slate-400 hover:text-white transition-colors ${isMemories ? 'text-rose-400 border-b border-rose-400 pb-1' : ''}`}>Memories</a>
+            }} className={`block text-sm uppercase tracking-[0.2em] font-medium text-white hover:text-white transition-colors ${!sessionId && !isMemories ? 'text-rose-400 border-b border-rose-400 pb-1' : ''}`}>Quizzes</a>
+            <a href="#memories" onClick={() => setIsMobileMenuOpen(false)} className={`block text-sm uppercase tracking-[0.2em] font-medium text-white hover:text-white transition-colors ${isMemories ? 'text-rose-400 border-b border-rose-400 pb-1' : ''}`}>Memories</a>
             <button onClick={() => {
               setIsChatOpen(true);
               setIsMobileMenuOpen(false);
-            }} className="block text-sm uppercase tracking-[0.2em] font-medium text-slate-400 flex items-center gap-2 hover:text-white transition-colors text-indigo-300">
+            }} className="block text-sm uppercase tracking-[0.2em] font-medium text-white flex items-center gap-2 hover:text-white transition-colors text-indigo-300">
               <MessageCircle className="w-4 h-4" /> Chat
             </button>
             <div className="border-t border-white/5 my-4"></div>
-            <button onClick={handleUnpair} className="block w-full text-left text-xs uppercase tracking-widest text-slate-500 hover:text-rose-400 transition-colors flex items-center gap-2 px-4 py-2">
+            <button onClick={handleUnpair} className="block w-full text-left text-xs uppercase tracking-widest text-white hover:text-rose-400 transition-colors flex items-center gap-2 px-4 py-2">
               <UserMinus className="w-4 h-4" /> Disconnect
             </button>
-            <button onClick={logOut} className="block w-full text-left text-xs uppercase tracking-widest text-slate-500 hover:text-rose-400 transition-colors flex items-center gap-2 px-4 py-2">
-              Log Out
+            <button onClick={logOut} className="block w-full text-left text-xs uppercase tracking-widest text-white hover:text-rose-400 transition-colors flex items-center gap-2 px-4 py-2">
+              <LogOut className="w-4 h-4" /> Log Out
             </button>
           </div>
         </div>
