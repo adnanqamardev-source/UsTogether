@@ -1,51 +1,55 @@
 # Implementation Plan
 
 [Overview]
-Enhance UsTogether with polished visuals and new features that deepen couples' connection through streak tracking, achievements, and daily reminders while preserving the app's luxurious dark Desi aesthetic.
+Resolve six performance, scalability, and correctness issues in the UsTogether codebase through targeted, low-risk refactors across Firestore queries, React rendering, and AI caching logic.
 
-This plan responds to the request to improve the website look using screenshots and implement new features. It first assesses the current UI baseline captured in `test-results/landing-current.png`, then proceeds with a top-to-bottom visual polish across the landing page, dashboard, quizzes, and memory board. New features—streaks, achievements, and reminders—are layered in as dashboard modules, keeping the change minimal and non-breaking.
+The app is a Next.js couples-connection platform using Firebase Firestore for persistence and Google Gemini for AI-generated quizzes and challenges. As usage grows, the current implementation will degrade: unbounded queries will blow up Firebase egress costs, infinite chat lists will crash lower-end browsers, and the AI caching bug will make every couple see the same quiz for hours. This plan addresses each issue incrementally so changes can be shipped and tested independently.
 
 [Types]
-No new TypeScript types are required; existing component props and Firestore document shapes remain valid.
+Minimal new types required; the work primarily adjusts existing component props and local state.
 
-New Firestore fields will use existing types or add optional properties where appropriate. Planned additions:
-- `users/{uid}`: optional `streak`, `lastActiveAt`, `reminderEnabled`, `reminderTime`
-- `couples/{coupleId}`: optional `streak`, `lastQuizCompletedAt`
-- New subcollection: `achievements/{userId}` with lightweight objects like `{ id, title, description, unlockedAt }`
+New types to add:
+- QuizListItem — explicit interface for quiz objects stored in QuizList state (replaces any[]).
+  Fields: id: string; title: string; description: string; questions: any[]; isPublic: boolean; creatorId: string; createdAt: number.
+- SessionSummary — explicit interface for session documents in QuizList and MemoryBoard.
+  Fields: id: string; coupleId: string; type: string; status: string; state: { quizId: string; currentQuestion: number; scores: Record<string, number>; answers: Record<string, any> }; createdAt: number; updatedAt: number; quizTitle: string.
 
 [Files]
-- `app/globals.css` — Add custom animations, smooth scrollbar styling, and premium gradient mesh noise texture
-- `app/layout.tsx` — Add metadata enhancement and theme color declarations
-- `components/LandingSections.tsx` — New animated landing sections with staggered fade-ins and floating gradient orbs
-- `components/StreakCounter.tsx` — New dashboard module for current streak display
-- `components/AchievementsPanel.tsx` — New dashboard module showing recent achievement badges
-- `components/QuizCard.tsx` — Enhanced quiz card with improved hover glow, glass-morphism, and border gradient
-- `components/ChatDrawer.tsx` — Polish message bubbles, add message timestamps and read receipts
-- `components/MemoryBoard.tsx` — Refine card layout, add date formatting and mood icon per memory
-- `components/CoupleDashboard.tsx` — Integrate new modules in dashboard without changing auth logic
-- `package.json` — No dependency changes; enhancements use existing Tailwind, Motion, Lucide
+- components/MemoryBoard.tsx — Remove full quizzes collection fetch; rely on denormalized quizTitle stored on session docs.
+- components/QuizList.tsx — Add .limit(20) to public quiz query, implement Load More pagination, denormalize quizTitle into session docs on creation.
+- components/ChatPanel.tsx — Replace direct messages.map() with react-virtuoso Virtuoso for windowed rendering.
+- components/Dashboard.tsx — Replace window.location.reload() with router.refresh() + local state update after pairing.
+- components/CoupleDashboard.tsx — Replace window.location.reload() with state-driven cleanup after unpairing.
+- app/api/generate-quiz/route.ts — Remove unstable_cache wrapper so each request reaches Gemini.
+- app/api/generate-challenge/route.ts — Summarize history to last 5 quiz titles before passing to unstable_cache to bound key size.
+- package.json — Add react-virtuoso dependency.
 
 [Functions]
-- `Page` (app/page.tsx) — Wrap with new animated sections component
-- `CoupleDashboard` (components/CoupleDashboard.tsx) — Add modules for streak counter and achievements below quiz list
-- `QuizList` (components/QuizList.tsx) — Update card styling through new `QuizCard` component
-- `ChatDrawer` (components/ChatDrawer.tsx) — Add timestamp rendering and sender label
-- `MemoryBoard` (components/MemoryBoard.tsx) — Improve date display, add icon, and grid hover effects
+- fetchMemories (MemoryBoard.tsx) — Remove getDocs over entire quizzes collection; read quizTitle directly from session data.
+- startQuiz (QuizList.tsx) — Add quizTitle field when creating a new session doc.
+- useEffect quiz listener (QuizList.tsx) — Apply .limit(20), track displayed count, conditionally render Load More button.
+- ChatPanel render block — Substitute Virtuoso for messages.map().
+- handlePair (Dashboard.tsx) — Drop window.location.reload(); call router.refresh() and set local state to pair-complete.
+- handleUnpair (CoupleDashboard.tsx) — Drop window.location.reload(); clear local state and let AuthProvider handle re-render.
+- getCachedQuiz (generate-quiz/route.ts) — Inline the Gemini call; eliminate unstable_cache entirely.
+- getCachedChallenge (generate-challenge/route.ts) — Summarize input to keep cache keys small.
 
 [Classes]
-- New components: `QuizCard`, `LandingSections`, `StreakCounter`, `AchievementsPanel`
+No class-based components in this codebase; all changes target functional components and route handlers.
+
+[Dependencies]
+Add react-virtuoso (^4.12.3) for chat virtualization. No other dependency version changes.
 
 [Testing]
-Playwright tests will be extended to cover new UI states:
-- Verify streak counter appears with correct fallback text when missing data
-- Verify achievements panel renders empty state gracefully
-- Verify polished landing page animations do not block initial interaction
-- Verify Message timestamps in ChatDrawer are human-readable
+- Add Playwright test for chat rendering with 1000+ messages.
+- Verify two consecutive quiz requests return different content.
+- Verify pairing completes without full page reload via network panel.
+- Manual smoke test: create 100+ public quizzes, confirm QuizList loads 20 at a time.
 
 [Implementation Order]
-1. Add visual polish in globals.css: gradients, smooth transitions, custom scrollbar
-2. Create `LandingSections.tsx` and integrate into `app/page.tsx`
-3. Create `QuizCard.tsx` and update `QuizList.tsx` to use it
-4. Create `StreakCounter.tsx` and `AchievementsPanel.tsx`, integrate into dashboard
-5. Polish `ChatDrawer.tsx` and `MemoryBoard.tsx`
-6. Run Playwright tests and capture before/after screenshots for comparison
+1. Denormalize quizTitle in QuizList startQuiz, then fix MemoryBoard to drop full-collection scan.
+2. Add limit(20) + Load More to QuizList.
+3. Replace hard reloads in Dashboard and CoupleDashboard with router.refresh() and state updates.
+4. Remove unstable_cache from generate-quiz/route.ts.
+5. Summarize history in generate-challenge/route.ts cache key.
+6. Add react-virtuoso and virtualize ChatPanel.

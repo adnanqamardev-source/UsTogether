@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { collection, query, where, onSnapshot, addDoc, doc, setDoc, deleteDoc } from 'firebase/firestore';
+import { collection, query, where, onSnapshot, addDoc, doc, setDoc, deleteDoc, limit } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useAuth } from './AuthProvider';
 import { Sparkles, Trash2 } from 'lucide-react';
@@ -14,13 +14,16 @@ export default function QuizList({ coupleId }: { coupleId: string }) {
   const [sessions, setSessions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [seeded, setSeeded] = useState(false);
+  const [quizPage, setQuizPage] = useState(1);
+  const [hasMore, setHasMore] = useState(false);
 
   useEffect(() => {
-    const qb = query(collection(db, 'quizzes'), where('isPublic', '==', true));
+    const qb = query(collection(db, 'quizzes'), where('isPublic', '==', true), limit(20));
     const unsubQ = onSnapshot(qb, (snapshot) => {
       const q = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
       setQuizzes(q);
-      
+      setHasMore(q.length >= 20);
+
       // Auto seed if empty and we haven't tried yet
       if (q.length === 0 && !seeded) {
          setSeeded(true);
@@ -81,19 +84,20 @@ export default function QuizList({ coupleId }: { coupleId: string }) {
        }
 
       const sessionRef = doc(collection(db, `couples/${coupleId}/sessions`));
-       await setDoc(sessionRef, {
-          coupleId,
-          type: 'quiz',
-          status: 'waiting', 
-          state: {
-             quizId: quiz.id,
-             currentQuestion: 0,
-             scores: {},
-             answers: {}
-          },
-          createdAt: Date.now(),
-          updatedAt: Date.now(),
-       });
+        await setDoc(sessionRef, {
+           coupleId,
+           type: 'quiz',
+           status: 'waiting',
+           quizTitle: quiz.title,
+           state: {
+              quizId: quiz.id,
+              currentQuestion: 0,
+              scores: {},
+              answers: {}
+           },
+           createdAt: Date.now(),
+           updatedAt: Date.now(),
+        });
        window.location.hash = `#session/${sessionRef.id}`;
      } catch (e) {
         handleFirestoreError(e, OperationType.CREATE, `couples/${coupleId}/sessions`);
@@ -177,17 +181,29 @@ export default function QuizList({ coupleId }: { coupleId: string }) {
              <button onClick={fetchNewQuiz} disabled={generatingQuiz} className="bg-indigo-500 hover:bg-indigo-400 text-white font-bold py-2 px-6 rounded-full text-sm uppercase tracking-widest transition-all">{generatingQuiz ? 'Generating...' : 'Reload Quizzes'}</button>
            </div>
         ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {quizzes.map(q => (
-              <QuizCard
-                key={q.id}
-                quiz={q}
-                userId={user?.uid}
-                onStart={startQuiz}
-                onDelete={deleteQuiz}
-              />
-            ))}
-          </div>
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {quizzes.map(q => (
+                <QuizCard
+                  key={q.id}
+                  quiz={q}
+                  userId={user?.uid}
+                  onStart={startQuiz}
+                  onDelete={deleteQuiz}
+                />
+              ))}
+            </div>
+            {hasMore && (
+              <div className="text-center mt-8">
+                <button
+                  onClick={() => setQuizPage(p => p + 1)}
+                  className="bg-white/10 hover:bg-white/20 text-white font-bold py-3 px-8 rounded-full text-sm uppercase tracking-widest transition-all border border-white/10"
+                >
+                  Load More
+                </button>
+              </div>
+            )}
+          </>
         )}
       </section>
     </div>

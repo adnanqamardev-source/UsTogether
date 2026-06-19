@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { useAuth } from './AuthProvider';
 import { motion } from 'motion/react';
 import { Heart, Users, ArrowRight } from 'lucide-react';
@@ -10,6 +11,7 @@ import { handleFirestoreError, OperationType } from '@/lib/firestore-errors';
 import CoupleDashboard from './CoupleDashboard';
 
 export default function Dashboard() {
+  const router = useRouter();
   const { user, dbUser, logOut } = useAuth();
   const [partnerCode, setPartnerCode] = useState('');
   const [loading, setLoading] = useState(false);
@@ -101,7 +103,7 @@ export default function Dashboard() {
            throw e;
        });
 
-       window.location.reload(); // Quick refresh to catch state
+        router.refresh();
     } catch (err: any) {
        setErrorMsg(err.message || 'Error occurred');
        // removed generic catch handleFirestoreError

@@ -58,8 +58,8 @@ Return only the challenge text, max 3 short paragraphs.`;
 export async function POST(req: NextRequest) {
   try {
     const { history } = await req.json();
-    const historyString = JSON.stringify(history || []);
-    const challenge = await getCachedChallenge(historyString);
+    const summarized = (history || []).slice(-5).map((s: any) => s.quizTitle || s.title || 'unknown').join(', ');
+    const challenge = await getCachedChallenge(summarized);
     return NextResponse.json({ challenge });
   } catch (err: any) {
     console.error(err);

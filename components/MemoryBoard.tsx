@@ -6,6 +6,10 @@ import { Images, Calendar, Sparkles, Loader } from 'lucide-react';
 import { handleFirestoreError, OperationType } from '@/lib/firestore-errors';
 import Markdown from 'react-markdown';
 
+function getQuizTitle(s: any): string {
+  return s.quizTitle || s.state?.quizTitle || 'Unknown Quiz';
+}
+
 export default function MemoryBoard({ coupleId }: { coupleId: string }) {
   const { user } = useAuth();
   const [finishedSessions, setFinishedSessions] = useState<any[]>([]);
@@ -18,21 +22,7 @@ export default function MemoryBoard({ coupleId }: { coupleId: string }) {
       try {
         const qs = query(collection(db, `couples/${coupleId}/sessions`), where('status', '==', 'finished'));
         const sn = await getDocs(qs);
-        // We also need the quiz details to show title.
-        // We can fetch quizzes or store titles on session. Oh wait, we don't store quiz title on the session.
-        // Let's just fetch all quizzes to map them.
-        const quizzesSnap = await getDocs(collection(db, 'quizzes'));
-        const quizzesMap = new Map();
-        quizzesSnap.forEach(d => quizzesMap.set(d.id, d.data()));
-
-        const sessions = sn.docs.map(d => {
-          const data = d.data();
-          const quizId = data.state?.quizId;
-          return { id: d.id, ...data, quizTitle: quizId ? quizzesMap.get(quizId)?.title || 'A Quiz' : 'Unknown Quiz' };
-        });
-
-        // wait, does session store quizId? Let's check QuizList to see how we start a session.
-        
+        const sessions = sn.docs.map(d => ({ id: d.id, ...d.data() }));
         setFinishedSessions(sessions);
       } catch (e: any) {
          handleFirestoreError(e, OperationType.LIST, `couples/${coupleId}/sessions (Memories)`);
@@ -53,7 +43,7 @@ export default function MemoryBoard({ coupleId }: { coupleId: string }) {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          history: finishedSessions.map(s => ({ title: s.quizTitle, answers: s.state?.answers }))
+          history: finishedSessions.map(s => ({ title: getQuizTitle(s), answers: s.state?.answers }))
         })
       });
       const data = await res.json();
@@ -113,7 +103,7 @@ export default function MemoryBoard({ coupleId }: { coupleId: string }) {
            finishedSessions.map(s => (
              <div key={s.id} className="bg-white/5 p-6 rounded-[2rem] border border-white/10 shadow-lg flex flex-col items-center">
                  <Calendar className="w-8 h-8 text-rose-400 mb-4" />
-                 <h3 className="font-serif italic text-xl mb-2 text-[#F8FAFC]">{s.quizTitle}</h3>
+                  <h3 className="font-serif italic text-xl mb-2 text-[#F8FAFC]">{getQuizTitle(s)}</h3>
                  <p className="text-xs text-indigo-300 uppercase tracking-widest">{new Date(s.updatedAt || Date.now()).toLocaleDateString()}</p>
                  <button onClick={() => window.location.hash = `#session/${s.id}`} className="mt-6 uppercase text-xs tracking-widest text-indigo-200 hover:text-white transition-colors bg-indigo-500/20 px-6 py-2 rounded-full border border-indigo-500/30">
                     View

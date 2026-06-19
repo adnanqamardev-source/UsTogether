@@ -59,10 +59,9 @@ export default function CoupleDashboard({ coupleId }: { coupleId: string }) {
         : null;
       await updateDoc(doc(db, 'users', user.uid), { pairedCoupleId: null, updatedAt: Date.now() });
       if (partnerId) await updateDoc(doc(db, 'users', partnerId), { pairedCoupleId: null, updatedAt: Date.now() });
-      if (coupleSnap.exists()) await deleteDoc(coupleRef);
-      try { await deleteDoc(doc(db, 'pairingCodes', user.uid.substring(0, 8).toUpperCase())); } catch {}
-      if (partnerId) try { await deleteDoc(doc(db, 'pairingCodes', partnerId.substring(0, 8).toUpperCase())); } catch {}
-      window.location.reload();
+       if (coupleSnap.exists()) await deleteDoc(coupleRef);
+       try { await deleteDoc(doc(db, 'pairingCodes', user.uid.substring(0, 8).toUpperCase())); } catch {}
+       if (partnerId) try { await deleteDoc(doc(db, 'pairingCodes', partnerId.substring(0, 8).toUpperCase())); } catch {}
     } catch (e: any) { handleFirestoreError(e, OperationType.UPDATE, `users`); }
   };
 
