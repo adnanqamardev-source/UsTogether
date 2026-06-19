@@ -2,9 +2,10 @@ import { useState, useEffect } from 'react';
 import { collection, query, where, onSnapshot, addDoc, doc, setDoc, deleteDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useAuth } from './AuthProvider';
-import { Play, Sparkles, Trash2 } from 'lucide-react';
+import { Sparkles, Trash2 } from 'lucide-react';
 import { handleFirestoreError, OperationType } from '@/lib/firestore-errors';
 import QuizCardSkeleton from './QuizCardSkeleton';
+import QuizCard from './QuizCard';
 
 // A component to list quizzes and active sessions
 export default function QuizList({ coupleId }: { coupleId: string }) {
@@ -178,23 +179,13 @@ export default function QuizList({ coupleId }: { coupleId: string }) {
         ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {quizzes.map(q => (
-               <div key={q.id} className="relative bg-white/5 p-6 rounded-[2rem] border border-white/10 shadow-lg hover:shadow-[0_0_30px_rgba(244,63,94,0.3)] hover:scale-105 hover:bg-rose-500/10 hover:border-rose-500/30 transition-all duration-300 flex flex-col h-full group backdrop-blur-md">
-                  {q.creatorId === user?.uid && (
-                    <div className="absolute top-4 right-4 z-10 transition-opacity">
-                      <button onClick={(e) => deleteQuiz(e, q.id)} className="p-2 text-white/30 hover:text-rose-400 focus:outline-none transition-colors">
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
-                  )}
-                  <div className="flex-1 cursor-pointer flex flex-col h-full" onClick={() => startQuiz(q)}>
-                    <h3 className="font-serif italic text-xl mb-3 text-[#F8FAFC] group-hover:text-rose-300 transition-colors pr-8">{q.title}</h3>
-                    <p className="text-indigo-200/60 text-sm mb-6 flex-1 line-clamp-3">{q.description}</p>
-                    <button className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl bg-indigo-500/20 text-indigo-100 font-bold group-hover:bg-rose-500/50 border border-indigo-500/30 transition-all group-hover:border-rose-400/80 group-hover:text-white">
-                      <Play className="w-4 h-4" />
-                      Start Quiz
-                    </button>
-                  </div>
-               </div>
+              <QuizCard
+                key={q.id}
+                quiz={q}
+                userId={user?.uid}
+                onStart={startQuiz}
+                onDelete={deleteQuiz}
+              />
             ))}
           </div>
         )}
