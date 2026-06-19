@@ -1,11 +1,12 @@
 import { GoogleGenAI } from '@google/genai';
 import { NextRequest, NextResponse } from "next/server";
 import { unstable_cache } from "next/cache";
+import { streamText } from 'ai';
+import { createGoogleGenerativeAI } from '@ai-sdk/google';
 
 export const maxDuration = 60;
 
 // Cache the AI challenge generation to reduce API costs and latency.
-// Cache key includes a hash of the history to serve cached results for identical requests.
 const getCachedChallenge = unstable_cache(
   async (historyString: string) => {
     if (!process.env.GEMINI_API_KEY) {
@@ -21,23 +22,37 @@ const getCachedChallenge = unstable_cache(
       history = [];
     }
 
-    const prompt = `You are an AI relationship coach and creative companion for couples.
-Here is a summary of some of the answers a couple has given in past relationship quizzes:
-${JSON.stringify(history).substring(0, 5000)}
-
-Based exclusively on their answers, their vibe, and what they seem to value or find funny, generate a single, highly creative, very personalized "Couple's Challenge" or "Relationship Prompt" for them to do today.
-It should be fun, thoughtful, and reference their past answers loosely if possible (if they have past answers). If there's no past history, just generate a really fun universal couple challenge.
-Format the response cleanly in plain text or simple markdown. Do not include too much preamble. Start directly with the challenge or prompt. Keep it to max 3 paragraphs.`;
+    const prompt = `You are a warm, playful Desi relationship coach for couples.
+Based on their past quiz answers, vibe, and quirks, craft a single, creative "Couple's Challenge" for today. Sprinkle in Desi warmth — chai evenings, monsoon drives, samosa runs, Bollywood song dedications, Delhi metro adventures — while keeping it fun and easy to act on.
+Return only the challenge text, max 3 short paragraphs.`;
 
     const response = await ai.models.generateContent({
       model: "gemini-3-flash-preview",
       contents: prompt,
+      config: {
+        responseMimeType: "application/json",
+        responseSchema: {
+          type: "object",
+          properties: {
+            challenge: { type: "string" }
+          },
+          required: ["challenge"]
+        }
+      }
     });
 
-    return response.text;
+    const text = response.text || '';
+    let parsed;
+    try {
+      const cleaned = text.replace(/```json\n?/, '').replace(/```\n?/, '');
+      parsed = JSON.parse(cleaned);
+    } catch {
+      parsed = { challenge: text };
+    }
+    return parsed.challenge;
   },
   ['challenge-generation-cache'],
-  { revalidate: 86400, tags: ['challenge'] } // Cache for 24 hours
+  { revalidate: 86400, tags: ['challenge'] }
 );
 
 export async function POST(req: NextRequest) {
@@ -46,6 +61,29 @@ export async function POST(req: NextRequest) {
     const historyString = JSON.stringify(history || []);
     const challenge = await getCachedChallenge(historyString);
     return NextResponse.json({ challenge });
+  } catch (err: any) {
+    console.error(err);
+    return NextResponse.json({ error: err.message }, { status: 500 });
+  }
+}
+
+export async function GET(req: NextRequest) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const history = searchParams.get('history') || '[]';
+    const historyString = JSON.stringify(JSON.parse(history));
+
+    const google = createGoogleGenerativeAI({ apiKey: process.env.GEMINI_API_KEY });
+
+    const result = streamText({
+      model: google('gemini-3-flash-preview'),
+      prompt: `You are a warm, playful Desi relationship coach for couples.
+Based on their past quiz answers, vibe, and quirks, craft a single, creative "Couple's Challenge" for today. Sprinkle in Desi warmth — chai evenings, monsoon drives, samosa runs, Bollywood song dedications, Delhi metro adventures — while keeping it fun and easy to act on.
+Return only the challenge text, max 3 short paragraphs.`,
+      maxOutputTokens: 600,
+    });
+
+    return result.toTextStreamResponse();
   } catch (err: any) {
     console.error(err);
     return NextResponse.json({ error: err.message }, { status: 500 });

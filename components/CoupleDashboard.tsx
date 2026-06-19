@@ -91,16 +91,26 @@ export default function CoupleDashboard({ coupleId }: { coupleId: string }) {
   const isMemories = activeHash === '#memories';
 
   return (
-    <div className="flex-1 flex flex-col font-sans p-2 sm:p-6 relative w-full min-h-screen max-w-7xl mx-auto text-[#F8FAFC]">
+    <div className="flex-1 flex flex-col font-sans relative w-full min-h-screen max-w-6xl mx-auto text-[#F8FAFC]">
+      {/* Ambient background glows */}
+      <div className="fixed top-0 left-1/4 -translate-y-1/2 w-[600px] h-[600px] bg-rose-900/15 blur-[120px] rounded-full pointer-events-none" />
+      <div className="fixed bottom-0 right-0 translate-x-1/3 translate-y-1/3 w-[500px] h-[500px] bg-indigo-900/15 blur-[120px] rounded-full pointer-events-none" />
+      <div className="fixed top-1/2 left-0 -translate-x-1/2 w-[400px] h-[400px] bg-purple-900/10 blur-[120px] rounded-full pointer-events-none" />
+      
+      {/* Chat sidebar backdrop */}
+      {isChatOpen && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40" onClick={() => setIsChatOpen(false)} />
+      )}
+
       <nav className="flex flex-col md:flex-row justify-between items-center mb-6 relative z-10 gap-4 mt-2 sm:mt-6">
         <div
-          className="flex items-center space-x-3 cursor-pointer"
+          className="flex items-center space-x-3 cursor-pointer shrink-0"
           onClick={() => window.location.hash = ''}
         >
           <div className="w-10 h-10 bg-gradient-to-br from-rose-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-rose-500/20">
             <span className="font-bold text-xl text-white">U</span>
           </div>
-          <span className="text-2xl font-light tracking-tight">Us<span className="font-bold">Together</span></span>
+          <span className="text-2xl font-light tracking-tight whitespace-nowrap">Us<span className="font-bold">Together</span></span>
         </div>
         <div className="hidden md:flex space-x-8 text-sm uppercase tracking-[0.2em] font-medium text-slate-400">
           <a href="#" onClick={() => window.location.hash = ''} className={`transition-colors ${!sessionId && !isMemories ? 'text-rose-400 border-b border-rose-400 pb-1' : 'hover:text-white'}`}>Quizzes</a>
@@ -112,19 +122,28 @@ export default function CoupleDashboard({ coupleId }: { coupleId: string }) {
           </button>
         </div>
         <div className="flex items-center space-x-4">
-          <button onClick={handleUnpair} className="text-xs uppercase tracking-widest text-slate-500 hover:text-rose-400 transition-colors flex items-center gap-1">
+          <button onClick={handleUnpair} className="text-xs uppercase tracking-widest text-slate-500 hover:text-rose-400 transition-colors flex items-center gap-1 shrink-0">
             <UserMinus className="w-3 h-3" /> Disconnect
           </button>
-          <button onClick={logOut} className="text-xs uppercase tracking-widest text-slate-500 hover:text-rose-400 transition-colors">
+          <button onClick={logOut} className="text-xs uppercase tracking-widest text-slate-500 hover:text-rose-400 transition-colors shrink-0 whitespace-nowrap">
             Log Out
           </button>
-          <div className="flex -space-x-3">
+          <div className="flex -space-x-3 shrink-0">
             <div className="w-10 h-10 rounded-full border-2 border-[#0F0A1F] bg-indigo-500 flex items-center justify-center text-xs font-bold text-white shadow-lg">{user?.email?.[0].toUpperCase()}</div>
           </div>
         </div>
       </nav>
 
-      <main className="flex-1 rounded-[40px] flex flex-col p-6 sm:p-10 relative z-10 w-full backdrop-blur-sm bg-white/5 border border-white/10 shadow-2xl">
+      {/* Chat sidebar */}
+      {isChatOpen && (
+        <div className="fixed right-0 top-0 h-full max-w-sm w-full z-50">
+          <Suspense fallback={<div className="w-full h-full bg-[#0F0A1F] border-l border-white/10 flex items-center justify-center"><Loader className="w-8 h-8 text-white animate-spin" /></div>}>
+            <ChatDrawer coupleId={coupleId} onClose={() => setIsChatOpen(false)} />
+          </Suspense>
+        </div>
+      )}
+
+      <main className="flex-1 relative z-10 w-full p-4 sm:p-10">
         {isMemories ? (
           <MemoryBoard coupleId={coupleId} />
         ) : !sessionId ? (
@@ -139,13 +158,6 @@ export default function CoupleDashboard({ coupleId }: { coupleId: string }) {
           <ActiveSession coupleId={coupleId} sessionId={sessionId} />
         )}
       </main>
-
-      {/* Floating chat widget */}
-      {isChatOpen && (
-        <Suspense fallback={<div className="fixed bottom-6 right-6 w-80 h-96 bg-[#0F0A1F] border border-white/10 rounded-2xl shadow-2xl flex items-center justify-center z-50"><Loader className="w-6 h-6 text-white animate-spin" /></div>}>
-          <ChatDrawer coupleId={coupleId} onClose={() => setIsChatOpen(false)} />
-        </Suspense>
-      )}
     </div>
   );
 }

@@ -62,11 +62,11 @@ export default function ChatDrawer({ coupleId, onClose }: ChatDrawerProps) {
 
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.95 }}
+      initial={{ opacity: 0, x: 40 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: 40 }}
       transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-      className="fixed bottom-6 right-6 w-80 h-96 bg-[#0F0A1F] border border-white/10 rounded-2xl shadow-2xl flex flex-col overflow-hidden z-50"
+      className="h-full w-full bg-[#0F0A1F] border-l border-white/10 shadow-2xl flex flex-col overflow-hidden"
     >
       {/* Header */}
       <div className="p-4 border-b border-white/10 flex items-center justify-between pb-3">

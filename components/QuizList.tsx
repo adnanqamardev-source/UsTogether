@@ -4,6 +4,7 @@ import { db } from '@/lib/firebase';
 import { useAuth } from './AuthProvider';
 import { Play, Sparkles, Trash2 } from 'lucide-react';
 import { handleFirestoreError, OperationType } from '@/lib/firestore-errors';
+import QuizCardSkeleton from './QuizCardSkeleton';
 
 // A component to list quizzes and active sessions
 export default function QuizList({ coupleId }: { coupleId: string }) {
@@ -98,7 +99,16 @@ export default function QuizList({ coupleId }: { coupleId: string }) {
      }
   };
 
-  if (loading) return <div className="text-indigo-200 animate-pulse">Loading games...</div>;
+  if (loading) return (
+    <div className="space-y-8">
+      <div className="h-8 w-40 bg-white/10 rounded animate-pulse" />
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <QuizCardSkeleton />
+        <QuizCardSkeleton />
+        <QuizCardSkeleton />
+      </div>
+    </div>
+  );
 
   const deleteQuiz = async (e: React.MouseEvent, quizId: string) => {
     e.stopPropagation();
@@ -133,7 +143,7 @@ export default function QuizList({ coupleId }: { coupleId: string }) {
              <span className="w-2 h-2 rounded-full bg-green-500 animate-[pulse_1s_infinite]" />
              Live Sessions
           </h2>
-          <div className="grid gap-4 md:grid-cols-2">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
              {sessions.filter(s => s.status !== 'finished').map(s => (
                 <div key={s.id} onClick={() => window.location.hash = `#session/${s.id}`} className="relative bg-rose-500/10 border border-rose-500/30 p-5 rounded-3xl cursor-pointer hover:bg-rose-500/20 hover:scale-[1.02] transition-all duration-300 shadow-[0_0_15px_rgba(244,63,94,0.1)] hover:shadow-[0_0_25px_rgba(244,63,94,0.3)] group">
                    <div className="absolute top-4 right-4 z-10 transition-opacity">
@@ -166,7 +176,7 @@ export default function QuizList({ coupleId }: { coupleId: string }) {
              <button onClick={fetchNewQuiz} disabled={generatingQuiz} className="bg-indigo-500 hover:bg-indigo-400 text-white font-bold py-2 px-6 rounded-full text-sm uppercase tracking-widest transition-all">{generatingQuiz ? 'Generating...' : 'Reload Quizzes'}</button>
            </div>
         ) : (
-              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {quizzes.map(q => (
                <div key={q.id} className="relative bg-white/5 p-6 rounded-[2rem] border border-white/10 shadow-lg hover:shadow-[0_0_30px_rgba(244,63,94,0.3)] hover:scale-105 hover:bg-rose-500/10 hover:border-rose-500/30 transition-all duration-300 flex flex-col h-full group backdrop-blur-md">
                   {q.creatorId === user?.uid && (
