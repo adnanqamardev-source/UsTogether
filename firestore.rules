@@ -123,16 +123,17 @@ service cloud.firestore {
          allow delete: if false;
       }
       
-      // 2.2 Couple Sessions
-      function isValidSession(data) {
-         return data.keys().hasAll(['coupleId', 'type', 'status', 'state', 'createdAt', 'updatedAt']) &&
-                data.size() == 6 &&
-                data.coupleId is string && data.coupleId.size() <= 128 &&
-                data.type in ['quiz', 'minigame'] &&
-                data.status in ['waiting', 'playing', 'finished'] &&
-                data.state is map && // arbitrary state for flexibility
-                data.createdAt is number && data.updatedAt is number;
-      }
+    // 2.2 Couple Sessions
+    function isValidSession(data) {
+       return data.keys().hasAll(['coupleId', 'type', 'status', 'state', 'createdAt', 'updatedAt']) &&
+              data.size() >= 6 && data.size() <= 7 &&
+              data.coupleId is string && data.coupleId.size() <= 128 &&
+              data.type in ['quiz', 'minigame'] &&
+              data.status in ['waiting', 'playing', 'finished'] &&
+              data.state is map && // arbitrary state for flexibility
+              data.createdAt is number && data.updatedAt is number &&
+              isOptionalString(data, 'quizTitle', 100);
+    }
       match /sessions/{sessionId} {
          allow get: if isAuthenticated();
          allow list: if isAuthenticated();
