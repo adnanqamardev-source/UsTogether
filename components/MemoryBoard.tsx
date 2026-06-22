@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { motion } from 'motion/react';
 import { useAuth } from './AuthProvider';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
@@ -8,6 +9,11 @@ import Markdown from 'react-markdown';
 
 function getQuizTitle(s: any): string {
   return s.quizTitle || s.state?.quizTitle || 'Unknown Quiz';
+}
+
+function formatMemoryDate(ts: number | undefined): string {
+  if (!ts) return 'Just now';
+  return new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).format(new Date(ts));
 }
 
 export default function MemoryBoard({ coupleId }: { coupleId: string }) {
@@ -93,25 +99,30 @@ export default function MemoryBoard({ coupleId }: { coupleId: string }) {
         </div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-         {finishedSessions.length === 0 ? (
-           <div className="col-span-full text-center py-20 bg-white/5 border border-white/10 rounded-3xl">
-              <Images className="w-12 h-12 text-indigo-400/50 mx-auto mb-4" />
-              <p className="text-indigo-200/50">You haven't finished any quizzes yet.</p>
-           </div>
-         ) : (
-           finishedSessions.map(s => (
-             <div key={s.id} className="bg-white/5 p-6 rounded-[2rem] border border-white/10 shadow-lg flex flex-col items-center">
-                 <Calendar className="w-8 h-8 text-rose-400 mb-4" />
-                  <h3 className="font-serif italic text-xl mb-2 text-[#F8FAFC]">{getQuizTitle(s)}</h3>
-                 <p className="text-xs text-indigo-300 uppercase tracking-widest">{new Date(s.updatedAt || Date.now()).toLocaleDateString()}</p>
-                 <button onClick={() => window.location.hash = `#session/${s.id}`} className="mt-6 uppercase text-xs tracking-widest text-indigo-200 hover:text-white transition-colors bg-indigo-500/20 px-6 py-2 rounded-full border border-indigo-500/30">
-                    View
-                 </button>
-             </div>
-           ))
-         )}
-      </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {finishedSessions.length === 0 ? (
+            <div className="col-span-full text-center py-20 bg-white/5 border border-white/10 rounded-3xl">
+               <Images className="w-12 h-12 text-indigo-400/50 mx-auto mb-4" />
+               <p className="text-indigo-200/50">You haven't finished any quizzes yet.</p>
+            </div>
+          ) : (
+            finishedSessions.map(s => (
+              <motion.div
+                key={s.id}
+                whileHover={{ scale: 1.03, y: -4 }}
+                className="group relative bg-white/5 p-6 rounded-[2rem] border border-white/10 shadow-lg flex flex-col items-center overflow-hidden"
+              >
+                <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/0 via-indigo-500/0 to-rose-500/0 group-hover:from-indigo-500/10 group-hover:to-rose-500/10 transition-all duration-500 pointer-events-none" />
+                <Calendar className="w-8 h-8 text-rose-400 mb-4 relative z-10" />
+                <h3 className="font-serif italic text-xl mb-2 text-[#F8FAFC] relative z-10">{getQuizTitle(s)}</h3>
+                <p className="text-xs text-indigo-300 uppercase tracking-widest relative z-10">{formatMemoryDate(s.updatedAt)}</p>
+                <button onClick={() => window.location.hash = `#session/${s.id}`} className="mt-6 uppercase text-xs tracking-widest text-indigo-200 hover:text-white transition-colors bg-indigo-500/20 px-6 py-2 rounded-full border border-indigo-500/30 relative z-10 group-hover:bg-indigo-500/40 group-hover:border-indigo-400/50">
+                   View
+                </button>
+              </motion.div>
+            ))
+          )}
+        </div>
     </div>
   );
 }

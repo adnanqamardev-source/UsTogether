@@ -2,10 +2,26 @@ import { useState, useEffect } from 'react';
 import { collection, query, where, onSnapshot, addDoc, doc, setDoc, deleteDoc, limit } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useAuth } from './AuthProvider';
-import { Sparkles, Trash2 } from 'lucide-react';
+import { Sparkles, Trash2, Flame } from 'lucide-react';
 import { handleFirestoreError, OperationType } from '@/lib/firestore-errors';
 import QuizCardSkeleton from './QuizCardSkeleton';
 import QuizCard from './QuizCard';
+
+function SectionHeader({ title, badge, icon: Icon, accent = "text-indigo-300" }: { title: string; badge?: number; icon?: any; accent?: string }) {
+  return (
+    <div className="flex items-center justify-between mb-6">
+      <h2 className={`text-xs font-bold uppercase tracking-[0.2em] ${accent} flex items-center gap-2`}>
+        {Icon && <Icon className="w-4 h-4" />}
+        {title}
+        {badge !== undefined && (
+          <span className="ml-2 inline-flex items-center justify-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-white/10 text-white border border-white/10">
+            {badge}
+          </span>
+        )}
+      </h2>
+    </div>
+  );
+}
 
 // A component to list quizzes and active sessions
 export default function QuizList({ coupleId }: { coupleId: string }) {
@@ -140,36 +156,35 @@ export default function QuizList({ coupleId }: { coupleId: string }) {
     }
   };
 
+  const activeSessions = sessions.filter(s => s.status !== 'finished');
+
   return (
-    <div className="space-y-8">
-      {sessions.filter(s => s.status !== 'finished').length > 0 && (
+    <div className="space-y-12">
+      {activeSessions.length > 0 && (
         <section>
-          <h2 className="text-sm font-bold uppercase tracking-[0.2em] mb-4 text-green-400 flex items-center gap-2">
-             <span className="w-2 h-2 rounded-full bg-green-500 animate-[pulse_1s_infinite]" />
-             Live Sessions
-          </h2>
+          <SectionHeader title="Live Sessions" badge={activeSessions.length} icon={Flame} accent="text-green-400" />
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-             {sessions.filter(s => s.status !== 'finished').map(s => (
+             {activeSessions.map(s => (
                 <div key={s.id} onClick={() => window.location.hash = `#session/${s.id}`} className="relative bg-rose-500/10 border border-rose-500/30 p-5 rounded-3xl cursor-pointer hover:bg-rose-500/20 hover:scale-[1.02] transition-all duration-300 shadow-[0_0_15px_rgba(244,63,94,0.1)] hover:shadow-[0_0_25px_rgba(244,63,94,0.3)] group">
                    <div className="absolute top-4 right-4 z-10 transition-opacity">
                     <button onClick={(e) => deleteSession(e, s.id)} className="p-2 text-white/30 hover:text-rose-400 focus:outline-none transition-colors">
                       <Trash2 className="w-4 h-4" />
                     </button>
-                   </div>
-                   <h3 className="font-bold text-rose-300 mb-1 flex items-center justify-between pr-8">
-                     Game in Progress
-                     <span className="opacity-0 group-hover:opacity-100 transition-opacity">→</span>
-                   </h3>
-                   <p className="text-xs text-rose-200/60 uppercase tracking-widest">Tap to rejoin your partner</p>
-                </div>
+                  </div>
+                  <h3 className="font-bold text-rose-300 mb-1 flex items-center justify-between pr-8">
+                    Game in Progress
+                    <span className="opacity-0 group-hover:opacity-100 transition-opacity">→</span>
+                  </h3>
+                  <p className="text-xs text-rose-200/60 uppercase tracking-widest">Tap to rejoin your partner</p>
+               </div>
              ))}
           </div>
         </section>
       )}
 
       <section>
-        <div className="flex items-center justify-between mb-6">
-           <h2 className="text-xs font-bold uppercase tracking-[0.2em] text-indigo-300">Featured Quizzes</h2>
+        <SectionHeader title="Featured Quizzes" />
+        <div className="flex items-center justify-end mb-2">
            <button onClick={fetchNewQuiz} disabled={generatingQuiz} className="text-xs font-bold uppercase tracking-[0.2em] text-rose-400 hover:text-rose-300 transition-colors flex items-center gap-2">
              <Sparkles className="w-3 h-3" /> {generatingQuiz ? '...' : 'Fetch New'}
            </button>

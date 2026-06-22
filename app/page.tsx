@@ -18,8 +18,14 @@ export default function Page() {
           <LandingSections />
         </main>
         
-        <footer className="mt-6 flex justify-between items-center text-[10px] text-slate-500 uppercase tracking-widest relative z-10 border-t border-white/5 pt-4">
+        <footer className="mt-6 flex flex-col md:flex-row justify-between items-center text-[11px] text-slate-500 uppercase tracking-widest relative z-10 border-t border-white/5 pt-4 gap-3">
           <div>&copy; {new Date().getFullYear()} UsTogether. All rights reserved.</div>
+          <div className="flex items-center gap-5 text-slate-600">
+            <span className="hover:text-indigo-400 transition-colors">Privacy</span>
+            <span className="hover:text-indigo-400 transition-colors">Terms</span>
+            <span className="hover:text-indigo-400 transition-colors">Contact</span>
+            <span className="text-indigo-400/60">❤</span>
+          </div>
         </footer>
       </div>
     </AuthWrapper>

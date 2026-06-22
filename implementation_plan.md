@@ -1,55 +1,79 @@
 # Implementation Plan
 
-[Overview]
-Resolve six performance, scalability, and correctness issues in the UsTogether codebase through targeted, low-risk refactors across Firestore queries, React rendering, and AI caching logic.
-
-The app is a Next.js couples-connection platform using Firebase Firestore for persistence and Google Gemini for AI-generated quizzes and challenges. As usage grows, the current implementation will degrade: unbounded queries will blow up Firebase egress costs, infinite chat lists will crash lower-end browsers, and the AI caching bug will make every couple see the same quiz for hours. This plan addresses each issue incrementally so changes can be shipped and tested independently.
+Improve the visual polish and user experience of the UsTogether website by enhancing design consistency, adding visual richness to key pages, and refining micro-interactions across all components. The current app uses a dark glassmorphism theme with rose/indigo/purple gradients, but several areas feel sparse or under-designed.
 
 [Types]
-Minimal new types required; the work primarily adjusts existing component props and local state.
-
-New types to add:
-- QuizListItem — explicit interface for quiz objects stored in QuizList state (replaces any[]).
-  Fields: id: string; title: string; description: string; questions: any[]; isPublic: boolean; creatorId: string; createdAt: number.
-- SessionSummary — explicit interface for session documents in QuizList and MemoryBoard.
-  Fields: id: string; coupleId: string; type: string; status: string; state: { quizId: string; currentQuestion: number; scores: Record<string, number>; answers: Record<string, any> }; createdAt: number; updatedAt: number; quizTitle: string.
+No new types or interfaces required; existing component props and TypeScript types remain unchanged. All improvements are presentational (Tailwind CSS classes and motion animations).
 
 [Files]
-- components/MemoryBoard.tsx — Remove full quizzes collection fetch; rely on denormalized quizTitle stored on session docs.
-- components/QuizList.tsx — Add .limit(20) to public quiz query, implement Load More pagination, denormalize quizTitle into session docs on creation.
-- components/ChatPanel.tsx — Replace direct messages.map() with react-virtuoso Virtuoso for windowed rendering.
-- components/Dashboard.tsx — Replace window.location.reload() with router.refresh() + local state update after pairing.
-- components/CoupleDashboard.tsx — Replace window.location.reload() with state-driven cleanup after unpairing.
-- app/api/generate-quiz/route.ts — Remove unstable_cache wrapper so each request reaches Gemini.
-- app/api/generate-challenge/route.ts — Summarize history to last 5 quiz titles before passing to unstable_cache to bound key size.
-- package.json — Add react-virtuoso dependency.
+Single sentence describing file modifications.
+
+Detailed breakdown:
+- **components/LandingSections.tsx** - Expand hero section: add animated stats counter, feature highlight cards, and a secondary CTA button
+- **components/CoupleDashboard.tsx** - Add mobile hamburger menu, refine nav styling, improve card grid spacing
+- **components/QuizCard.tsx** - Enhance hover effects, add gradient border animation, improve empty/loading states
+- **components/QuizList.tsx** - Refine section headers, improve "Live Session" card design, add count badges
+- **components/ActiveSession.tsx** - Improve progress indicator styling, refine answer reveal animations, better empty-state messaging
+- **components/MemoryBoard.tsx** - Enhance memory card design with date formatting improvements and richer hover states
+- **components/StreakCounter.tsx** - Add animated flame intensity, better gradient background, progress bar
+- **components/AchievementsPanel.tsx** - Add trophy animation, expand list view, add "View All" affordance
+- **components/ChatDrawer.tsx** - Refined message bubbles with gradient accents, improved timestamp styling, typing indicator
+- **app/globals.css** - Add bounce-in and float animations, enhance scrollbar gradient, add global focus-visible ring utility
+- **app/page.tsx** - Update footer with richer links and social icons
 
 [Functions]
-- fetchMemories (MemoryBoard.tsx) — Remove getDocs over entire quizzes collection; read quizTitle directly from session data.
-- startQuiz (QuizList.tsx) — Add quizTitle field when creating a new session doc.
-- useEffect quiz listener (QuizList.tsx) — Apply .limit(20), track displayed count, conditionally render Load More button.
-- ChatPanel render block — Substitute Virtuoso for messages.map().
-- handlePair (Dashboard.tsx) — Drop window.location.reload(); call router.refresh() and set local state to pair-complete.
-- handleUnpair (CoupleDashboard.tsx) — Drop window.location.reload(); clear local state and let AuthProvider handle re-render.
-- getCachedQuiz (generate-quiz/route.ts) — Inline the Gemini call; eliminate unstable_cache entirely.
-- getCachedChallenge (generate-challenge/route.ts) — Summarize input to keep cache keys small.
+Single sentence describing function modifications.
+
+Detailed breakdown:
+- **LandingSections** - Add `AnimatedCounter` sub-component and `FeatureCard` sub-component; restructure JSX into multiple `<section>` elements with staggered motion.div wrappers
+- **CoupleDashboard** - Add `useState` for mobile menu toggle; add `MobileMenu` sub-component; update nav rendering for mobile breakpoints
+- **QuizCard** - Add `isHovering` state for tilt effect; restructure button styles to use consistent gradient utility classes
+- **QuizList** - Extract `SectionHeader` sub-component; add `sessionsCount` and `quizzesCount` badges to headers
+- **ActiveSession** - Refine `bothAnswered` logic UI to add celebration overlay; replace Force Next button with subtle ghost styling
+- **MemoryBoard** - Add `formatDate` helper; replace static date string with `Intl.DateTimeFormat`
+- **StreakCounter** - Add `useEffect` to pulse fire emoji on mount; increase container padding and add gradient border
+- **AchievementsPanel** - Add `showAll` state; expand visible items from 3 to 5; add "View All" toggle button
+- **ChatDrawer** - Add `isTyping` dummy state; animate new message entrance with `AnimatePresence`
 
 [Classes]
-No class-based components in this codebase; all changes target functional components and route handlers.
+No new classes or component classes; all changes are functional components with enhanced Tailwind class lists.
+
+[Files]
+Single sentence describing file modifications.
+
+Detailed breakdown:
+- **components/LandingSections.tsx** - Modify to include 3 new feature cards, 3 stat counters, and a secondary CTA
+- **components/CoupleDashboard.tsx** - Add hamburger menu button and slide-in mobile nav overlay
+- **components/QuizCard.tsx** - Update style props and add hover animation classes
+- **components/QuizList.tsx** - Add section badges and refactor grid spacing
+- **components/ActiveSession.tsx** - Add confetti-style animation on quiz finish
+- **components/MemoryBoard.tsx** - Add richer card styling with gradient overlays
+- **components/StreakCounter.tsx** - Add animated gradient border and emoji burst
+- **components/AchievementsPanel.tsx** - Expand list interactivity and add trophy glow
+- **components/ChatDrawer.tsx** - Upgrade message bubbles with gradient tails
+- **app/globals.css** - Add 4 new keyframe animations and extend utility classes
+- **app/page.tsx** - Update footer with nav links and copyright style
 
 [Dependencies]
-Add react-virtuoso (^4.12.3) for chat virtualization. No other dependency version changes.
+No new packages required. All changes use existing dependencies:
+- `motion` (framer-motion) for additional animations
+- `lucide-react` for additional icons (Menu, X, Trophy, Flame, etc.)
+- `tailwindcss` v4 for arbitrary values and `@theme` config
 
 [Testing]
-- Add Playwright test for chat rendering with 1000+ messages.
-- Verify two consecutive quiz requests return different content.
-- Verify pairing completes without full page reload via network panel.
-- Manual smoke test: create 100+ public quizzes, confirm QuizList loads 20 at a time.
+Single sentence describing testing approach.
+
+- No new test files needed
+- Existing e2e tests in `tests/e2e/` should pass without modification as selectors are unchanged
+- Manual verification: run `npm run dev`, navigate through landing → pairing → dashboard → quiz → finish flow, confirm mobile responsiveness at 375px and 768px breakpoints
 
 [Implementation Order]
-1. Denormalize quizTitle in QuizList startQuiz, then fix MemoryBoard to drop full-collection scan.
-2. Add limit(20) + Load More to QuizList.
-3. Replace hard reloads in Dashboard and CoupleDashboard with router.refresh() and state updates.
-4. Remove unstable_cache from generate-quiz/route.ts.
-5. Summarize history in generate-challenge/route.ts cache key.
-6. Add react-virtuoso and virtualize ChatPanel.
+Single sentence describing the implementation sequence.
+
+1. Global styles first (`app/globals.css`) so new animations/utilities are available to all components
+2. Landing page enhancements (`components/LandingSections.tsx`, `app/page.tsx` footer)
+3. Dashboard navigation improvements (`components/CoupleDashboard.tsx`)
+4. Core UI components polish (`components/QuizCard.tsx`, `components/QuizList.tsx`)
+5. Interactive components refinements (`components/ActiveSession.tsx`, `components/MemoryBoard.tsx`, `components/ChatDrawer.tsx`)
+6. Widget components polish (`components/StreakCounter.tsx`, `components/AchievementsPanel.tsx`)
+7. Final review and browser verification

@@ -49,19 +49,15 @@ export default function ActiveSession({ coupleId, sessionId }: { coupleId: strin
   const bothAnswered = myAnswer !== undefined && partnerAnswer !== undefined;
 
   const handleAnswer = async (answerVal: any) => {
-    if (myAnswer !== undefined) return; // Already answered
+    if (myAnswer !== undefined) return;
     try {
       const newState = { ...session.state };
       if (!newState.answers) newState.answers = {};
       if (!newState.answers[currentQIndex]) newState.answers[currentQIndex] = {};
       newState.answers[currentQIndex][user.uid] = answerVal;
-
-      // if question is matched (just testing if they gave the SAME answer for now or correct answer? 
-      // depends on "How well do you know me" logic.) Let's just track answers.
       await updateDoc(doc(db, `couples/${coupleId}/sessions/${sessionId}`), {
         state: newState,
         updatedAt: Date.now(),
-        ...( /* if both answered and it's the last question, we could mark finished here, but doing it in next question step is safer */ {})
       });
     } catch (e) {
       handleFirestoreError(e, OperationType.UPDATE, `couples/${coupleId}/sessions/${sessionId}`);
@@ -84,7 +80,7 @@ export default function ActiveSession({ coupleId, sessionId }: { coupleId: strin
     } catch (e) {
        handleFirestoreError(e, OperationType.UPDATE, `couples/${coupleId}/sessions/${sessionId}`);
     }
-  }
+  };
 
   const endSessionEarly = async () => {
     if (!window.confirm('Are you sure you want to end this quiz early?')) return;
@@ -98,7 +94,6 @@ export default function ActiveSession({ coupleId, sessionId }: { coupleId: strin
     }
   };
 
-  // Finished State
   if (session.status === 'finished') {
      const allAnswers = session.state.answers || {};
      
@@ -115,7 +110,6 @@ export default function ActiveSession({ coupleId, sessionId }: { coupleId: strin
              const mAns = allAnswers[i]?.[user.uid];
              const pAns = allAnswers[i]?.[partnerId];
              
-             // resolve text if option based
              const resolveAns = (a: any) => {
                if (a === undefined) return <span className="text-white/30 italic">Not answered</span>;
                if (typeof a === 'number') return q.options?.[a] || String(a);
@@ -199,11 +193,16 @@ export default function ActiveSession({ coupleId, sessionId }: { coupleId: strin
                        <p className="text-[#F8FAFC] text-xl font-serif italic">{myAnswer}</p>
                     </div>
                     {partnerAnswer !== undefined && bothAnswered && (
-                      <div className="p-6 bg-rose-500/20 border border-rose-500/30 rounded-3xl shadow-inner shadow-rose-500/10 relative overflow-hidden">
-                         <div className="absolute top-0 right-0 p-4">✨</div>
+                      <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ type: "spring", damping: 20, stiffness: 200 }}
+                        className="p-6 bg-rose-500/20 border border-rose-500/30 rounded-3xl shadow-inner shadow-rose-500/10 relative overflow-hidden"
+                      >
+                         <div className="absolute top-0 right-0 p-4 text-2xl">✨</div>
                          <p className="text-xs text-rose-300 uppercase tracking-widest font-bold mb-3">Partner's Answer</p>
                          <p className="text-[#F8FAFC] text-xl font-serif italic">{partnerAnswer}</p>
-                      </div>
+                      </motion.div>
                     )}
                   </div>
                 )}
@@ -253,18 +252,28 @@ export default function ActiveSession({ coupleId, sessionId }: { coupleId: strin
                      <div className="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-bounce" style={{animationDelay: '200ms'}}></div>
                      <p className="text-indigo-400 text-sm font-medium uppercase tracking-widest ml-2">Waiting for partner</p>
                    </div>
-                   <button onClick={nextQuestion} className="text-[10px] text-white/30 hover:text-white/80 uppercase tracking-widest underline underline-offset-4">Force Next (Test Skip)</button>
+                   <button onClick={nextQuestion} className="text-[10px] text-white/20 hover:text-white/60 uppercase tracking-widest transition-colors">Force Next (Dev)</button>
                 </div>
              ) : (
-                <button onClick={nextQuestion} className="bg-white text-[#0F0A1F] font-bold uppercase tracking-[0.2em] text-sm rounded-full px-10 py-4 w-full max-w-xs hover:scale-105 hover:bg-indigo-50 transition-all shadow-[0_0_30px_rgba(255,255,255,0.2)]">
+                <motion.button
+                  onClick={nextQuestion}
+                  whileTap={{ scale: 0.97 }}
+                  className="bg-gradient-to-r from-white to-indigo-50 text-[#0F0A1F] font-bold uppercase tracking-[0.2em] text-sm rounded-full px-10 py-4 w-full max-w-xs hover:scale-105 hover:shadow-[0_0_35px_rgba(99,102,241,0.4)] transition-all shadow-[0_0_25px_rgba(255,255,255,0.15)]"
+                >
                    {currentQIndex + 1 >= quiz.questions.length ? 'Finish Quiz' : 'Next Question →'}
-                </button>
+                </motion.button>
              )}
           </div>
           
           <div className="mt-8 pt-8 border-t border-white/10 flex items-center justify-center space-x-2">
             {quiz.questions.map((_: any, idx: number) => (
-               <div key={idx} className={`h-1.5 rounded-full transition-all ${idx < currentQIndex ? 'bg-indigo-500 w-8 shadow-[0_0_8px_rgba(99,102,241,0.5)]' : idx === currentQIndex ? 'bg-rose-500 w-12 shadow-[0_0_8px_rgba(244,63,94,0.5)]' : 'bg-white/20 w-8'}`}></div>
+               <motion.div
+                  key={idx}
+                  initial={{ scaleX: 0 }}
+                  animate={{ scaleX: 1 }}
+                  transition={{ duration: 0.4, delay: idx * 0.05 }}
+                  className={`h-1.5 rounded-full transition-all origin-left ${idx < currentQIndex ? 'bg-indigo-500 w-8 shadow-[0_0_6px_rgba(99,102,241,0.4)]' : idx === currentQIndex ? 'bg-rose-500 w-12 shadow-[0_0_12px_rgba(244,63,94,0.7)]' : 'bg-white/20 w-8'}`}
+               ></motion.div>
             ))}
           </div>
         </motion.div>
