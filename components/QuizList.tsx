@@ -129,6 +129,11 @@ export default function QuizList({ coupleId }: { coupleId: string }) {
           return;
        }
 
+       if (!quiz.questions || !Array.isArray(quiz.questions) || quiz.questions.length === 0) {
+         window.alert('This quiz has no questions. Please try another quiz.');
+         return;
+       }
+
       const sessionRef = doc(collection(db, `couples/${coupleId}/sessions`));
         await setDoc(sessionRef, {
            coupleId,
@@ -164,10 +169,19 @@ export default function QuizList({ coupleId }: { coupleId: string }) {
   const deleteQuiz = async (e: React.MouseEvent, quizId: string) => {
     e.stopPropagation();
     if (!window.confirm("Delete this quiz?")) return;
+    if (!user) {
+      window.alert('You must be logged in to delete quizzes.');
+      return;
+    }
     try {
       await deleteDoc(doc(db, 'quizzes', quizId));
     } catch (e: any) {
-      window.alert('Could not delete this quiz. You can only delete quizzes you created.');
+      console.error('Delete quiz error:', e);
+      if (e.code === 'permission-denied') {
+        window.alert('You do not have permission to delete this quiz. Only the creator can delete it.');
+      } else {
+        window.alert('Could not delete this quiz. Please try again.');
+      }
       handleFirestoreError(e, OperationType.DELETE, 'quizzes', user);
     }
   };

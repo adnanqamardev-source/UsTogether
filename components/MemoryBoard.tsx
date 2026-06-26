@@ -29,7 +29,19 @@ export default function MemoryBoard({ coupleId }: { coupleId: string }) {
         const qs = query(collection(db, `couples/${coupleId}/sessions`), where('status', '==', 'finished'));
         const sn = await getDocs(qs);
         const sessions = sn.docs.map(d => ({ id: d.id, ...d.data() }));
-        setFinishedSessions(sessions);
+        
+        // Filter out sessions with empty quizzes to keep memories meaningful
+        const validSessions = sessions.filter((s: any) => {
+          const quizId = s.state?.quizId;
+          if (!quizId) return false;
+          // We can't reliably check quiz questions here without extra fetch,
+          // but we can filter out sessions with no answers as a proxy
+          const answers = s.state?.answers || {};
+          const hasAnswers = Object.keys(answers).length > 0;
+          return hasAnswers;
+        });
+        
+        setFinishedSessions(validSessions);
       } catch (e: any) {
          handleFirestoreError(e, OperationType.LIST, `couples/${coupleId}/sessions (Memories)`);
       } finally {
