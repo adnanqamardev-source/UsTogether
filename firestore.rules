@@ -49,6 +49,20 @@ service cloud.firestore {
     }
 
     // ------------------------------------------------------------
+    // 1.6 Achievements
+    // ------------------------------------------------------------
+    match /achievements/{userId}/items/{itemId} {
+      function isOwner() { return isAuthenticated() && request.auth.uid == userId; }
+
+      allow get: if isOwner();
+      allow list: if isOwner();
+
+      allow create: if isOwner() && isValidId(itemId);
+      allow update: if isOwner() && isValidId(itemId);
+      allow delete: if isOwner() && isValidId(itemId);
+    }
+
+    // ------------------------------------------------------------
     // 1.5 Pairing Codes
     // ------------------------------------------------------------
     function isValidPairingCode(data) {
