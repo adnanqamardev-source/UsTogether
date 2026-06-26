@@ -4,29 +4,44 @@ import { useState, useEffect, Suspense } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useAuth } from './AuthProvider';
 import { MessageCircle, LogOut, UserMinus, Loader, Menu, X } from 'lucide-react';
-import { doc, getDoc, collection, onSnapshot, updateDoc, deleteDoc } from 'firebase/firestore';
+import { doc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
-import { handleFirestoreError, OperationType } from '@/lib/firestore-errors';
+import {
+  useFirestoreDocument,
+  useFirestoreCollection,
+  batchWrite,
+  deletePairingCode,
+} from '@/lib/firebase';
+import type { Couple, UserProfile, Achievement } from '../global.d';
 import dynamic from 'next/dynamic';
 import QuizList from './QuizList';
 import StreakCounter from './StreakCounter';
 import AchievementsPanel from './AchievementsPanel';
 
-const ChatDrawer = dynamic(() => import('./ChatDrawer'), { 
-  ssr: false, 
-  loading: () => <div className="fixed bottom-6 right-6 w-80 h-96 bg-slate-900 border border-white/10 rounded-2xl shadow-2xl flex items-center justify-center z-50"><Loader className="w-6 h-6 text-white animate-spin" /></div> 
+const ChatDrawer = dynamic(() => import('./ChatDrawer'), {
+  ssr: false,
+  loading: () => <div className="fixed bottom-6 right-6 w-80 h-96 bg-slate-900 border border-white/10 rounded-2xl shadow-2xl flex items-center justify-center z-50"><Loader className="w-6 h-6 text-white animate-spin" /></div>
 });
-const MemoryBoard = dynamic(() => import('./MemoryBoard'), { 
-  ssr: false, 
-  loading: () => <div className="flex items-center justify-center h-full"><Loader className="w-8 h-8 text-indigo-400 animate-spin" /></div> 
+const MemoryBoard = dynamic(() => import('./MemoryBoard'), {
+  ssr: false,
+  loading: () => <div className="flex items-center justify-center h-full"><Loader className="w-8 h-8 text-indigo-400 animate-spin" /></div>
 });
-const ActiveSession = dynamic(() => import('./ActiveSession'), { 
-  ssr: false, 
-  loading: () => <div className="flex items-center justify-center h-full"><Loader className="w-8 h-8 text-indigo-400 animate-spin" /></div> 
+const ActiveSession = dynamic(() => import('./ActiveSession'), {
+  ssr: false,
+  loading: () => <div className="flex items-center justify-center h-full"><Loader className="w-8 h-8 text-indigo-400 animate-spin" /></div>
 });
 
-// Extracted Mobile Menu Sub-component
-const MobileMenu = ({ isOpen, onClose, sessionId, isMemories, onUnpair, onLogout, onOpenChat }: any) => (
+type MobileMenuProps = {
+  isOpen: boolean;
+  onClose: () => void;
+  sessionId: string | null;
+  isMemories: boolean;
+  onUnpair: () => void;
+  onLogout: () => void;
+  onOpenChat: () => void;
+};
+
+const MobileMenu = ({ isOpen, onClose, sessionId, isMemories, onUnpair, onLogout, onOpenChat }: MobileMenuProps) => (
   <AnimatePresence>
     {isOpen && (
       <>
@@ -67,10 +82,22 @@ export default function CoupleDashboard({ coupleId }: { coupleId: string }) {
   const { user, logOut } = useAuth();
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [activeHash, setActiveHash] = useState('');
-  const [couple, setCouple] = useState<any>(null);
-  const [userProfile, setUserProfile] = useState<any>(null);
-  const [achievements, setAchievements] = useState<any[]>([]);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const { data: couple, loading: coupleLoading } = useFirestoreDocument<Couple>(['couples', coupleId]);
+  const { data: userProfile, loading: userLoading } = useFirestoreDocument<UserProfile>(['users', user?.uid || '']);
+  const { data: achievements } = useFirestoreCollection<Achievement>(
+    user ? ['achievements', user.uid, 'items'] : [],
+    [],
+    (id, data) => ({ id, ...(data as Omit<Achievement, 'id'>) } as Achievement)
+  );
+
+  const partnerId =
+    couple && user
+      ? couple.user1Id === user.uid
+        ? couple.user2Id
+        : couple.user1Id
+      : '';
 
   useEffect(() => {
     setActiveHash(window.location.hash);
@@ -79,48 +106,39 @@ export default function CoupleDashboard({ coupleId }: { coupleId: string }) {
     return () => window.removeEventListener('hashchange', handleHash);
   }, []);
 
-  useEffect(() => {
-    if (!coupleId || !user) return;
-    const unsub = onSnapshot(doc(db, 'couples', coupleId), (snap) => {
-      if (snap.exists()) setCouple(snap.data());
-    });
-    const userUnsub = onSnapshot(doc(db, 'users', user.uid), (snap) => {
-      if (snap.exists()) setUserProfile(snap.data());
-    });
-    const achUnsub = onSnapshot(collection(db, 'achievements', user.uid, 'items'), (snap) => {
-      setAchievements(snap.docs.map(d => ({ id: d.id, ...d.data() })));
-    });
-    return () => { unsub(); userUnsub(); achUnsub(); };
-  }, [coupleId, user]);
-
   const sessionMatch = activeHash.match(/^#session\/(.+)$/);
   const sessionId = sessionMatch ? sessionMatch[1] : null;
+  const isMemories = activeHash === '#memories';
 
   const handleUnpair = async () => {
     if (!window.confirm('Are you sure you want to disconnect from your partner?')) return;
-    if (!user) return;
+    if (!user || !couple) return;
     try {
+      const userRef = doc(db, 'users', user.uid);
+      const partnerRef = doc(db, 'users', partnerId);
       const coupleRef = doc(db, 'couples', coupleId);
-      const coupleSnap = await getDoc(coupleRef);
-      const partnerId = coupleSnap.exists() ?
-        (coupleSnap.data().user1Id === user.uid ? coupleSnap.data().user2Id : coupleSnap.data().user1Id)
-        : null;
-      await updateDoc(doc(db, 'users', user.uid), { pairedCoupleId: null, updatedAt: Date.now() });
-      if (partnerId) await updateDoc(doc(db, 'users', partnerId), { pairedCoupleId: null, updatedAt: Date.now() });
-      if (coupleSnap.exists()) await deleteDoc(coupleRef);
-      try { await deleteDoc(doc(db, 'pairingCodes', user.uid.substring(0, 8).toUpperCase())); } catch {}
-      if (partnerId) try { await deleteDoc(doc(db, 'pairingCodes', partnerId.substring(0, 8).toUpperCase())); } catch {}
-    } catch (e: any) { handleFirestoreError(e, OperationType.UPDATE, `users`); }
+      const now = Date.now();
+
+      await batchWrite([
+        { type: 'update', ref: userRef, data: { pairedCoupleId: '', updatedAt: now } },
+        { type: 'update', ref: partnerRef, data: { pairedCoupleId: '', updatedAt: now } },
+        { type: 'delete', ref: coupleRef },
+        { type: 'delete', ref: doc(db, 'pairingCodes', user.uid.substring(0, 8).toUpperCase()) },
+        { type: 'delete', ref: doc(db, 'pairingCodes', partnerId.substring(0, 8).toUpperCase()) },
+      ]);
+    } catch (e: any) {
+      console.error('Unpair failed', e);
+    }
   };
 
-  const isMemories = activeHash === '#memories';
+  const isLoading = coupleLoading || userLoading;
 
   return (
     <div className="flex-1 flex flex-col font-sans relative w-full min-h-screen max-w-6xl mx-auto text-[#F8FAFC]">
       {/* Background Ambient Glows */}
       <div className="fixed top-0 left-1/4 -translate-y-1/2 w-[600px] h-[600px] bg-rose-900/15 blur-[120px] rounded-full pointer-events-none" />
       <div className="fixed bottom-0 right-0 translate-x-1/3 translate-y-1/3 w-[500px] h-[500px] bg-indigo-900/15 blur-[120px] rounded-full pointer-events-none" />
-      
+
       {/* Chat Overlay */}
       {isChatOpen && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40" onClick={() => setIsChatOpen(false)} />
@@ -167,14 +185,14 @@ export default function CoupleDashboard({ coupleId }: { coupleId: string }) {
       </nav>
 
       {/* Render Extracted Mobile Menu */}
-      <MobileMenu 
-        isOpen={mobileMenuOpen} 
-        onClose={() => setMobileMenuOpen(false)} 
-        sessionId={sessionId} 
-        isMemories={isMemories} 
-        onUnpair={handleUnpair} 
-        onLogout={logOut} 
-        onOpenChat={() => setIsChatOpen(true)} 
+      <MobileMenu
+        isOpen={mobileMenuOpen}
+        onClose={() => setMobileMenuOpen(false)}
+        sessionId={sessionId}
+        isMemories={isMemories}
+        onUnpair={handleUnpair}
+        onLogout={logOut}
+        onOpenChat={() => setIsChatOpen(true)}
       />
 
       {/* Chat Drawer Side Panel */}
@@ -194,17 +212,17 @@ export default function CoupleDashboard({ coupleId }: { coupleId: string }) {
           <>
             <header className="mb-8 md:mb-10">
               <h1 className="text-4xl md:text-5xl font-serif italic mb-3 text-white">
-                Hi, {user?.displayName || user?.email?.split('@')[0]} ☁️
+                {isLoading ? 'Loading...' : `Hi, ${userProfile?.displayName || user?.email?.split('@')[0]} ☁️`}
               </h1>
               <p className="text-slate-400 text-sm md:text-base">Pick a quiz or game to challenge your partner.</p>
             </header>
-            
+
             {/* Widgts Row with improved grid spacing */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 mb-12">
               <StreakCounter streak={userProfile?.streak || 0} />
               <AchievementsPanel achievements={achievements} />
             </div>
-            
+
             <QuizList coupleId={coupleId} />
           </>
         ) : (

@@ -1,68 +1,43 @@
-import React, { useState, useRef, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { X, Send } from "lucide-react";
-import { useAuth } from "./AuthProvider";
-import { collection, query, orderBy, onSnapshot, addDoc, serverTimestamp } from "firebase/firestore";
-import { db } from "@/lib/firebase";
-import { handleFirestoreError, OperationType } from "@/lib/firestore-errors";
+"use client";
 
-interface Message {
-  id: string;
-  text: string;
-  senderId: string;
-  timestamp: Date;
-}
+import { useState, useRef, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { X, Send } from 'lucide-react';
+import { useAuth } from './AuthProvider';
+import { useFirestoreCollection, addMessage } from '@/lib/firebase';
+import { orderBy } from 'firebase/firestore';
+import type { ChatMessage } from '../global.d';
 
-interface ChatDrawerProps {
-  coupleId: string;
-  onClose: () => void;
-}
-
-export default function ChatDrawer({ coupleId, onClose }: ChatDrawerProps) {
+export default function ChatDrawer({ coupleId, onClose }: { coupleId: string; onClose: () => void }) {
   const { user } = useAuth();
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [text, setText] = useState("");
+  const [text, setText] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, isTyping]);
+  const { data: messages } = useFirestoreCollection<ChatMessage>(
+    ['couples', coupleId, 'messages'],
+    [orderBy('timestamp', 'asc')],
+    (id, data) => ({
+      id,
+      senderId: data.senderId,
+      text: data.text,
+      timestamp: new Date((data.timestamp?.toDate?.() ?? data.timestamp ?? Date.now()) as number),
+    } as ChatMessage)
+  );
 
   useEffect(() => {
-    if (!coupleId) return;
-    const q = query(collection(db, "couples", coupleId, "messages"), orderBy("timestamp"));
-    const unsub = onSnapshot(
-      q,
-      (snapshot) => {
-        const msgs: Message[] = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          text: doc.data().text,
-          senderId: doc.data().senderId,
-          timestamp: doc.data().timestamp?.toDate() || new Date(),
-        }));
-        setMessages(msgs);
-      },
-      (err) => {
-        handleFirestoreError(err, OperationType.LIST, `couples/${coupleId}/messages`);
-      }
-    );
-    return () => unsub();
-  }, [coupleId]);
+    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages, isTyping]);
 
   const handleSend = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!text.trim() || !user || !coupleId) return;
     try {
-      await addDoc(collection(db, "couples", coupleId, "messages"), {
-        text: text.trim(),
-        senderId: user.uid,
-        timestamp: serverTimestamp(),
-      });
-      setText("");
+      await addMessage(coupleId, { senderId: user.uid, text: text.trim() });
+      setText('');
       setIsTyping(false);
     } catch (err) {
-      handleFirestoreError(err, OperationType.CREATE, `couples/${coupleId}/messages`);
+      console.error('Send message failed', err);
     }
   };
 
@@ -71,7 +46,7 @@ export default function ChatDrawer({ coupleId, onClose }: ChatDrawerProps) {
       initial={{ opacity: 0, x: 40 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: 40 }}
-      transition={{ type: "spring", damping: 25, stiffness: 200 }}
+      transition={{ type: 'spring', damping: 25, stiffness: 200 }}
       className="h-full w-full bg-[#0F0A1F] border-l border-white/10 shadow-2xl flex flex-col overflow-hidden"
     >
       <div className="p-4 border-b border-white/10 flex items-center justify-between pb-3">
@@ -97,25 +72,21 @@ export default function ChatDrawer({ coupleId, onClose }: ChatDrawerProps) {
                 initial={{ opacity: 0, y: 12, scale: 0.96 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.96 }}
-                transition={{ type: "spring", damping: 18, stiffness: 120 }}
-                className={`flex ${isMe ? "justify-end" : "justify-start"}`}
+                transition={{ type: 'spring', damping: 18, stiffness: 120 }}
+                className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}
               >
                 <div
                   className={`max-w-[80%] rounded-2xl px-4 py-2.5 shadow-md ${
                     isMe
-                      ? "bg-gradient-to-br from-indigo-600 to-rose-600 text-white rounded-br-none"
-                      : "bg-white/10 text-white rounded-bl-none"
+                      ? 'bg-gradient-to-br from-indigo-600 to-rose-600 text-white rounded-br-none'
+                      : 'bg-white/10 text-white rounded-bl-none'
                   }`}
                 >
                   <p className="text-sm break-words">{m.text}</p>
-                  <p
-                    className={`mt-1 text-[10px] ${
-                      isMe ? "text-white/70" : "text-white/50"
-                    }`}
-                  >
+                  <p className={`mt-1 text-[10px] ${isMe ? 'text-white/70' : 'text-white/50'}`}>
                     {m.timestamp.toLocaleTimeString([], {
-                      hour: "2-digit",
-                      minute: "2-digit",
+                      hour: '2-digit',
+                      minute: '2-digit',
                     })}
                   </p>
                 </div>
@@ -132,8 +103,8 @@ export default function ChatDrawer({ coupleId, onClose }: ChatDrawerProps) {
           >
             <span className="inline-flex items-center gap-1 bg-white/5 border border-white/10 rounded-full px-3 py-1.5">
               <span className="w-1.5 h-1.5 bg-indigo-400 rounded-full animate-bounce" />
-              <span className="w-1.5 h-1.5 bg-indigo-400 rounded-full animate-bounce" style={{ animationDelay: "100ms" }} />
-              <span className="w-1.5 h-1.5 bg-indigo-400 rounded-full animate-bounce" style={{ animationDelay: "200ms" }} />
+              <span className="w-1.5 h-1.5 bg-indigo-400 rounded-full animate-bounce" style={{ animationDelay: '100ms' }} />
+              <span className="w-1.5 h-1.5 bg-indigo-400 rounded-full animate-bounce" style={{ animationDelay: '200ms' }} />
               Partner is typing...
             </span>
           </motion.div>

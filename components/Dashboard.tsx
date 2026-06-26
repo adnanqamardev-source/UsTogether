@@ -5,10 +5,11 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from './AuthProvider';
 import { motion } from 'motion/react';
 import { Heart, Users, ArrowRight } from 'lucide-react';
-import { doc, getDoc, setDoc, updateDoc, collection, query, where, onSnapshot, or } from 'firebase/firestore';
+import { doc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
-import { handleFirestoreError, OperationType } from '@/lib/firestore-errors';
+import { createPairingCode, getPairingCode, batchWrite } from '@/lib/firebase';
 import CoupleDashboard from './CoupleDashboard';
+import type { UserProfile } from '../global.d';
 
 export default function Dashboard() {
   const router = useRouter();
@@ -19,19 +20,13 @@ export default function Dashboard() {
   const [myCode, setMyCode] = useState<string>('');
 
   useEffect(() => {
-     if (user && !myCode && !dbUser?.pairedCoupleId) {
-        // use local logic for making a 6-digit code or use UID snippet.
-        // UID first 6 chars might collide, let's use the first 8
-        const code = user.uid.substring(0,8).toUpperCase();
+      if (user && !myCode && !dbUser?.pairedCoupleId) {
+        const code = user.uid.substring(0, 8).toUpperCase();
         setMyCode(code);
-        // create pairing code
-        try {
-           setDoc(doc(db, 'pairingCodes', code), {
-             userId: user.uid,
-             createdAt: Date.now()
-           }, { merge: true });
-        } catch(e) {}
-     }
+        createPairingCode(user.uid).catch(() => {
+          // best-effort: pairing code creation may fail if already exists
+        });
+      }
   }, [user, dbUser, myCode]);
 
   // If partner connects, AuthProvider updates dbUser automatically.
@@ -54,61 +49,41 @@ export default function Dashboard() {
 
     setLoading(true);
     try {
-       // get the code
-       const codeDoc = await getDoc(doc(db, 'pairingCodes', codeStr)).catch(e => {
-           handleFirestoreError(e, OperationType.GET, `pairingCodes`);
-           throw e;
-       });
-       if (!codeDoc.exists()) {
-          throw new Error('Invalid or expired pairing code.');
-       }
-       const partnerId = codeDoc.data().userId;
-       
-       // Create Couple
-       const coupleId = [user.uid, partnerId].sort().join('_');
-       const coupleRef = doc(db, 'couples', coupleId);
-       
-       const coupleDoc = await getDoc(coupleRef).catch(e => {
-           handleFirestoreError(e, OperationType.GET, `couples`);
-           throw e;
-       });
-       if (!coupleDoc.exists()) {
-          const newCouple = {
-             user1Id: user.uid < partnerId ? user.uid : partnerId,
-             user2Id: user.uid > partnerId ? user.uid : partnerId,
-             status: 'active',
-             totalScore: 0,
-             createdAt: Date.now(),
-             updatedAt: Date.now(),
-          };
-          await setDoc(coupleRef, newCouple).catch(e => {
-             handleFirestoreError(e, OperationType.CREATE, `couples`);
-             throw e;
-          });
-       }
-       
-       // Update both users 
-       await updateDoc(doc(db, 'users', user.uid), {
-          pairedCoupleId: coupleId,
-          updatedAt: Date.now()
-       }).catch(e => {
-           handleFirestoreError(e, OperationType.UPDATE, `users my self`);
-           throw e;
-       });
-       await updateDoc(doc(db, 'users', partnerId), {
-          pairedCoupleId: coupleId,
-          updatedAt: Date.now()
-       }).catch(e => {
-           handleFirestoreError(e, OperationType.UPDATE, `users partner`);
-           throw e;
-       });
+        const codeDoc = await getPairingCode(codeStr);
+        if (!codeDoc) {
+           throw new Error('Invalid or expired pairing code.');
+        }
+        const partnerId = codeDoc.userId;
+
+        const coupleId = [user.uid, partnerId].sort().join('_');
+
+        const userRef = doc(db, 'users', user.uid);
+        const partnerRef = doc(db, 'users', partnerId);
+        const coupleRef = doc(db, 'couples', coupleId);
+        const codeRef = doc(db, 'pairingCodes', codeStr);
+        const myCodeRef = doc(db, 'pairingCodes', myCode);
+        const now = Date.now();
+
+        await batchWrite([
+          { type: 'set', ref: coupleRef, data: {
+            user1Id: user.uid < partnerId ? user.uid : partnerId,
+            user2Id: user.uid > partnerId ? user.uid : partnerId,
+            status: 'active',
+            totalScore: 0,
+            createdAt: now,
+            updatedAt: now,
+          }},
+          { type: 'update', ref: userRef, data: { pairedCoupleId: coupleId, updatedAt: now } },
+          { type: 'update', ref: partnerRef, data: { pairedCoupleId: coupleId, updatedAt: now } },
+          { type: 'delete', ref: codeRef },
+          { type: 'delete', ref: myCodeRef },
+        ]);
 
         router.refresh();
     } catch (err: any) {
        setErrorMsg(err.message || 'Error occurred');
-       // removed generic catch handleFirestoreError
     } finally {
-      setLoading(false);
+       setLoading(false);
     }
   };
 

@@ -25,12 +25,13 @@ service cloud.firestore {
     // ------------------------------------------------------------
     function isValidUser(data) {
       return data.keys().hasAll(['email', 'points', 'createdAt', 'updatedAt']) &&
-             data.size() >= 4 && data.size() <= 6 &&
+             data.size() >= 4 && data.size() <= 7 &&
              data.email is string && data.email.size() <= 256 &&
              data.points is number && data.points >= 0 &&
              data.createdAt is number && data.updatedAt is number &&
              isOptionalString(data, 'displayName', 100) &&
-             isOptionalString(data, 'pairedCoupleId', 128);
+             isOptionalString(data, 'pairedCoupleId', 128) &&
+             isOptionalNumber(data, 'streak');
     }
 
     match /users/{userId} {
@@ -45,7 +46,7 @@ service cloud.firestore {
                     
       // Allow updates that only modify allowed fields. Skip full user validation to permit partial updates.
       allow update: if isAuthenticated() &&
-            incoming().diff(existing()).affectedKeys().hasOnly(['displayName', 'pairedCoupleId', 'points', 'updatedAt']);
+            incoming().diff(existing()).affectedKeys().hasOnly(['displayName', 'pairedCoupleId', 'points', 'streak', 'updatedAt']);
     }
 
     // ------------------------------------------------------------
