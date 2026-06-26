@@ -6,6 +6,7 @@ import { Sparkles, Trash2, Flame } from 'lucide-react';
 import { handleFirestoreError, OperationType } from '@/lib/firestore-errors';
 import QuizCardSkeleton from './QuizCardSkeleton';
 import QuizCard from './QuizCard';
+import { getRandomQuestions, toFirestoreQuizBatch } from '@/lib/quiz-data';
 
 function SectionHeader({ title, badge, icon: Icon, accent = "text-indigo-300" }: { title: string; badge?: number; icon?: any; accent?: string }) {
   return (
@@ -32,6 +33,7 @@ export default function QuizList({ coupleId }: { coupleId: string }) {
   const [seeded, setSeeded] = useState(false);
   const [quizPage, setQuizPage] = useState(1);
   const [hasMore, setHasMore] = useState(false);
+  const [recentQuestionIds, setRecentQuestionIds] = useState<number[]>([]);
 
   useEffect(() => {
     const qb = query(collection(db, 'quizzes'), where('isPublic', '==', true), limit(20));
@@ -68,24 +70,52 @@ export default function QuizList({ coupleId }: { coupleId: string }) {
      try {
        const res = await fetch('/api/generate-quiz', {
          method: 'POST',
+         headers: { 'Content-Type': 'application/json' },
+         body: JSON.stringify({
+           recentTopics: recentQuestionIds.slice(-20),
+           preferredCategory: undefined,
+         }),
        });
        const data = await res.json();
-       
-       if (data.title && data.questions) {
-           await addDoc(collection(db, 'quizzes'), {
-              creatorId: user.uid,
-              title: data.title,
-              description: data.description || 'A brand new AI generated quiz.',
-              isPublic: true,
-              questions: data.questions,
-              createdAt: Date.now()
-           });
+
+       if (data.title && data.questions && data.questions.length > 0) {
+         const quizRef = await addDoc(collection(db, 'quizzes'), {
+            creatorId: user.uid,
+            title: data.title,
+            description: data.description || 'A brand new AI generated quiz.',
+            isPublic: true,
+            questions: data.questions,
+            createdAt: Date.now()
+         });
+         if (data.questionIds && Array.isArray(data.questionIds)) {
+           setRecentQuestionIds(prev => [...prev, ...data.questionIds]);
+         }
        } else {
-           // Fallback if AI fails
-           console.log("AI Failed to generate, falling back.", data);
+         const staticQs = getRandomQuestions(10, recentQuestionIds.slice(-50));
+         if (staticQs.length > 0) {
+           const quizData = toFirestoreQuizBatch(staticQs, 'Couples Quiz', 'Fun questions for you both', user.uid);
+           await addDoc(collection(db, 'quizzes'), {
+             ...quizData,
+             createdAt: Date.now()
+           });
+           setRecentQuestionIds(prev => [...prev, ...staticQs.map(q => q.id)]);
+         }
        }
      } catch (e) {
        console.error("Failed to fetch new quiz", e);
+       try {
+         const staticQs = getRandomQuestions(10, recentQuestionIds.slice(-50));
+         if (staticQs.length > 0 && user) {
+           const quizData = toFirestoreQuizBatch(staticQs, 'Couples Quiz', 'Fun questions for you both', user.uid);
+           await addDoc(collection(db, 'quizzes'), {
+             ...quizData,
+             createdAt: Date.now()
+           });
+           setRecentQuestionIds(prev => [...prev, ...staticQs.map(q => q.id)]);
+         }
+       } catch (fallbackErr) {
+         console.error("Fallback also failed", fallbackErr);
+       }
      } finally {
        setGeneratingQuiz(false);
      }

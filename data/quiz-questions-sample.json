@@ -1,0 +1,362 @@
+[
+  {
+    "id": 1,
+    "category": "Food & Drink",
+    "question": "What's the most popular evening snack combination in Indian households?",
+    "type": "mcq",
+    "options": ["Samosa + chai", "Pakora + coffee", "Biscuit + milk", "Murukku + tea"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 2,
+    "category": "Food & Drink",
+    "question": "Which Indian breakfast is typically eaten with your hands rather than utensils?",
+    "type": "mcq",
+    "options": ["Poha", "Upma", "Idli sambar", "All of these"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 3,
+    "category": "Food & Drink",
+    "question": "What's the traditional method of drinking chai in many Indian homes?",
+    "type": "mcq",
+    "options": ["Sipping from a kulhar", "Pouring between two glasses", "Using a saucer to cool it", "All of the above"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 4,
+    "category": "Travel",
+    "question": "What's the most common mode of long-distance travel for middle-class Indian families?",
+    "type": "mcq",
+    "options": ["Sleeper train", "Private car", "Budget flight", "State bus"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 5,
+    "category": "Travel",
+    "question": "When booking a train ticket in India, what does 'SW' in berth type stand for?",
+    "type": "mcq",
+    "options": ["Side Wait", "Side Lower", "Senior Window", "Special Waiting"],
+    "text_fallback_allowed": false
+  },
+  {
+    "id": 6,
+    "category": "Travel",
+    "question": "What's the most reliable indicator that your Indian train is approaching a station?",
+    "type": "mcq",
+    "options": ["Vendor announcements", "Chai wala knocks", "Fellow passengers packing bags", "Platform view through window"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 7,
+    "category": "Family Dynamics",
+    "question": "What's a common phrase Indian parents use when they want something done immediately?",
+    "type": "mcq",
+    "options": ["Bas kar", "Jaldi se bolo", "Ek kaam kar", "Chalo chalte hain"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 8,
+    "category": "Family Dynamics",
+    "question": "In Indian joint families, who typically has the final say in household decisions?",
+    "type": "mcq",
+    "options": ["Eldest male", "Eldest female", "Financial contributor", "Depends on the matter"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 9,
+    "category": "Family Dynamics",
+    "question": "What's considered the ultimate measure of success in many Indian families?",
+    "type": "mcq",
+    "options": ["Government job", "Settlement abroad", "Married with kids", "Owns property"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 10,
+    "category": "Family Dynamics",
+    "question": "What's the typical reaction when you tell Indian parents you're going out with friends?",
+    "type": "mcq",
+    "options": ["Kab ja rahe ho?", "Kitne log hain?", "Phone rakh lena", "All of these"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 11,
+    "category": "Wedding Traditions",
+    "question": "What's the significance of the 'pheras' in an Indian wedding?",
+    "type": "mcq",
+    "options": ["Seven vows around fire", "Exchange of garlands", "Applying sindoor", "Tying the knot"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 12,
+    "category": "Wedding Traditions",
+    "question": "What does the 'jai mala' ceremony represent?",
+    "type": "mcq",
+    "options": ["Exchange of garlands", "Ring ceremony", "Sindoor application", "Saptapadi"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 13,
+    "category": "Wedding Traditions",
+    "question": "In many Indian weddings, what does the groom's family traditionally bring?",
+    "type": "mcq",
+    "options": ["Dry fruits and sweets", "Gold jewelry", "Cash in envelopes", "New clothes for family"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 14,
+    "category": "Wedding Traditions",
+    "question": "What's the 'sindoor dan' ceremony?",
+    "type": "mcq",
+    "options": ["Groom applies sindoor on bride's hair parting", "Bride applies tilak on groom", "Exchange of gifts", "Receiving blessings"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 15,
+    "category": "Festivals",
+    "question": "Which festival is known as the 'festival of lights' in India?",
+    "type": "mcq",
+    "options": ["Diwali", "Holi", "Dussehra", "Raksha Bandhan"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 16,
+    "category": "Festivals",
+    "question": "What's the main ritual performed during Raksha Bandhan?",
+    "type": "mcq",
+    "options": ["Sister ties rakhi on brother's wrist", "Brother gives gifts to sister", "Exchange of sweets", "All of these"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 17,
+    "category": "Festivals",
+    "question": "During Holi, what do people throw at each other?",
+    "type": "mcq",
+    "options": ["Colored powder and water", "Flowers", "Money", "Toys"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 18,
+    "category": "Festivals",
+    "question": "What's special about the food eaten during Navratri?",
+    "type": "mcq",
+    "options": ["It's all vegetarian", "No onion and garlic", "Only fruits", "Only milk products"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 19,
+    "category": "Money & UPI",
+    "question": "What's UPI in the context of Indian digital payments?",
+    "type": "mcq",
+    "options": ["Unified Payments Interface", "Universal Payment Integration", "User Payment Identifier", "Unified Payment Index"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 20,
+    "category": "Money & UPI",
+    "question": "What's the maximum amount you can typically transfer via UPI in one transaction?",
+    "type": "mcq",
+    "options": ["₹1 lakh", "₹2 lakh", "₹5 lakh", "₹10 lakh"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 21,
+    "category": "Money & UPI",
+    "question": "What's 'bhed chaal' in financial terms?",
+    "type": "mcq",
+    "options": ["Following the crowd in investments", "Dividing expenses equally", "Hidden charges in banking", "Fixed deposit interest"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 22,
+    "category": "Money & UPI",
+    "question": "What do you call asking someone to send you money on UPI?",
+    "type": "mcq",
+    "options": ["Collect request", "Split request", "Transfer request", "Pay request"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 23,
+    "category": "Daily Life / Jugaad",
+    "question": "What's the Indian concept of 'jugaad'?",
+    "type": "mcq",
+    "options": ["Frugal innovation", "Cooking technique", "Dance form", "Fabric type"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 24,
+    "category": "Daily Life / Jugaad",
+    "question": "What's a common jugaad for fixing a punctured cycle tube?",
+    "type": "mcq",
+    "options": ["Old rubber tube patch", "Temporary tube sealant", "Tying with rope", "Using a old tube piece"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 25,
+    "category": "Daily Life / Jugaad",
+    "question": "How do Indians typically cool water in summers without a fridge?",
+    "type": "mcq",
+    "options": ["Matka (earthen pot)", "Wet cloth covering", "Keeping in cellar", "All of these"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 26,
+    "category": "Daily Life / Jugaad",
+    "question": "What's a jugaad phone holder for a bike?",
+    "type": "mcq",
+    "options": ["Rubber band and bottle cap", "Cloth and sticks", "Old spectacle case", "All creative solutions"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 27,
+    "category": "Transport",
+    "question": "What's the typical seating arrangement in a Mumbai local train?",
+    "type": "mcq",
+    "options": ["Bench style with partitions", "Individual bucket seats", "Long benches without dividers", "Mixed seating"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 28,
+    "category": "Transport",
+    "question": "In Delhi Metro, what does the pink color on the route map indicate?",
+    "type": "mcq",
+    "options": ["Magenta line", "Pink line", "Violet line", "Airport express"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 29,
+    "category": "Transport",
+    "question": "What's an 'auto meter' commonly referred to?",
+    "type": "mcq",
+    "options": ["Taxi fare counter", "Auto-rickshaw fare machine", "Bus ticket machine", "Train fare calculator"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 30,
+    "category": "Transport",
+    "question": "What's 'share auto'?",
+    "type": "mcq",
+    "options": ["Auto shared with other passengers", "Owned by multiple people", "Electric auto", "Auto on rent"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 31,
+    "category": "Relationships / Dating",
+    "question": "What's the most common way couples in India meet before marriage?",
+    "type": "mcq",
+    "options": ["Through family friends", "At college/work", "Matrimonial sites", "All of these"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 32,
+    "category": "Relationships / Dating",
+    "question": "What's 'meeting the family' typically like in Indian relationships?",
+    "type": "mcq",
+    "options": ["Big commitment milestone", "Casual coffee", "Waiting till marriage", "Not necessary"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 33,
+    "category": "Relationships / Dating",
+    "question": "How do Indian parents usually react when their child mentions dating?",
+    "type": "mcq",
+    "options": ["Shock and concern", "Curious questions", "Silent judgment", "Depends on the parent"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 34,
+    "category": "Relationships / Dating",
+    "question": "What's the significance of meeting each other's siblings in an Indian relationship?",
+    "type": "mcq",
+    "options": ["Siblings approve first", "Just a formality", "Never required", "Only for marriage"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 35,
+    "category": "Food Habits",
+    "question": "What's 'paratha roll' typically made with?",
+    "type": "mcq",
+    "options": ["Stuffed paratha wrapped", "Rolled roti", "Kathi roll", "Frankie wrap"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 36,
+    "category": "Food Habits",
+    "question": "Which meal do Indians typically eat with their hands rather than utensils?",
+    "type": "mcq",
+    "options": ["Roti sabzi", "Rice and curry", "Idli dosa", "All of these"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 37,
+    "category": "Food Habits",
+    "question": "What's the most common street food in Mumbai?",
+    "type": "mcq",
+    "options": ["Vada pav", "Pav bhaji", "Both vada pav and pav bhaji", "Panipuri"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 38,
+    "category": "Food Habits",
+    "question": "What's 'masala dosa' made of?",
+    "type": "mcq",
+    "options": ["Rice crepe with potato filling", "Wheat crepe with paneer", "Semolina crepe", "Lentil pancake"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 39,
+    "category": "Shopping & Bargaining",
+    "question": "Where is bargaining most common in India?",
+    "type": "mcq",
+    "options": ["Street markets", "Malls", "Online shopping", "Branded stores"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 40,
+    "category": "Shopping & Bargaining",
+    "question": "What's 'dukaan wale bhaiya' in local markets?",
+    "type": "mcq",
+    "options": ["Shopkeeper brother", "Wholesale trader", "Delivery boy", "Fellow customer"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 41,
+    "category": "Shopping & Bargaining",
+    "question": "What's the typical starting conversation when bargaining at a market?",
+    "type": "mcq",
+    "options": ["Kitne ka diya?", "Bahut mehnga hai", "Hum regular customer hain", "Peer ke liye le rahe hain"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 42,
+    "category": "Shopping & Bargaining",
+    "question": "When do Indians usually buy new clothes during festivals?",
+    "type": "mcq",
+    "options": ["Diwali", "Navratri", "Both", "Other occasions"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 43,
+    "category": "Household",
+    "question": "What's 'chhote bhai' and 'bade bhai' in joint families?",
+    "type": "mcq",
+    "options": ["Younger and elder brothers", "Servant roles", "Work titles", "Nicknames"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 44,
+    "category": "Household",
+    "question": "What's the most important cooking ingredient in Indian kitchens?",
+    "type": "mcq",
+    "options": ["Onion and garlic", "Turmeric", "Garam masala", "Mustard seeds"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 45,
+    "category": "Household",
+    "question": "What's a 'pressure cooker whistle' commonly associated with?",
+    "type": "mcq",
+    "options": ["Food getting cooked", "Cooking time measurement", "Kitchen alarm", "All of these"],
+    "text_fallback_allowed": true
+  }
+]

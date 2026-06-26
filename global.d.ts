@@ -30,6 +30,15 @@ export interface QuizQuestion {
   options?: string[];
 }
 
+export interface StaticQuizQuestion {
+  id: number;
+  category: string;
+  question: string;
+  type: 'mcq';
+  options: string[];
+  text_fallback_allowed: boolean;
+}
+
 export interface Quiz {
   creatorId: string;
   title: string;

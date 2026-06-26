@@ -1,0 +1,2402 @@
+[
+  {
+    "id": 1,
+    "category": "Food & Drink",
+    "question": "What's the most popular evening snack combination in Indian households?",
+    "type": "mcq",
+    "options": ["Samosa + chai", "Pakora + coffee", "Biscuit + milk", "Murukku + tea"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 2,
+    "category": "Food & Drink",
+    "question": "Which Indian breakfast is typically eaten with your hands rather than utensils?",
+    "type": "mcq",
+    "options": ["Poha", "Upma", "Idli sambar", "All of these"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 3,
+    "category": "Food & Drink",
+    "question": "What's the traditional method of drinking chai in many Indian homes?",
+    "type": "mcq",
+    "options": ["Sipping from a kulhar", "Pouring between two glasses", "Using a saucer to cool it", "All of the above"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 4,
+    "category": "Travel",
+    "question": "What's the most common mode of long-distance travel for middle-class Indian families?",
+    "type": "mcq",
+    "options": ["Sleeper train", "Private car", "Budget flight", "State bus"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 5,
+    "category": "Travel",
+    "question": "When booking a train ticket in India, what does 'SW' in berth type stand for?",
+    "type": "mcq",
+    "options": ["Side Wait", "Side Lower", "Senior Window", "Special Waiting"],
+    "text_fallback_allowed": false
+  },
+  {
+    "id": 6,
+    "category": "Travel",
+    "question": "What's the most reliable indicator that your Indian train is approaching a station?",
+    "type": "mcq",
+    "options": ["Vendor announcements", "Chai wala knocks", "Fellow passengers packing bags", "Platform view through window"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 7,
+    "category": "Family Dynamics",
+    "question": "What's a common phrase Indian parents use when they want something done immediately?",
+    "type": "mcq",
+    "options": ["Bas kar", "Jaldi se bolo", "Ek kaam kar", "Chalo chalte hain"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 8,
+    "category": "Family Dynamics",
+    "question": "In Indian joint families, who typically has the final say in household decisions?",
+    "type": "mcq",
+    "options": ["Eldest male", "Eldest female", "Financial contributor", "Depends on the matter"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 9,
+    "category": "Family Dynamics",
+    "question": "What's considered the ultimate measure of success in many Indian families?",
+    "type": "mcq",
+    "options": ["Government job", "Settlement abroad", "Married with kids", "Owns property"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 10,
+    "category": "Family Dynamics",
+    "question": "What's the typical reaction when you tell Indian parents you're going out with friends?",
+    "type": "mcq",
+    "options": ["Kab ja rahe ho?", "Kitne log hain?", "Phone rakh lena", "All of these"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 11,
+    "category": "Wedding Traditions",
+    "question": "What's the significance of the 'pheras' in an Indian wedding?",
+    "type": "mcq",
+    "options": ["Seven vows around fire", "Exchange of garlands", "Applying sindoor", "Tying the knot"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 12,
+    "category": "Wedding Traditions",
+    "question": "What does the 'jai mala' ceremony represent?",
+    "type": "mcq",
+    "options": ["Exchange of garlands", "Ring ceremony", "Sindoor application", "Saptapadi"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 13,
+    "category": "Wedding Traditions",
+    "question": "In many Indian weddings, what does the groom's family traditionally bring?",
+    "type": "mcq",
+    "options": ["Dry fruits and sweets", "Gold jewelry", "Cash in envelopes", "New clothes for family"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 14,
+    "category": "Wedding Traditions",
+    "question": "What's the 'sindoor dan' ceremony?",
+    "type": "mcq",
+    "options": ["Groom applies sindoor on bride's hair parting", "Bride applies tilak on groom", "Exchange of gifts", "Receiving blessings"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 15,
+    "category": "Festivals",
+    "question": "Which festival is known as the 'festival of lights' in India?",
+    "type": "mcq",
+    "options": ["Diwali", "Holi", "Dussehra", "Raksha Bandhan"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 16,
+    "category": "Festivals",
+    "question": "What's the main ritual performed during Raksha Bandhan?",
+    "type": "mcq",
+    "options": ["Sister ties rakhi on brother's wrist", "Brother gives gifts to sister", "Exchange of sweets", "All of these"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 17,
+    "category": "Festivals",
+    "question": "During Holi, what do people throw at each other?",
+    "type": "mcq",
+    "options": ["Colored powder and water", "Flowers", "Money", "Toys"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 18,
+    "category": "Festivals",
+    "question": "What's special about the food eaten during Navratri?",
+    "type": "mcq",
+    "options": ["It's all vegetarian", "No onion and garlic", "Only fruits", "Only milk products"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 19,
+    "category": "Money & UPI",
+    "question": "What's UPI in the context of Indian digital payments?",
+    "type": "mcq",
+    "options": ["Unified Payments Interface", "Universal Payment Integration", "User Payment Identifier", "Unified Payment Index"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 20,
+    "category": "Money & UPI",
+    "question": "What's the maximum amount you can typically transfer via UPI in one transaction?",
+    "type": "mcq",
+    "options": ["₹1 lakh", "₹2 lakh", "₹5 lakh", "₹10 lakh"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 21,
+    "category": "Money & UPI",
+    "question": "What's 'bhed chaal' in financial terms?",
+    "type": "mcq",
+    "options": ["Following the crowd in investments", "Dividing expenses equally", "Hidden charges in banking", "Fixed deposit interest"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 22,
+    "category": "Money & UPI",
+    "question": "What do you call asking someone to send you money on UPI?",
+    "type": "mcq",
+    "options": ["Collect request", "Split request", "Transfer request", "Pay request"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 23,
+    "category": "Daily Life / Jugaad",
+    "question": "What's the Indian concept of 'jugaad'?",
+    "type": "mcq",
+    "options": ["Frugal innovation", "Cooking technique", "Dance form", "Fabric type"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 24,
+    "category": "Daily Life / Jugaad",
+    "question": "What's a common jugaad for fixing a punctured cycle tube?",
+    "type": "mcq",
+    "options": ["Old rubber tube patch", "Temporary tube sealant", "Tying with rope", "Using an old tube piece"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 25,
+    "category": "Daily Life / Jugaad",
+    "question": "How do Indians typically cool water in summers without a fridge?",
+    "type": "mcq",
+    "options": ["Matka (earthen pot)", "Wet cloth covering", "Keeping in cellar", "All of these"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 26,
+    "category": "Daily Life / Jugaad",
+    "question": "What's a jugaad phone holder for a bike?",
+    "type": "mcq",
+    "options": ["Rubber band and bottle cap", "Cloth and sticks", "Old spectacle case", "All creative solutions"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 27,
+    "category": "Transport",
+    "question": "What's the typical seating arrangement in a Mumbai local train?",
+    "type": "mcq",
+    "options": ["Bench style with partitions", "Individual bucket seats", "Long benches without dividers", "Mixed seating"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 28,
+    "category": "Transport",
+    "question": "In Delhi Metro, what does the pink color on the route map indicate?",
+    "type": "mcq",
+    "options": ["Magenta line", "Pink line", "Violet line", "Airport express"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 29,
+    "category": "Transport",
+    "question": "What's an 'auto meter' commonly referred to?",
+    "type": "mcq",
+    "options": ["Taxi fare counter", "Auto-rickshaw fare machine", "Bus ticket machine", "Train fare calculator"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 30,
+    "category": "Transport",
+    "question": "What's 'share auto'?",
+    "type": "mcq",
+    "options": ["Auto shared with other passengers", "Owned by multiple people", "Electric auto", "Auto on rent"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 31,
+    "category": "Relationships / Dating",
+    "question": "What's the most common way couples in India meet before marriage?",
+    "type": "mcq",
+    "options": ["Through family friends", "At college/work", "Matrimonial sites", "All of these"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 32,
+    "category": "Relationships / Dating",
+    "question": "What's 'meeting the family' typically like in Indian relationships?",
+    "type": "mcq",
+    "options": ["Big commitment milestone", "Casual coffee", "Waiting till marriage", "Not necessary"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 33,
+    "category": "Relationships / Dating",
+    "question": "How do Indian parents usually react when their child mentions dating?",
+    "type": "mcq",
+    "options": ["Shock and concern", "Curious questions", "Silent judgment", "Depends on the parent"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 34,
+    "category": "Relationships / Dating",
+    "question": "What's the significance of meeting each other's siblings in an Indian relationship?",
+    "type": "mcq",
+    "options": ["Siblings approve first", "Just a formality", "Never required", "Only for marriage"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 35,
+    "category": "Food Habits",
+    "question": "What's 'paratha roll' typically made with?",
+    "type": "mcq",
+    "options": ["Stuffed paratha wrapped", "Rolled roti", "Kathi roll", "Frankie wrap"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 36,
+    "category": "Food Habits",
+    "question": "Which meal do Indians typically eat with their hands rather than utensils?",
+    "type": "mcq",
+    "options": ["Roti sabzi", "Rice and curry", "Idli dosa", "All of these"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 37,
+    "category": "Food Habits",
+    "question": "What's the most common street food in Mumbai?",
+    "type": "mcq",
+    "options": ["Vada pav", "Pav bhaji", "Both vada pav and pav bhaji", "Panipuri"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 38,
+    "category": "Food Habits",
+    "question": "What's 'masala dosa' made of?",
+    "type": "mcq",
+    "options": ["Rice crepe with potato filling", "Wheat crepe with paneer", "Semolina crepe", "Lentil pancake"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 39,
+    "category": "Shopping & Bargaining",
+    "question": "Where is bargaining most common in India?",
+    "type": "mcq",
+    "options": ["Street markets", "Malls", "Online shopping", "Branded stores"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 40,
+    "category": "Shopping & Bargaining",
+    "question": "What's 'dukaan wale bhaiya' in local markets?",
+    "type": "mcq",
+    "options": ["Shopkeeper brother", "Wholesale trader", "Delivery boy", "Fellow customer"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 41,
+    "category": "Shopping & Bargaining",
+    "question": "What's the typical starting conversation when bargaining at a market?",
+    "type": "mcq",
+    "options": ["Kitne ka diya?", "Bahut mehnga hai", "Hum regular customer hain", "Peer ke liye le rahe hain"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 42,
+    "category": "Shopping & Bargaining",
+    "question": "When do Indians usually buy new clothes during festivals?",
+    "type": "mcq",
+    "options": ["Diwali", "Navratri", "Both", "Other occasions"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 43,
+    "category": "Household",
+    "question": "What's 'chhote bhai' and 'bade bhai' in joint families?",
+    "type": "mcq",
+    "options": ["Younger and elder brothers", "Servant roles", "Work titles", "Nicknames"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 44,
+    "category": "Household",
+    "question": "What's the most important cooking ingredient in Indian kitchens?",
+    "type": "mcq",
+    "options": ["Onion and garlic", "Turmeric", "Garam masala", "Mustard seeds"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 45,
+    "category": "Household",
+    "question": "What's a 'pressure cooker whistle' commonly associated with?",
+    "type": "mcq",
+    "options": ["Food getting cooked", "Cooking time measurement", "Kitchen alarm", "All of these"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 46,
+    "category": "Food & Drink",
+    "question": "Which southern Indian dish is made from fermented rice and lentil batter?",
+    "type": "mcq",
+    "options": ["Idli", "Dosa", "Vada", "Appam"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 47,
+    "category": "Food & Drink",
+    "question": "What's 'filter coffee' primarily associated with?",
+    "type": "mcq",
+    "options": ["South Indian households", "Mumbai Irani cafes", "Kolkata adda sessions", "Punjabi dhabas"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 48,
+    "category": "Food & Drink",
+    "question": "What is 'golgappa' water typically made of?",
+    "type": "mcq",
+    "options": ["Tamarind and mint", "Jaljeera mix", "Soda and spices", "All of these variations exist"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 49,
+    "category": "Food & Drink",
+    "question": "Which sweet is traditionally associated with Diwali?",
+    "type": "mcq",
+    "options": ["Laddoo", "Barfi", "Jalebi", "All of these"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 50,
+    "category": "Food & Drink",
+    "question": "What is the primary ingredient in 'dal makhani'?",
+    "type": "mcq",
+    "options": ["Black lentils", "Red lentils", "Yellow lentils", "Chickpeas"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 51,
+    "category": "Food & Drink",
+    "question": "Which fruit is used to make 'aam panna'?",
+    "type": "mcq",
+    "options": ["Raw mango", "Pineapple", "Watermelon", "Papaya"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 52,
+    "category": "Food & Drink",
+    "question": "What's 'rabri' made from?",
+    "type": "mcq",
+    "options": ["Sweetened condensed milk", "Curd and fruit", "Flour and sugar", "Coconut milk"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 53,
+    "category": "Food & Drink",
+    "question": "Which chaat features yogurt as a key ingredient?",
+    "type": "mcq",
+    "options": ["Dahi puri", "Sev puri", "Both", "Neither"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 54,
+    "category": "Food & Drink",
+    "question": "What is 'misal pav' originally from?",
+    "type": "mcq",
+    "options": ["Maharashtra", "Gujarat", "Karnataka", "Goa"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 55,
+    "category": "Food & Drink",
+    "question": "What type of bread is 'bun' in 'vada pav'?",
+    "type": "mcq",
+    "options": ["Pav", "Bun", "Roll", "All similar"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 56,
+    "category": "Food & Drink",
+    "question": "Which state is 'dhokla' from?",
+    "type": "mcq",
+    "options": ["Gujarat", "Rajasthan", "Maharashtra", "Kerala"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 57,
+    "category": "Food & Drink",
+    "question": "What gives 'rasam' its tangy flavor?",
+    "type": "mcq",
+    "options": ["Tamarind", "Tomato", "Lemon", "All contribute"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 58,
+    "category": "Food & Drink",
+    "question": "Which of these is a famous sweet from Kolkata?",
+    "type": "mcq",
+    "options": ["Rasgulla", "Mysore pak", "Gajar ka halwa", "Puran poli"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 59,
+    "category": "Food & Drink",
+    "question": "What's 'bhelpuri' primarily made of?",
+    "type": "mcq",
+    "options": ["Puffed rice", "Boiled peanuts", "Sev and vegetables", "All of these"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 60,
+    "category": "Food & Drink",
+    "question": "Which dish combines rice, vegetables, and spices cooked together?",
+    "type": "mcq",
+    "options": ["Biryani", "Khichdi", "Both", "Pulav only"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 61,
+    "category": "Food & Drink",
+    "question": "What's 'kulfi' similar to?",
+    "type": "mcq",
+    "options": ["Ice cream", "Custard", "Frozen yogurt", "Sorbet"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 62,
+    "category": "Food & Drink",
+    "question": "Which meal is eaten after fasting during festivals?",
+    "type": "mcq",
+    "options": ["Prasad", "Langar", "Feast", "Special thali"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 63,
+    "category": "Travel",
+    "question": "What's a 'tatkal ticket' in Indian railways?",
+    "type": "mcq",
+    "options": ["Last-minute booking", "Advance booking", "Season pass", "Group booking"],
+    "text_fallback_allowed": false
+  },
+  {
+    "id": 64,
+    "category": "Travel",
+    "question": "Which mode of transport uses 'chhattisgarh state road transport'?",
+    "type": "mcq",
+    "options": ["State buses", "Private taxis", "Trains", "Flights"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 65,
+    "category": "Travel",
+    "question": "What does 'SV' stand for in Indian railway berth codes?",
+    "type": "mcq",
+    "options": ["Sleeper Upper", "Senior Waiting", "Special Valve", "Side Vacant"],
+    "text_fallback_allowed": false
+  },
+  {
+    "id": 66,
+    "category": "Travel",
+    "question": "What's 'local train' most associated with?",
+    "type": "mcq",
+    "options": ["Mumbai suburban network", "Delhi metro", "Chennai MRTS", "Kolkata tram"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 67,
+    "category": "Travel",
+    "question": "What's 'volvo bus' service typically used for?",
+    "type": "mcq",
+    "options": ["Intercity luxury travel", "City commuting", "School transport", "Airport shuttles"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 68,
+    "category": "Travel",
+    "question": "In Indian buses, what does 'G1' typically indicate?",
+    "type": "mcq",
+    "options": ["Seat number", "Gate number", "Stop code", "Ticket class"],
+    "text_fallback_allowed": false
+  },
+  {
+    "id": 69,
+    "category": "Travel",
+    "question": "What's the busiest metro system in India?",
+    "type": "mcq",
+    "options": ["Delhi Metro", "Mumbai Metro", "Bangalore Metro", "Chennai Metro"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 70,
+    "category": "Travel",
+    "question": "What does 'IRCTC' stand for?",
+    "type": "mcq",
+    "options": ["Indian Railway Catering and Tourism Corporation", "Indian Rail Transit and Cargo", "Integrated Reservation and Ticketing Company", "None of these"],
+    "text_fallback_allowed": false
+  },
+  {
+    "id": 71,
+    "category": "Travel",
+    "question": "What's a 'dormitory' in Indian trains?",
+    "type": "mcq",
+    "options": ["Shared berth facility", "Sleeper class", "AC 3-tier", "General compartment"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 72,
+    "category": "Family Dynamics",
+    "question": "What's the typical Indian parent's reaction to 'I want a pet'?",
+    "type": "mcq",
+    "options": ["First no, then maybe", "Yes immediately", "Only if it's a dog", "Only fish allowed"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 73,
+    "category": "Family Dynamics",
+    "question": "In Indian families, who usually wakes up first?",
+    "type": "mcq",
+    "options": ["Mother", "Father", "Grandmother", "The chai vendor outside"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 74,
+    "category": "Family Dynamics",
+    "question": "What's the golden rule of living with Indian parents?",
+    "type": "mcq",
+    "options": ["Call when leaving", "Eat whatever is cooked", "Keep phone charged", "All of these"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 75,
+    "category": "Family Dynamics",
+    "question": "How do Indian parents measure their child's success?",
+    "type": "mcq",
+    "options": ["Sharma ji ke beta", "Salary package", "Settlement abroad", "All metrics matter"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 76,
+    "category": "Family Dynamics",
+    "question": "What's the most common Indian family argument about?",
+    "type": "mcq",
+    "options": ["Food quality", "TV remote", "Paying bills", "All of these"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 77,
+    "category": "Family Dynamics",
+    "question": "What's 'rishta' in Indian families?",
+    "type": "mcq",
+    "options": ["Marriage proposal", "Property dispute", "Business deal", "Family secret"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 78,
+    "category": "Family Dynamics",
+    "question": "Who is the unofficial 'family doctor' in Indian homes?",
+    "type": "mcq",
+    "options": ["Grandmother", "Mother", "Father", "Eldest aunt"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 79,
+    "category": "Family Dynamics",
+    "question": "What's 'joint family' system known for?",
+    "type": "mcq",
+    "options": ["Multiple generations living together", "Shared resources", "Collective decision-making", "All of these"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 80,
+    "category": "Family Dynamics",
+    "question": "How do Indian families celebrate birthdays traditionally?",
+    "type": "mcq",
+    "options": ["Puja and blessings", "Sweet distribution", "Family dinner", "All of these"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 81,
+    "category": "Wedding Traditions",
+    "question": "What's the 'sindoor' ceremony in Indian weddings?",
+    "type": "mcq",
+    "options": ["Applying vermillion on bride's forehead", "Tying mangalsutra", "Applying mehndi", "Exchange of rings"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 82,
+    "category": "Wedding Traditions",
+    "question": "What does 'mangalsutra' symbolize?",
+    "type": "mcq",
+    "options": ["Marital status", "Good luck", "Family heritage", "All of these"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 83,
+    "category": "Wedding Traditions",
+    "question": "What's the 'haldi' ceremony?",
+    "type": "mcq",
+    "options": ["Applying turmeric paste", "Mehndi application", "Sangeet performance", "Garland exchange"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 84,
+    "category": "Wedding Traditions",
+    "question": "What's exchanged during 'shagun'?",
+    "type": "mcq",
+    "options": ["Gifts and sweets", "Money only", "Clothes", "Jewelry"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 85,
+    "category": "Wedding Traditions",
+    "question": "What is 'sangeet' in Indian weddings?",
+    "type": "mcq",
+    "options": ["Musical night", "Dance performance", "Both", "None"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 86,
+    "category": "Wedding Traditions",
+    "question": "What's the significance of 'kanyadaan'?",
+    "type": "mcq",
+    "options": ["Giving away bride", "Accepting daughter-in-law", "Performing rituals", "All of these"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 87,
+    "category": "Wedding Traditions",
+    "question": "Which hand is the mangalsutra tied on?",
+    "type": "mcq",
+    "options": ["Left hand", "Right hand", "Either hand", "Around the neck"],
+    "text_fallback_allowed": false
+  },
+  {
+    "id": 88,
+    "category": "Wedding Traditions",
+    "question": "What's 'roka' ceremony?",
+    "type": "mcq",
+    "options": ["Pre-engagement ritual", "Post-wedding ritual", "Birth ceremony", "Naming ceremony"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 89,
+    "category": "Wedding Traditions",
+    "question": "In Indian weddings, what do brides typically wear on their feet?",
+    "type": "mcq",
+    "options": ["Red bangles", "Toe rings", "Anklets", "All of these"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 90,
+    "category": "Wedding Traditions",
+    "question": "What's 'jaimala'?",
+    "type": "mcq",
+    "options": ["Exchange of garlands", "Money gifts", "Blessing ceremony", "Food ceremony"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 91,
+    "category": "Festivals",
+    "question": "What's Diwali commonly associated with?",
+    "type": "mcq",
+    "options": ["Lights and diyas", "Lakshmi puja", "Fireworks", "All of these"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 92,
+    "category": "Festivals",
+    "question": "On which day is 'Bhai Dooj' celebrated?",
+    "type": "mcq",
+    "options": ["Last day of Diwali", "First day of Diwali", "Holi", "Separate festival"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 93,
+    "category": "Festivals",
+    "question": "What's 'karwa chauth'?",
+    "type": "mcq",
+    "options": ["Married women fasting for husbands", "Brother-sister festival", "Harvest festival", "New year celebration"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 94,
+    "category": "Festivals",
+    "question": "Which festival marks the end of Ramadan?",
+    "type": "mcq",
+    "options": ["Eid al-Fitr", "Eid al-Adha", "Diwali", "Bakrid"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 95,
+    "category": "Festivals",
+    "question": "What's the significance of 'pongal'?",
+    "type": "mcq",
+    "options": ["Harvest festival", "New year", "Monsoon festival", "Spring festival"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 96,
+    "category": "Festivals",
+    "question": "During Ganesh Chaturthi, what's 'modak'?",
+    "type": "mcq",
+    "options": ["Lord Ganesha's favorite sweet", "Festival flower", "Prayer item", "Decorative item"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 97,
+    "category": "Festivals",
+    "question": "What's 'onam' famous for?",
+    "type": "mcq",
+    "options": ["Pookkalam (flower rangoli)", "Snake boat race", "Sadya feast", "All of these"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 98,
+    "category": "Festivals",
+    "question": "What's 'baisakhi'?",
+    "type": "mcq",
+    "options": ["Punjabi harvest festival", "Tamil new year", "Bengali festival", "Rajasthani fair"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 99,
+    "category": "Festivals",
+    "question": "Which festival involves dancing with dandiya sticks?",
+    "type": "mcq",
+    "options": ["Navratri", "Holi", "Diwali", "Durga Puja"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 100,
+    "category": "Festivals",
+    "question": "What's 'janmashtami' celebrating?",
+    "type": "mcq",
+    "options": ["Birth of Krishna", "Victory of good over evil", "Harvest season", "New year"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 101,
+    "category": "Money & UPI",
+    "question": "What's 'NEFT' in Indian banking?",
+    "type": "mcq",
+    "options": ["National Electronic Funds Transfer", "New Electronic Fund Transfer", "Non-Emi Fund Transfer", "None of these"],
+    "text_fallback_allowed": false
+  },
+  {
+    "id": 102,
+    "category": "Money & UPI",
+    "question": "What does 'KYC' mean in banking?",
+    "type": "mcq",
+    "options": ["Know Your Customer", "Keep Your Cash", "Key Your Code", "Know Your Currency"],
+    "text_fallback_allowed": false
+  },
+  {
+    "id": 103,
+    "category": "Money & UPI",
+    "question": "What's a fixed deposit also called?",
+    "type": "mcq",
+    "options": ["Term deposit", "Savings account", "Current account", "Recurring deposit"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 104,
+    "category": "Money & UPI",
+    "question": "What's 'PPF'?",
+    "type": "mcq",
+    "options": ["Public Provident Fund", "Private Pension Fund", "Personal Protection Fund", "Partial Payment Facility"],
+    "text_fallback_allowed": false
+  },
+  {
+    "id": 105,
+    "category": "Money & UPI",
+    "question": "In India, who issues currency notes?",
+    "type": "mcq",
+    "options": ["Reserve Bank of India", "Government of India", "State Bank of India", "Finance Ministry"],
+    "text_fallback_allowed": false
+  },
+  {
+    "id": 106,
+    "category": "Money & UPI",
+    "question": "What's 'SIP' in mutual funds?",
+    "type": "mcq",
+    "options": ["Systematic Investment Plan", "Single Investment Policy", "Secure Investment Program", "Standard Investment Procedure"],
+    "text_fallback_allowed": false
+  },
+  {
+    "id": 107,
+    "category": "Money & UPI",
+    "question": "What's 'NPA' in banking?",
+    "type": "mcq",
+    "options": ["Non-Performing Asset", "New Personal Account", "National Payment Authority", "Net Profit Allocation"],
+    "text_fallback_allowed": false
+  },
+  {
+    "id": 108,
+    "category": "Money & UPI",
+    "question": "What's the repo rate set by?",
+    "type": "mcq",
+    "options": ["RBI", "Government", "SEBI", "NABARD"],
+    "text_fallback_allowed": false
+  },
+  {
+    "id": 109,
+    "category": "Money & UPI",
+    "question": "What do Indians call a small neighborhood store?",
+    "type": "mcq",
+    "options": ["Kirana", "Departmental store", "Hypermarket", "Mall"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 110,
+    "category": "Money & UPI",
+    "question": "What's 'chit fund'?",
+    "type": "mcq",
+    "options": ["Rotating savings scheme", "Ponzi scheme", "Bank deposit", "Insurance policy"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 111,
+    "category": "Daily Life / Jugaad",
+    "question": "What's jugaad in simple terms?",
+    "type": "mcq",
+    "options": ["Creative resourcefulness", "Illegal shortcut", "Technology hack", "Business trick"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 112,
+    "category": "Daily Life / Jugaad",
+    "question": "How do you make a jugaad cooler?",
+    "type": "mcq",
+    "options": ["Wet sacking around bottle", "Keeping in fridge", "Buying new one", "Using thermos"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 113,
+    "category": "Daily Life / Jugaad",
+    "question": "What's a jugaad fan regulator?",
+    "type": "mcq",
+    "options": ["Speed controller repair hack", "New regulator", "Switch on/off", "Changing capacitor"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 114,
+    "category": "Daily Life / Jugaad",
+    "question": "How do Indians charge phones during power cuts?",
+    "type": "mcq",
+    "options": ["Power banks", "Inverters", "Solar chargers", "All of these"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 115,
+    "category": "Daily Life / Jugaad",
+    "question": "What's jugad for a leaking tap?",
+    "type": "mcq",
+    "options": ["Tying with thread", "Plumber's tape", "Replacing washer", "Calling expert"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 116,
+    "category": "Daily Life / Jugaad",
+    "question": "How do people carry heavy items on scooters?",
+    "type": "mcq",
+    "options": ["Extra bungee cords", "Ropes", "Balancing skills", "All jugaad methods"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 117,
+    "category": "Daily Life / Jugaad",
+    "question": "What's matka cooling principle?",
+    "type": "mcq",
+    "options": ["Evaporative cooling", "Insulation", "Earthen material", "All of these"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 118,
+    "category": "Daily Life / Jugaad",
+    "question": "How do you fix a broken zipper?",
+    "type": "mcq",
+    "options": ["Rubber band trick", "Replacing zipper", "Using safety pin", "Tying with thread"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 119,
+    "category": "Daily Life / Jugaad",
+    "question": "What's jugaad for mosquito protection?",
+    "type": "mcq",
+    "options": ["Fans and sheets", "Coils and vaporizers", "Neem oil", "All of these"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 120,
+    "category": "Daily Life / Jugaad",
+    "question": "How do Indians preserve food without refrigerators?",
+    "type": "mcq",
+    "options": ["Pickling", "Sun drying", "Using aluminum foil", "All methods"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 121,
+    "category": "Transport",
+    "question": "What's 'prepaid auto'?",
+    "type": "mcq",
+    "options": ["Fixed fare auto-rickshaw", "Advance booking", "Shared auto", "Electric auto"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 122,
+    "category": "Transport",
+    "question": "In Mumbai local trains, what's a 'pass' used for?",
+    "type": "mcq",
+    "options": ["Monthly commuting", "Tourist travel", "Season ticket", "Student discount"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 123,
+    "category": "Transport",
+    "question": "What's 'first class' in Mumbai local?",
+    "type": "mcq",
+    "options": ["Air-conditioned compartment", "More expensive reserved seats", "Faster train", "Luxury coach"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 124,
+    "category": "Transport",
+    "question": "What's an 'auto stand'?",
+    "type": "mcq",
+    "options": ["Designated auto-rickshaw queue", "Auto repair shop", "Parking lot", "Auto factory"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 125,
+    "category": "Transport",
+    "question": "Which city has the oldest metro system in India?",
+    "type": "mcq",
+    "options": ["Kolkata", "Delhi", "Chennai", "Bangalore"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 126,
+    "category": "Transport",
+    "question": "What's a 'bus pass' in India?",
+    "type": "mcq",
+    "options": ["Monthly travel ticket", "Discount card", "Student pass only", "Senior citizen pass"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 127,
+    "category": "Transport",
+    "question": "What does 'conductor' do in Indian buses?",
+    "type": "mcq",
+    "options": ["Collects tickets", "Drives bus", "Cleans bus", "Sells tickets only"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 128,
+    "category": "Transport",
+    "question": "What's the fastest way to book train tickets in India?",
+    "type": "mcq",
+    "options": ["IRCTC website/app", "Station counter", "Travel agent", "TTE on train"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 129,
+    "category": "Transport",
+    "question": "What's 'platform ticket'?",
+    "type": "mcq",
+    "options": ["Entry ticket to station platform", "Train ticket", "Platform food coupon", "Parking ticket"],
+    "text_fallback_allowed": false
+  },
+  {
+    "id": 130,
+    "category": "Transport",
+    "question": "In Indian trains, what does 'SLR' mean?",
+    "type": "mcq",
+    "options": ["Second Class Luggage/parcel van", "Sleeper Lower", "Senior Lower", "Sliding door"],
+    "text_fallback_allowed": false
+  },
+  {
+    "id": 131,
+    "category": "Relationships / Dating",
+    "question": "What's the process of 'rishta'?",
+    "type": "mcq",
+    "options": ["Family arrangement", "Personal choice", "Online dating", "Friends introduction"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 132,
+    "category": "Relationships / Dating",
+    "question": "How do Indian couples typically spend weekends?",
+    "type": "mcq",
+    "options": ["Family outings", "Movie dates", "Eating out", "All of these"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 133,
+    "category": "Relationships / Dating",
+    "question": "What's 'shaadi.com' primarily for?",
+    "type": "mcq",
+    "options": ["Matrimonial site", "Wedding planner", "Gift registry", "Couple therapy"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 134,
+    "category": "Relationships / Dating",
+    "question": "What's 'meeting the family' sequence in relationships?",
+    "type": "mcq",
+    "options": ["Gradual introductions", "All at once", "Secretly first", "Only after engagement"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 135,
+    "category": "Relationships / Dating",
+    "question": "What's Indian parents' top priority in partner selection?",
+    "type": "mcq",
+    "options": ["Caste and family", "Education and job", "Height and looks", "All factors"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 136,
+    "category": "Relationships / Dating",
+    "question": "What's 'love marriage' often called by traditionalists?",
+    "type": "mcq",
+    "options": ["Self-arranged marriage", "Modern marriage", "Inter-caste marriage", "None of these"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 137,
+    "category": "Relationships / Dating",
+    "question": "What's 'engagement' called in Indian contexts?",
+    "type": "mcq",
+    "options": ["Roka/Sagai", "Pre-wedding", "Promise ceremony", "Ring ceremony"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 138,
+    "category": "Relationships / Dating",
+    "question": "How important are horoscope matches in Indian marriages?",
+    "type": "mcq",
+    "options": ["Very important", "Somewhat important", "Not important", "Depends on family"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 139,
+    "category": "Relationships / Dating",
+    "question": "What's 'sindoor' ceremony?",
+    "type": "mcq",
+    "options": ["Applying vermillion on bride's hair part", "Applying turmeric paste", "Tying mangalsutra", "Exchange of rings"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 140,
+    "category": "Relationships / Dating",
+    "question": "What's dowry system illegal but prevalent?",
+    "type": "mcq",
+    "options": ["Gift exchange", "Demanded by groom's family", "Voluntary contribution", "Bride's right"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 141,
+    "category": "Food Habits",
+    "question": "What does 'dhaba' mean?",
+    "type": "mcq",
+    "options": ["Roadside eatery", "Fine dining", "Cafe", "Food truck"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 142,
+    "category": "Food Habits",
+    "question": "What is 'thali'?",
+    "type": "mcq",
+    "options": ["Platter of dishes", "Type of bread", "Sweet dish", "Drink"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 143,
+    "category": "Food Habits",
+    "question": "What's 'papadum' made from?",
+    "type": "mcq",
+    "options": ["Lentil flour", "Rice flour", "Potato", "Bread"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 144,
+    "category": "Food Habits",
+    "question": "What's 'khichdi' made of?",
+    "type": "mcq",
+    "options": ["Rice and lentils", "Wheat and ghee", "Vegetables only", "Milk and sugar"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 145,
+    "category": "Food Habits",
+    "question": "Which state is 'appam' from?",
+    "type": "mcq",
+    "options": ["Kerala", "Tamil Nadu", "Karnataka", "Andhra Pradesh"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 146,
+    "category": "Food Habits",
+    "question": "What's 'pav bhaji' served with?",
+    "type": "mcq",
+    "options": ["Buttered pav", "Rice", "Roti", "Paratha"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 147,
+    "category": "Food Habits",
+    "question": "What's 'gulab jamun' made of?",
+    "type": "mcq",
+    "options": ["Khoya balls", "Flour balls", "Paneer balls", "Vegetable balls"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 148,
+    "category": "Food Habits",
+    "question": "Which dish is 'mutton biryani' associated with?",
+    "type": "mcq",
+    "options": ["Hyderabad", "Lucknow", "Kolkata", "All origins"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 149,
+    "category": "Food Habits",
+    "question": "What's 'chaat'?",
+    "type": "mcq",
+    "options": ["Savory snack", "Dessert", "Main course", "Drink"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 150,
+    "category": "Food Habits",
+    "question": "What's 'lassi'?",
+    "type": "mcq",
+    "options": ["Yogurt drink", "Milk shake", "Fruit juice", "Tea"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 151,
+    "category": "Shopping & Bargaining",
+    "question": "Where do you find the best Gujarati food?",
+    "type": "mcq",
+    "options": ["Ahmedabad", "Surat", "Mumbai", "All Gujarati cities"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 152,
+    "category": "Shopping & Bargaining",
+    "question": "What's 'borivali' known for?",
+    "type": "mcq",
+    "options": ["Beaches", "Markets", "Metro access", "National park"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 153,
+    "category": "Shopping & Bargaining",
+    "question": "What's the famous street market in Delhi?",
+    "type": "mcq",
+    "options": ["Sarojini Nagar", "Karol Bagh", "Lajpat Nagar", "All of these"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 154,
+    "category": "Shopping & Bargaining",
+    "question": "What's 'bundeli' fabric from?",
+    "type": "mcq",
+    "options": ["Madhya Pradesh", "Rajasthan", "Uttar Pradesh", "Maharashtra"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 155,
+    "category": "Shopping & Bargaining",
+    "question": "What's 'phulkari' embroidery from?",
+    "type": "mcq",
+    "options": ["Punjab", "Rajasthan", "Gujarat", "West Bengal"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 156,
+    "category": "Shopping & Bargaining",
+    "question": "Where is 'pashmina' from?",
+    "type": "mcq",
+    "options": ["Kashmir", "Rajasthan", "Punjab", "Himachal Pradesh"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 157,
+    "category": "Shopping & Bargaining",
+    "question": "What's 'bandhani'?",
+    "type": "mcq",
+    "options": ["Tie-dye fabric", "Embroidery", "Block print", "Weaving technique"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 158,
+    "category": "Shopping & Bargaining",
+    "question": "Which city is famous for 'zari work'?",
+    "type": "mcq",
+    "options": ["Varanasi", "Ahmedabad", "Jaipur", "Kolkata"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 159,
+    "category": "Shopping & Bargaining",
+    "question": "What's 'kanjeevaram'?",
+    "type": "mcq",
+    "options": ["Silk saree from Tamil Nadu", "Gold jewelry", "Wood craft", "Metal work"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 160,
+    "category": "Shopping & Bargaining",
+    "question": "What's 'moleskin' fabric?",
+    "type": "mcq",
+    "options": ["Cotton fabric", "Silk fabric", "Wool fabric", "Synthetic fabric"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 161,
+    "category": "Household",
+    "question": "What's 'chai tapri'?",
+    "type": "mcq",
+    "options": ["Street tea stall", "Kitchen", "Tea brand", "Tea party"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 162,
+    "category": "Household",
+    "question": "What's 'doodh' in Indian households?",
+    "type": "mcq",
+    "options": ["Milk", "Water", "Tea", "Coffee"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 163,
+    "category": "Household",
+    "question": "What's 'belt' used for in Indian kitchens?",
+    "type": "mcq",
+    "options": ["Sharpeners knife", "Hang utensils", "Tie clothes", "All purposes"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 164,
+    "category": "Household",
+    "question": "What's 'thali' in religious context?",
+    "type": "mcq",
+    "options": ["Plate of offerings", "Type of food", "Metal plate", "All of these"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 165,
+    "category": "Household",
+    "question": "What's 'lota'?",
+    "type": "mcq",
+    "options": ["Small water pot", "Metal utensil", "Plastic container", "All of these"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 166,
+    "category": "Household",
+    "question": "What's 'charpai'?",
+    "type": "mcq",
+    "options": ["Woven cot bed", "Wooden chair", "Plastic stool", "Hammock"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 167,
+    "category": "Household",
+    "question": "What's 'kulhar'?",
+    "type": "mcq",
+    "options": ["Clay cup", "Steel glass", "Plastic mug", "Paper cup"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 168,
+    "category": "Household",
+    "question": "What's 'diya'?",
+    "type": "mcq",
+    "options": ["Oil lamp", "Candle", "Electric light", "Torch"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 169,
+    "category": "Household",
+    "question": "What's 'puja thali' contains?",
+    "type": "mcq",
+    "options": ["Lamp, flowers, sweets", "Only fruits", "Only incense", "All religious items"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 170,
+    "category": "Household",
+    "question": "What's 'chulha'?",
+    "type": "mcq",
+    "options": ["Traditional stove", "Refrigerator", "Water purifier", "Electric heater"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 171,
+    "category": "Household",
+    "question": "What's 'dhoti'?",
+    "type": "mcq",
+    "options": ["Traditional men's garment", "Women's wear", "Lungi", "Shorts"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 172,
+    "category": "Household",
+    "question": "What's 'saree'?",
+    "type": "mcq",
+    "options": ["Traditional women's garment", "Bed sheet", "Towel", "Shawl"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 173,
+    "category": "Household",
+    "question": "What's 'kurta'?",
+    "type": "mcq",
+    "options": ["Traditional tunic", "Pajama", "Shirt", "Jacket"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 174,
+    "category": "Household",
+    "question": "What's 'sherwani'?",
+    "type": "mcq",
+    "options": ["Formal men's wear", "Women's suit", "Casual wear", "Sports wear"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 175,
+    "category": "Household",
+    "question": "What's 'payal'?",
+    "type": "mcq",
+    "options": ["Anklet", "Necklace", "Bracelet", "Ring"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 176,
+    "category": "Food & Drink",
+    "question": "What's 'pav bhaji' origins?",
+    "type": "mcq",
+    "options": ["Mumbai", "Gujarat", "Kerala", "Punjab"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 177,
+    "category": "Food & Drink",
+    "question": "When do Americans typically eat hot dogs?",
+    "type": "mcq",
+    "options": ["Baseball games", "Thanksgiving", "Fourth of July", "Christmas"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 178,
+    "category": "Food & Drink",
+    "question": "What's a traditional American breakfast?",
+    "type": "mcq",
+    "options": ["Pancakes and bacon", "Oatmeal and toast", "Fruit and yogurt", "Eggs Benedict"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 179,
+    "category": "Food & Drink",
+    "question": "What's 'chai tapri' culture about?",
+    "type": "mcq",
+    "options": ["Social gathering over tea", "Tea brand marketing", "Office tea breaks", "Street food vending"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 180,
+    "category": "Food & Drink",
+    "question": "What's 'dhaba' food style?",
+    "type": "mcq",
+    "options": ["Rustic, hearty fare", "Fine dining", "Quick bites", "Street food only"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 181,
+    "category": "Food & Drink",
+    "question": "What's most popular Post-Monsoon dish?",
+    "type": "mcq",
+    "options": ["Pakora", "Bhajiya", "Fruit chaat", "Kulfi"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 182,
+    "category": "Food & Drink",
+    "question": "What's 'chole bhature' origin?",
+    "type": "mcq",
+    "options": ["North India", "South India", "East India", "West India"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 183,
+    "category": "Food & Drink",
+    "question": "What's 'dosa' fermented with?",
+    "type": "mcq",
+    "options": ["Rice and urad dal batter", "Wheat flour", "Chickpea flour", "Maida"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 184,
+    "category": "Food & Drink",
+    "question": "What's 'puran poli'?",
+    "type": "mcq",
+    "options": ["Sweet stuffed flatbread", "Salty snack", "Dessert", "All of these"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 185,
+    "category": "Food & Drink",
+    "question": "What's 'jalebi' made from?",
+    "type": "mcq",
+    "options": ["Deep-fried maida batter", "Gram flour", "Rice flour", "Semolina"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 186,
+    "category": "Food & Drink",
+    "question": "What's 'gajar ka halwa' main ingredient?",
+    "type": "mcq",
+    "options": ["Carrot", "Potato", "Pumpkin", "Beetroot"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 187,
+    "category": "Food & Drink",
+    "question": "What's 'rajma chawal'?",
+    "type": "mcq",
+    "options": ["Kidney beans and rice", "Chicken and rice", "Lentils and roti", "Mixed vegetables"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 188,
+    "category": "Food & Drink",
+    "question": "What's 'thukpa' from?",
+    "type": "mcq",
+    "options": ["Tibetan/Nepali", "North India", "South India", "East India"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 189,
+    "category": "Food & Drink",
+    "question": "What's 'momos'?",
+    "type": "mcq",
+    "options": ["Tibetan dumplings", "Indian curry", "Chinese noodles", "Thai soup"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 190,
+    "category": "Food & Drink",
+    "question": "What's 'poha' made of?",
+    "type": "mcq",
+    "options": ["Flattened rice", "Puffed rice", "Boiled rice", "Fried rice"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 191,
+    "category": "Food & Drink",
+    "question": "What's 'upma' made of?",
+    "type": "mcq",
+    "options": ["Semolina", "Rice flour", "Wheat flour", "Corn flour"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 192,
+    "category": "Food & Drink",
+    "question": "What's 'dhokla' made from?",
+    "type": "mcq",
+    "options": ["Gram flour", "Rice flour", "Wheat flour", "Maida"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 193,
+    "category": "Food & Drink",
+    "question": "What's 'sambhar'?",
+    "type": "mcq",
+    "options": ["Lentil-based vegetable stew", "Rice dish", "Bread", "Dessert"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 194,
+    "category": "Food & Drink",
+    "question": "What's 'rasgulla'?",
+    "type": "mcq",
+    "options": ["Chenna balls in sugar syrup", "Rice pudding", "Yogurt drink", "Fried sweet"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 195,
+    "category": "Food & Drink",
+    "question": "What's 'peda'?",
+    "type": "mcq",
+    "options": ["Khoya-based sweet", "Fried snack", "Savory dish", "Drink"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 196,
+    "category": "Food & Drink",
+    "question": "What's 'sooji'?",
+    "type": "mcq",
+    "options": ["Semolina", "Rice flour", "Wheat flour", "Gram flour"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 197,
+    "category": "Food & Drink",
+    "question": "What's 'maida'?",
+    "type": "mcq",
+    "options": ["Refined wheat flour", "Whole wheat flour", "Rice flour", "Gram flour"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 198,
+    "category": "Food & Drink",
+    "question": "What's 'atta'?",
+    "type": "mcq",
+    "options": ["Whole wheat flour", "Refined flour", "Rice flour", "Bread"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 199,
+    "category": "Food & Drink",
+    "question": "What's 'ghee'?",
+    "type": "mcq",
+    "options": ["Clarified butter", "Cooking oil", "Vegetable butter", "Margarine"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 200,
+    "category": "Food & Drink",
+    "question": "What's 'ajeer'?",
+    "type": "mcq",
+    "options": ["Cumin seeds", "Coriander", "Turmeric", "Mustard seeds"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 201,
+    "category": "Travel",
+    "question": "What's 'passenger' category in trains?",
+    "type": "mcq",
+    "options": ["Unreserved seating", "Reserved sleeper", "AC coach", "General compartment"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 202,
+    "category": "Travel",
+    "question": "What's 'express' train?",
+    "type": "mcq",
+    "options": ["Fast train with few stops", "Local train", "Metro", "Bus service"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 203,
+    "category": "Travel",
+    "question": "What's 'mail' train service?",
+    "type": "mcq",
+    "options": ["Train carrying mail parcels", "Superfast train", "Passenger train", "Luxury train"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 204,
+    "category": "Travel",
+    "question": "What's 'superfast' train?",
+    "type": "mcq",
+    "options": ["Limited stops, higher speed", "Luxury train", "Premium service", "All of these"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 205,
+    "category": "Travel",
+    "question": "What's 'duronto'?",
+    "type": "mcq",
+    "options": ["Non-stop express train", "Luxury train", "Suburban train", "Heritage train"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 206,
+    "category": "Travel",
+    "question": "What's 'rajdhani'?",
+    "type": "mcq",
+    "options": ["Premium fully AC train", "Local train", "Hill railway", "Metro"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 207,
+    "category": "Travel",
+    "question": "What's 'shatabdi'?",
+    "type": "mcq",
+    "options": ["Day train returning same day", "Overnight train", "Luxury train", "Heritage train"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 208,
+    "category": "Travel",
+    "question": "What's 'garib rath'?",
+    "type": "mcq",
+    "options": ["No-frills AC train", "Luxury train", "Local train", "Express train"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 209,
+    "category": "Travel",
+    "question": "What's 'jan shatabdi'?",
+    "type": "mcq",
+    "options": ["Affordable day train", "Luxury train", "Overnight train", "Metro"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 210,
+    "category": "Travel",
+    "question": "What's 'double decker' train?",
+    "type": "mcq",
+    "options": ["Two-level passenger train", "Luxury train", "Goods train", "Express train"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 211,
+    "category": "Travel",
+    "question": "What's 'humsafar'?",
+    "type": "mcq",
+    "options": ["3-tier AC train with extra amenities", "Local train", "Metro", "Bus service"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 212,
+    "category": "Travel",
+    "question": "What's 'tejas'?",
+    "type": "mcq",
+    "options": ["Premium train with onboard WiFi", "Local train", "Bus service", "Airline"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 213,
+    "category": "Travel",
+    "question": "What's 'vande bharat'?",
+    "type": "mcq",
+    "options": ["Semi-high-speed train", "Flight service", "Bus service", "Metro"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 214,
+    "category": "Family Dynamics",
+    "question": "What's 'chachi' vs 'bua'?",
+    "type": "mcq",
+    "options": ["Father's sister vs father's brother's wife", "Mother's sister vs mother's brother's wife", "Elder vs younger aunt", "No difference"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 215,
+    "category": "Family Dynamics",
+    "question": "How do Indian families address elders respectfully?",
+    "type": "mcq",
+    "options": ["Using 'aunty/uncle'", "Using first names", "Using 'ji' suffix", "Using titles only"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 216,
+    "category": "Family Dynamics",
+    "question": "What's 'beta' and 'beti'?",
+    "type": "mcq",
+    "options": ["Son and daughter", "Brother and sister", "Uncle and aunt", "Grandparents"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 217,
+    "category": "Family Dynamics",
+    "question": "What's 'mausi' and 'mausa'?",
+    "type": "mcq",
+    "options": ["Mother's sister and her husband", "Father's sister and her husband", "Aunt and uncle", "Grandparents"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 218,
+    "category": "Family Dynamics",
+    "question": "What's 'nana' and 'nani'?",
+    "type": "mcq",
+    "options": ["Maternal grandparents", "Paternal grandparents", "Great grandparents", "Great uncles/aunts"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 219,
+    "category": "Family Dynamics",
+    "question": "What's 'dada' and 'dadi'?",
+    "type": "mcq",
+    "options": ["Paternal grandparents", "Maternal grandparents", "Great grandparents", "Uncle and aunt"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 220,
+    "category": "Family Dynamics",
+    "question": "What's 'taya' and 'tayi'?",
+    "type": "mcq",
+    "options": ["Father's elder brother and wife", "Father's younger brother and wife", "Uncle and aunt", "No relation"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 221,
+    "category": "Family Dynamics",
+    "question": "What's 'chacha' and 'chachi'?",
+    "type": "mcq",
+    "options": ["Father's younger brother and wife", "Father's elder brother and wife", "Uncle and aunt", "No relation"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 222,
+    "category": "Family Dynamics",
+    "question": "What's 'bua' and 'fufa'?",
+    "type": "mcq",
+    "options": ["Father's sister and her husband", "Mother's sister and her husband", "Aunt and uncle", "Siblings"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 223,
+    "category": "Family Dynamics",
+    "question": "What's 'mama' and 'mami'?",
+    "type": "mcq",
+    "options": ["Mother's brother and his wife", "Father's brother and his wife", "Uncle and aunt", "Siblings"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 224,
+    "category": "Family Dynamics",
+    "question": "What's 'didi' and 'bhaiya'?",
+    "type": "mcq",
+    "options": ["Elder sister and brother", "Younger sister and brother", "Cousins", "No relation"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 225,
+    "category": "Family Dynamics",
+    "question": "What's 'bua' and 'mausi' difference?",
+    "type": "mcq",
+    "options": ["Father's sister vs mother's sister", "Elder vs younger", "No difference", "Regional names"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 226,
+    "category": "Wedding Traditions",
+    "question": "What's mehndi ceremony?",
+    "type": "mcq",
+    "options": ["Applying henna on hands", "Sangeet night", "Sindoor ceremony", "Ring exchange"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 227,
+    "category": "Wedding Traditions",
+    "question": "What's 'sangeet'?",
+    "type": "mcq",
+    "options": ["Musical celebration", "Dance performance only", "Singer performance", "DJ party"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 228,
+    "category": "Wedding Traditions",
+    "question": "What's 'mandap'?",
+    "type": "mcq",
+    "options": ["Wedding canopy", "Bride's dress", "Groom's dress", "Wedding cake"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 229,
+    "category": "Wedding Traditions",
+    "question": "What's 'varmala'?",
+    "type": "mcq",
+    "options": ["Exchange of garlands", "Ring ceremony", "Sindoor ceremony", "Pheras"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 230,
+    "category": "Wedding Traditions",
+    "question": "What's 'baraat'?",
+    "type": "mcq",
+    "options": ["Groom's wedding procession", "Bride's farewell", "Reception party", "Sangeet night"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 231,
+    "category": "Wedding Traditions",
+    "question": "What's 'jaago'?",
+    "type": "mcq",
+    "options": ["Pre-wedding celebration", "Wedding ceremony", "Reception", "Sangeet"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 232,
+    "category": "Wedding Traditions",
+    "question": "What's 'muhurtham'?",
+    "type": "mcq",
+    "options": ["Auspicious wedding time", "Wedding venue", "Ceremony name", "Reception time"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 233,
+    "category": "Wedding Traditions",
+    "question": "What's 'kanyadaan'?",
+    "type": "mcq",
+    "options": ["Giving away bride", "Receiving groom", "Wedding ritual", "Engagement"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 234,
+    "category": "Wedding Traditions",
+    "question": "What's 'saat pheras'?",
+    "type": "mcq",
+    "options": ["Seven rounds around fire", "Seven vows", "Seven ceremonies", "Seven guests"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 235,
+    "category": "Wedding Traditions",
+    "question": "What's 'sagan' ceremony?",
+    "type": "mcq",
+    "options": ["Pre-wedding ritual with gifts", "Post-wedding feast", "Ring ceremony", "Sangeet"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 236,
+    "category": "Wedding Traditions",
+    "question": "What's 'bidai'?",
+    "type": "mcq",
+    "options": ["Bride's farewell", "Groom's arrival", "Reception", "Sangeet"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 237,
+    "category": "Wedding Traditions",
+    "question": "What's 'griha pravesh'?",
+    "type": "mcq",
+    "options": ["Entering new home", "Wedding ceremony", "Sangeet", "Reception"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 238,
+    "category": "Wedding Traditions",
+    "question": "What's 'muh dikhai'?",
+    "type": "mcq",
+    "options": ["Showing face to family", "Gift ceremony", "First meeting", "Sangeet"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 239,
+    "category": "Festivals",
+    "question": "What's 'akar trik' in Indian mythology?",
+    "type": "mcq",
+    "options": ["Three forms of Shiva", "Three goddesses", "Three worlds", "Three Vedas"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 240,
+    "category": "Festivals",
+    "question": "What's 'vijayadashami'?",
+    "type": "mcq",
+    "options": ["Dussehra celebration", "Diwali eve", "Durga Puja end", "All of these"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 241,
+    "category": "Festivals",
+    "question": "What's 'lohri'?",
+    "type": "mcq",
+    "options": ["Punjabi harvest festival", "Winter festival", "Bonfire festival", "All of these"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 242,
+    "category": "Festivals",
+    "question": "What's 'makar sankranti'?",
+    "type": "mcq",
+    "options": ["Harvest festival", "Kite festival", "Winter solstice", "All of these"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 243,
+    "category": "Festivals",
+    "question": "What's 'gudi padwa'?",
+    "type": "mcq",
+    "options": ["Marathi new year", "Harvest festival", "Spring festival", "All of these"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 244,
+    "category": "Festivals",
+    "question": "What's 'ugadi'?",
+    "type": "mcq",
+    "options": ["Kannada/Telugu new year", "Harvest festival", "Spring festival", "All of these"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 245,
+    "category": "Festivals",
+    "question": "What's 'vishu'?",
+    "type": "mcq",
+    "options": ["Kerala new year", "Harvest festival", "Spring festival", "All of these"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 246,
+    "category": "Festivals",
+    "question": "What's 'pongal' celebrated for?",
+    "type": "mcq",
+    "options": ["Thanksgiving to nature", "New year", "Harvest", "Sun worship"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 247,
+    "category": "Festivals",
+    "question": "What's 'bihu' from Assam?",
+    "type": "mcq",
+    "options": ["Harvest festival", "New year", "Spring festival", "All of these"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 248,
+    "category": "Festivals",
+    "question": "What's 'losar'?",
+    "type": "mcq",
+    "options": ["Tibetan new year", "Harvest festival", "Spring festival", "Winter festival"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 249,
+    "category": "Festivals",
+    "question": "What's 'horem' festival?",
+    "type": "mcq",
+    "options": ["Festival from Northeast", "Harvest festival", "Spring festival", "None of these"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 250,
+    "category": "Festivals",
+    "question": "What's 'moharram'?",
+    "type": "mcq",
+    "options": ["Islamic mourning", "Indian harvest festival", "New year", "Regional festival"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 251,
+    "category": "Festivals",
+    "question": "What's 'gurpurab'?",
+    "type": "mcq",
+    "options": ["Sikh festival", "Hindu festival", "Muslim festival", "Christian festival"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 252,
+    "category": "Festivals",
+    "question": "What's 'kumbh mela'?",
+    "type": "mcq",
+    "options": ["Religious gathering", "Trade fair", "Music festival", "Sports event"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 253,
+    "category": "Festivals",
+    "question": "What's 'pushkar fair'?",
+    "type": "mcq",
+    "options": ["Camel fair", "Religious gathering", "Trade fair", "All of these"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 254,
+    "category": "Festivals",
+    "question": "What's 'sonepur mela'?",
+    "type": "mcq",
+    "options": ["Cattle fair", "Religious fair", "Trade fair", "All of these"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 255,
+    "category": "Festivals",
+    "question": "What's 'ganga Dussehra'?",
+    "type": "mcq",
+    "options": ["River festival", "Harvest festival", "Spring festival", "All of these"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 256,
+    "category": "Money & UPI",
+    "question": "What's 'PPF' interest rate typically around?",
+    "type": "mcq",
+    "options": ["7-8%", "9-10%", "5-6%", "10-12%"],
+    "text_fallback_allowed": false
+  },
+  {
+    "id": 257,
+    "category": "Money & UPI",
+    "question": "What's 'FD' tenure options?",
+    "type": "mcq",
+    "options": ["15 days to 10 years", "1-5 years", "Only 1 year", "Any tenure"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 258,
+    "category": "Money & UPI",
+    "question": "What's 'recurring deposit'?",
+    "type": "mcq",
+    "options": ["Monthly deposit scheme", "Fixed deposit", "Savings account", "Loan scheme"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 259,
+    "category": "Money & UPI",
+    "question": "What's 'ELSS'?",
+    "type": "mcq",
+    "options": ["Tax-saving mutual fund", "Stock", "Bond", "Insurance"],
+    "text_fallback_allowed": false
+  },
+  {
+    "id": 260,
+    "category": "Money & UPI",
+    "question": "What's 'NPS'?",
+    "type": "mcq",
+    "options": ["National Pension System", "National Provident Fund", "New Pension Scheme", "National Payment System"],
+    "text_fallback_allowed": false
+  },
+  {
+    "id": 261,
+    "category": "Money & UPI",
+    "question": "What's 'PM-KISAN' scheme?",
+    "type": "mcq",
+    "options": ["Farmers income support", "Housing scheme", "Pension scheme", "Insurance scheme"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 262,
+    "category": "Money & UPI",
+    "question": "What's 'GDP' of India (roughly)?",
+    "type": "mcq",
+    "options": ["$3 trillion+", "$1 trillion", "$5 trillion", "$10 trillion"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 263,
+    "category": "Money & UPI",
+    "question": "What's 'Make in India' about?",
+    "type": "mcq",
+    "options": ["Promoting local manufacturing", "Importing goods", "Exporting services", "Digital India"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 264,
+    "category": "Money & UPI",
+    "question": "What's 'demonetization'?",
+    "type": "mcq",
+    "options": ["Scrapping old currency", "New currency launch", "Digital payment push", "All of these"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 265,
+    "category": "Money & UPI",
+    "question": "What's 'GST'?",
+    "type": "mcq",
+    "options": ["Goods and Services Tax", "General Sales Tax", "Government Service Tax", "None of these"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 266,
+    "category": "Money & UPI",
+    "question": "What's 'tax slab' system?",
+    "type": "mcq",
+    "options": ["Progressive tax rates", "Flat tax", "No tax", "Indirect tax"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 267,
+    "category": "Money & UPI",
+    "question": "What's '80C deduction'?",
+    "type": "mcq",
+    "options": ["Tax-saving investments", "Income tax", "GST", "No deduction"],
+    "text_fallback_allowed": false
+  },
+  {
+    "id": 268,
+    "category": "Money & UPI",
+    "question": "What's 'PAN card'?",
+    "type": "mcq",
+    "options": ["Permanent Account Number", "Tax identification", "Bank account", "Aadhaar card"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 269,
+    "category": "Money & UPI",
+    "question": "What's 'Aadhaar'?",
+    "type": "mcq",
+    "options": ["12-digit identity number", "Passport", "Driving license", "Voter card"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 270,
+    "category": "Money & UPI",
+    "question": "What's 'Aadhaar-linked'?",
+    "type": "mcq",
+    "options": ["Bank account linked to Aadhaar", "SIM card", "Insurance", "All of these"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 271,
+    "category": "Money & UPI",
+    "question": "What's 'mobile wallet'?",
+    "type": "mcq",
+    "options": ["Digital payment app", "Physical wallet", "Bank locker", "Credit card"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 272,
+    "category": "Money & UPI",
+    "question": "What's 'BHIM app'?",
+    "type": "mcq",
+    "options": ["UPI-based payment app", "Banking app", "Wallet app", "Shopping app"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 273,
+    "category": "Money & UPI",
+    "question": "What's 'Google Pay' in India?",
+    "type": "mcq",
+    "options": ["UPI payment app", "E-wallet", "Banking app", "Shopping platform"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 274,
+    "category": "Money & UPI",
+    "question": "What's 'PhonePe'?",
+    "type": "mcq",
+    "options": ["UPI payment app", "E-commerce site", "Banking app", "Social media"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 275,
+    "category": "Money & UPI",
+    "question": "What's 'Paytm'?",
+    "type": "mcq",
+    "options": ["Digital wallet and payments", "Only e-commerce", "Banking app", "Only bill payment"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 276,
+    "category": "Money & UPI",
+    "question": "What's 'CCTV'?",
+    "type": "mcq",
+    "options": ["Closed-circuit TV", "Home security", "Bank security", "None of these"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 277,
+    "category": "Daily Life / Jugaad",
+    "question": "What's 'jugaad' mindset?",
+    "type": "mcq",
+    "options": ["Making do with limited resources", "Breaking rules", "Cheating", "Taking shortcuts"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 278,
+    "category": "Daily Life / Jugaad",
+    "question": "What's jugaad for cleaning hard-to-reach places?",
+    "type": "mcq",
+    "options": ["Stick with cloth tied", "Special tool", "Professional cleaner", "Giving up"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 279,
+    "category": "Daily Life / Jugaad",
+    "question": "What's jugaad for opening tight jar lids?",
+    "type": "mcq",
+    "options": ["Rubber grip", "Hot water", "Tapping edges", "All of these"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 280,
+    "category": "Daily Life / Jugaad",
+    "question": "How do Indians deal with mosquito problems?",
+    "type": "mcq",
+    "options": ["Coils and sprays", "Fans and nets", "Neem smoke", "All methods"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 281,
+    "category": "Daily Life / Jugaad",
+    "question": "What's jugaad for a broken phone screen?",
+    "type": "mcq",
+    "options": ["Temporary screen guard", "Tape around edges", "Using anyway", "Buying new phone"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 282,
+    "category": "Daily Life / Jugaad",
+    "question": "What's jugaad for carrying wet umbrellas?",
+    "type": "mcq",
+    "options": ["Plastic covers", "Dedicated umbrella bag", "Leaving outside", "Wrapping in paper"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 283,
+    "category": "Daily Life / Jugaad",
+    "question": "How do people manage with limited parking?",
+    "type": "mcq",
+    "options": ["Double parking", "Parking on footpaths", "Jugaad parking", "Using public transport"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 284,
+    "category": "Daily Life / Jugaad",
+    "question": "What's jugaad internet speed solution?",
+    "type": "mcq",
+    "options": ["Restart router", "Use mobile data", "Change network", "All hacks"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 285,
+    "category": "Daily Life / Jugaad",
+    "question": "What's jugaad for charging multiple devices?",
+    "type": "mcq",
+    "options": ["Multi-socket connector", "USB splitter", "Rotating usage", "Buying power bank"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 286,
+    "category": "Transport",
+    "question": "What's 'rickshaw' in India?",
+    "type": "mcq",
+    "options": ["Cycle or auto rickshaw", "Car", "Bus", "Train"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 287,
+    "category": "Transport",
+    "question": "What's 'cycle rickshaw'?",
+    "type": "mcq",
+    "options": ["Pedal-powered cart", "Motorized rickshaw", "Electric rickshaw", "Bicycle"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 288,
+    "category": "Transport",
+    "question": "What's 'e-rickshaw'?",
+    "type": "mcq",
+    "options": ["Electric auto", "Cycle rickshaw", "Electric bus", "Electric car"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 289,
+    "category": "Transport",
+    "question": "What's 'shared taxi'?",
+    "type": "mcq",
+    "options": ["Taxi shared with multiple passengers", "Renting out your car", "Car pool", "All of these"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 290,
+    "category": "Transport",
+    "question": "What's 'app-based cab' service?",
+    "type": "mcq",
+    "options": ["Ola, Uber", "Metro", "Bus", "Auto"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 291,
+    "category": "Transport",
+    "question": "What's 'carpool'?",
+    "type": "mcq",
+    "options": ["Sharing rides", "Buying car together", "Renting cars", "All of these"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 292,
+    "category": "Transport",
+    "question": "What's 'metro card'?",
+    "type": "mcq",
+    "options": ["Prepaid travel card", "Credit card", "Debit card", "ID card"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 293,
+    "category": "Transport",
+    "question": "What's 'token' in metro systems?",
+    "type": "mcq",
+    "options": ["Single journey ticket", "Monthly pass", "Token coin", "All stations ticket"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 294,
+    "category": "Transport",
+    "question": "What's 'smart card' in public transport?",
+    "type": "mcq",
+    "options": ["Reusable travel card", "Credit card", "ID card", "Metro card"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 295,
+    "category": "Transport",
+    "question": "What's 'last mile connectivity'?",
+    "type": "mcq",
+    "options": ["Travel between transit and destination", "First mile", "Middle mile", "All of these"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 296,
+    "category": "Transport",
+    "question": "What's 'shelter' at bus stops?",
+    "type": "mcq",
+    "options": ["Bus stop canopy", "Waiting bench", "Ticket counter", "All facilities"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 297,
+    "category": "Transport",
+    "question": "What's 'bus queue'?",
+    "type": "mcq",
+    "options": ["Line for boarding", "Ticket counter", "Driver seat", "Conductor area"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 298,
+    "category": "Transport",
+    "question": "What's 'traffic signal' timing in India?",
+    "type": "mcq",
+    "options": ["Fixed timers", "Manual control", "Sensors", "Varies by city"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 299,
+    "category": "Transport",
+    "question": "What's 'zebra crossing'?",
+    "type": "mcq",
+    "options": ["Pedestrian crossing", "Bus stop", "Traffic island", "Parking zone"],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 300,
+    "category": "Transport",
+    "question": "What's 'speed breaker'?",
+    "type": "mcq",
+    "options": ["Road hump for safety", "Racing track", "Highway stretch", "Bridge"],
+    "text_fallback_allowed": true
+  }
+]
