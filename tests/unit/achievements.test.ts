@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { checkAndAwardAchievements, getEligibleAchievements } from '@/lib/achievements';
 
 class MockQuery {
-  where = vi.fn(function () { return this; });
+  where = vi.fn(function (this: MockQuery) { return this; });
 }
 
 vi.mock('firebase/firestore', () => ({
