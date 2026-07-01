@@ -14,11 +14,13 @@ export default defineConfig([
   {
     extends: [...next],
     rules: {
-      "react-hooks/exhaustive-deps": "off",
-      "react-hooks/purity": "off",
-      "react-hooks/immutability": "off",
-      "react-hooks/set-state-in-effect": "off",
-      "react/no-unescaped-entities": "off"
+      // Re-enable React hook rules to catch dependency issues and side-effect bugs.
+      // If specific files need exceptions, use inline eslint-disable comments.
+      "react-hooks/exhaustive-deps": "warn",
+      "react-hooks/purity": "warn",
+      "react-hooks/immutability": "warn",
+      "react-hooks/set-state-in-effect": "warn",
+      "react/no-unescaped-entities": "warn"
     }
   },
   firebaseRulesPlugin.configs['flat/recommended']

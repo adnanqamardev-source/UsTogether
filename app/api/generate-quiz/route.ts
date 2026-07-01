@@ -1,23 +1,36 @@
 import { GoogleGenAI } from '@google/genai';
 import { NextRequest, NextResponse } from "next/server";
+import { getUserId } from "@/lib/api-auth";
+import { validateQuizBody } from "@/lib/input-validation";
+import { checkRateLimit } from "@/lib/ratelimit";
 
 export const maxDuration = 60;
 
 export async function POST(req: NextRequest) {
   try {
+    const userId = await getUserId(req);
+    if (!userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    if (!checkRateLimit(`quiz:${userId}`, 12, 60_000)) {
+      return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+    }
+
+    const raw = await req.json().catch(() => null);
+    const quizParsed = validateQuizBody(raw);
+    if (!quizParsed.ok) {
+      return NextResponse.json({ error: quizParsed.error }, { status: 400 });
+    }
+
     if (!process.env.GEMINI_API_KEY) {
       throw new Error("Missing Gemini API Key. Please set GEMINI_API_KEY in your environment.");
     }
 
     const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
-    let body: any = {};
-    try {
-      body = await req.json();
-    } catch {}
-
-    const recentTopics: string[] = Array.isArray(body.recentTopics) ? body.recentTopics.slice(0, 20) : [];
-    const preferredCategory: string | undefined = body.preferredCategory;
+    const recentTopics: string[] = Array.isArray(quizParsed.recentTopics) ? quizParsed.recentTopics.slice(0, 20) : [];
+    const preferredCategory: string | undefined = quizParsed.preferredCategory;
 
     const categories = [
       "Food & Drink",
@@ -36,7 +49,7 @@ export async function POST(req: NextRequest) {
 
     const selectedCategory = preferredCategory || categories[Math.floor(Math.random() * categories.length)];
 
-    const recentTopicsText = recentTopics.length > 0
+    const recentTopicsText = Array.isArray(recentTopics) && recentTopics.length > 0
       ? `\n\nIMPORTANT: Do NOT generate topics related to these recently asked questions: ${recentTopics.join(", ")}. Create entirely new scenarios.`
       : "";
 
@@ -97,22 +110,22 @@ Make sure exactly one JSON object is returned, with no markdown code blocks arou
 
     const text = response.text || '';
 
-    let parsed;
+    let aiParsed;
     try {
       const cleaned = text.replace(/\`\`\`json\n?/, '').replace(/\`\`\`\n?/, '');
-      parsed = JSON.parse(cleaned);
+      aiParsed = JSON.parse(cleaned);
     } catch (e) {
       throw new Error("Failed to parse AI response as JSON.");
     }
 
-    if (!parsed.questions || !Array.isArray(parsed.questions) || parsed.questions.length === 0) {
+    if (!aiParsed.questions || !Array.isArray(aiParsed.questions) || aiParsed.questions.length === 0) {
       throw new Error("AI returned invalid quiz format.");
     }
 
-    const questionIds = parsed.questions.map((_: any, idx: number) => Date.now() + idx);
+    const questionIds = aiParsed.questions.map((_: any, idx: number) => Date.now() + idx);
 
     return NextResponse.json({
-      ...parsed,
+      ...aiParsed,
       questionIds,
     });
   } catch (err: any) {

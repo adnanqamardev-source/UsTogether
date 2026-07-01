@@ -23,8 +23,8 @@ export default function Dashboard() {
       if (user && !myCode && !dbUser?.pairedCoupleId) {
         const code = user.uid.substring(0, 8).toUpperCase();
         setMyCode(code);
-        createPairingCode(user.uid).catch(() => {
-          // best-effort: pairing code creation may fail if already exists
+        createPairingCode(user.uid).catch((err) => {
+          console.error('Failed to create pairing code:', err);
         });
       }
   }, [user, dbUser, myCode]);

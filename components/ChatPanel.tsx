@@ -3,6 +3,12 @@ import { motion } from 'framer-motion';
 import { X, ZoomIn, ZoomOut, Printer, Send } from 'lucide-react';
 import { Virtuoso } from 'react-virtuoso';
 
+function escapeHtml(text: string): string {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
 interface Message {
   id: string;
   text: string;
@@ -33,7 +39,7 @@ export default function ChatPanel({ messages, user, onClose, onSendMessage }: Ch
     setFitToPage(!fitToPage);
   };
 
-  return (
+    return (
     <motion.div
       initial={{ x: '100%' }}
       animate={{ x: 0 }}
@@ -73,7 +79,7 @@ export default function ChatPanel({ messages, user, onClose, onSendMessage }: Ch
                 <div
                   className={`max-w-[80%] rounded-2xl px-4 py-2 ${isMe ? 'bg-indigo-600 text-white rounded-tr-sm' : 'bg-white/10 text-white rounded-tl-sm'}`}
                 >
-                  <p className="text-sm break-words">{m.text}</p>
+                  <p className="text-sm break-words" dangerouslySetInnerHTML={{ __html: escapeHtml(m.text) }} />
                 </div>
               </div>
             );

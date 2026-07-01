@@ -3,8 +3,22 @@ import { NextRequest, NextResponse } from "next/server";
 import { unstable_cache } from "next/cache";
 import { streamText } from 'ai';
 import { createGoogleGenerativeAI } from '@ai-sdk/google';
+import { getUserId } from "@/lib/api-auth";
+import { validateHistoryBody } from "@/lib/input-validation";
+import { checkRateLimit } from "@/lib/ratelimit";
 
 export const maxDuration = 60;
+
+const requireUserId = async (req: NextRequest) => {
+  const userId = await getUserId(req);
+  if (!userId) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  if (!checkRateLimit(`challenge:${userId}`, 12, 60_000)) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+  return null;
+};
 
 // Cache the AI challenge generation to reduce API costs and latency.
 const getCachedChallenge = unstable_cache(
@@ -57,8 +71,16 @@ Return only the challenge text, max 3 short paragraphs.`;
 
 export async function POST(req: NextRequest) {
   try {
-    const { history } = await req.json();
-    const summarized = (history || []).slice(-5).map((s: any) => s.quizTitle || s.title || 'unknown').join(', ');
+    const unauthorized = await requireUserId(req);
+    if (unauthorized) return unauthorized;
+
+    const raw = await req.json().catch(() => null);
+    const parsed = validateHistoryBody(raw);
+    if (!parsed.ok) {
+      return NextResponse.json({ error: parsed.error }, { status: 400 });
+    }
+
+    const summarized = parsed.history.slice(-5).map((s: any) => s.quizTitle || s.title || 'unknown').join(', ');
     const challenge = await getCachedChallenge(summarized);
     return NextResponse.json({ challenge });
   } catch (err: any) {
@@ -69,6 +91,13 @@ export async function POST(req: NextRequest) {
 
 export async function GET(req: NextRequest) {
   try {
+    const unauthorized = await requireUserId(req);
+    if (unauthorized) return unauthorized;
+
+    if (!process.env.GEMINI_API_KEY) {
+      throw new Error("Missing Gemini API Key. Please set GEMINI_API_KEY in your environment.");
+    }
+
     const { searchParams } = new URL(req.url);
     const history = searchParams.get('history') || '[]';
     const historyString = JSON.stringify(JSON.parse(history));
