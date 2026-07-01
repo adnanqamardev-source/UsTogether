@@ -5,7 +5,8 @@
     "title": "Date Night Vibe",
     "question": "What is your ultimate idea of a perfect dinner date?",
     "type": "mcq",
-    "options": ["Street food hopping", "Fancy fine dining", "Cozy home-cooked meal", "Ordering in and watching a movie"]
+    "options": ["Street food hopping", "Fancy fine dining", "Cozy home-cooked meal", "Ordering in and watching a movie"],
+    "text_fallback_allowed": true
   },
   {
     "id": 2,
@@ -13,7 +14,8 @@
     "title": "Morning Rituals",
     "question": "How do you need to start your morning?",
     "type": "mcq",
-    "options": ["A strong cup of chai/coffee", "Hitting snooze 5 times", "A quick workout", "A peaceful, silent breakfast"]
+    "options": ["A strong cup of chai/coffee", "Hitting snooze 5 times", "A quick workout", "A peaceful, silent breakfast"],
+    "text_fallback_allowed": true
   },
   {
     "id": 3,
@@ -21,7 +23,8 @@
     "title": "The Hangry Fix",
     "question": "When you're cranky and hungry, what instantly fixes your mood?",
     "type": "mcq",
-    "options": ["Comfort junk food (pizza/burgers)", "Something sweet", "A big, heavy meal like biryani", "Just give me space to eat"]
+    "options": ["Comfort junk food (pizza/burgers)", "Something sweet", "A big, heavy meal like biryani", "Just give me space to eat"],
+    "text_fallback_allowed": true
   },
   {
     "id": 4,
@@ -29,7 +32,8 @@
     "title": "Vacation Style",
     "question": "If we were taking a week-long trip, what's your preferred travel style?",
     "type": "mcq",
-    "options": ["Relaxing at a luxury resort", "Action-packed sightseeing", "A scenic sleeper train/road trip", "Backpacking and spontaneous plans"]
+    "options": ["Relaxing at a luxury resort", "Action-packed sightseeing", "A scenic sleeper train/road trip", "Backpacking and spontaneous plans"],
+    "text_fallback_allowed": true
   },
   {
     "id": 5,
@@ -37,7 +41,8 @@
     "title": "Packing Habits",
     "question": "How do you usually pack for a trip?",
     "type": "mcq",
-    "options": ["Weeks in advance with a checklist", "The night before", "Throwing things in a bag hours before", "Overpacking 'just in case'"]
+    "options": ["Weeks in advance with a checklist", "The night before", "Throwing things in a bag hours before", "Overpacking 'just in case'"],
+    "text_fallback_allowed": true
   },
   {
     "id": 6,
@@ -45,7 +50,8 @@
     "title": "Splurge vs. Save",
     "question": "If you suddenly got a bonus, what would you do with the money?",
     "type": "mcq",
-    "options": ["Save or invest it immediately", "Buy that gadget/item I've been eyeing", "Book a trip for us", "Treat us to a massive dinner"]
+    "options": ["Save or invest it immediately", "Buy that gadget/item I've been eyeing", "Book a trip for us", "Treat us to a massive dinner"],
+    "text_fallback_allowed": true
   },
   {
     "id": 7,
@@ -53,7 +59,8 @@
     "title": "Bill Splitting",
     "question": "What's your philosophy on paying for dates/expenses as a couple?",
     "type": "mcq",
-    "options": ["Split everything 50/50 via UPI", "Take turns paying", "Pool our money together", "One person mostly handles it"]
+    "options": ["Split everything 50/50 via UPI", "Take turns paying", "Pool our money together", "One person mostly handles it"],
+    "text_fallback_allowed": true
   },
   {
     "id": 8,
@@ -61,7 +68,8 @@
     "title": "Love Languages",
     "question": "How do you most prefer to receive love?",
     "type": "mcq",
-    "options": ["Words of affirmation", "Quality time together", "Physical touch", "Small gifts or acts of service"]
+    "options": ["Words of affirmation", "Quality time together", "Physical touch", "Small gifts or acts of service"],
+    "text_fallback_allowed": true
   },
   {
     "id": 9,
@@ -69,7 +77,8 @@
     "title": "Apology Style",
     "question": "After a silly argument, how do you usually make peace?",
     "type": "mcq",
-    "options": ["Saying a direct 'I'm sorry'", "Sending a funny meme to break the ice", "Buying food/snacks as an offering", "Acting like it never happened"]
+    "options": ["Saying a direct 'I'm sorry'", "Sending a funny meme to break the ice", "Buying food/snacks as an offering", "Acting like it never happened"],
+    "text_fallback_allowed": true
   },
   {
     "id": 10,
@@ -77,7 +86,8 @@
     "title": "Family Time",
     "question": "How do you prefer to spend weekends regarding family and friends?",
     "type": "mcq",
-    "options": ["Just the two of us", "Hanging out with a big group of friends", "Visiting parents/relatives", "A mix of everything"]
+    "options": ["Just the two of us", "Hanging out with a big group of friends", "Visiting parents/relatives", "A mix of everything"],
+    "text_fallback_allowed": true
   },
   {
     "id": 11,
@@ -85,7 +95,8 @@
     "title": "Future Milestones",
     "question": "When you think about the future, what excites you the most?",
     "type": "mcq",
-    "options": ["Building a successful career", "Owning a dream home together", "Traveling the world", "Starting a family"]
+    "options": ["Building a successful career", "Owning a dream home together", "Traveling the world", "Starting a family"],
+    "text_fallback_allowed": true
   },
   {
     "id": 12,
@@ -93,7 +104,8 @@
     "title": "Household Chores",
     "question": "If we live together, which chore do you absolutely hate doing?",
     "type": "mcq",
-    "options": ["Washing the dishes", "Folding laundry", "Cooking daily meals", "Cleaning the bathroom"]
+    "options": ["Washing the dishes", "Folding laundry", "Cooking daily meals", "Cleaning the bathroom"],
+    "text_fallback_allowed": true
   },
   {
     "id": 13,
@@ -101,7 +113,8 @@
     "title": "Weekend Vibe",
     "question": "It's a Sunday afternoon. Where are you most likely to be?",
     "type": "mcq",
-    "options": ["Binge-watching a series in bed", "Out exploring the city/malls", "Catching up on chores and life admin", "Napping for 3 hours"]
+    "options": ["Binge-watching a series in bed", "Out exploring the city/malls", "Catching up on chores and life admin", "Napping for 3 hours"],
+    "text_fallback_allowed": true
   },
   {
     "id": 14,
@@ -109,7 +122,8 @@
     "title": "Social Batteries",
     "question": "At a crowded party, what is your usual strategy?",
     "type": "mcq",
-    "options": ["Life of the party, talking to everyone", "Sticking right by your side", "Finding the pet or the food table", "Planning our exit strategy"]
+    "options": ["Life of the party, talking to everyone", "Sticking right by your side", "Finding the pet or the food table", "Planning our exit strategy"],
+    "text_fallback_allowed": true
   },
   {
     "id": 15,
@@ -117,6 +131,7 @@
     "title": "The Big Wedding Question",
     "question": "If we were planning a wedding, what style suits you best?",
     "type": "mcq",
-    "options": ["A massive traditional celebration with everyone", "An intimate gathering with close friends/family", "A beautiful destination wedding", "A simple court marriage and a big party later"]
+    "options": ["A massive traditional celebration with everyone", "An intimate gathering with close friends/family", "A beautiful destination wedding", "A simple court marriage and a big party later"],
+    "text_fallback_allowed": true
   }
 ]

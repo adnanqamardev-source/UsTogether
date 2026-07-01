@@ -6,7 +6,7 @@ import { Sparkles, Trash2, Flame } from 'lucide-react';
 import { handleFirestoreError, OperationType } from '@/lib/firestore-errors';
 import QuizCardSkeleton from './QuizCardSkeleton';
 import QuizCard from './QuizCard';
-import { getRandomQuestions, toFirestoreQuizBatch } from '@/lib/quiz-data';
+import { getRandomQuestions, toFirestoreQuizBatch, generateFallbackQuizMetadata } from '@/lib/quiz-data';
 
 function SectionHeader({ title, badge, icon: Icon, accent = "text-indigo-300" }: { title: string; badge?: number; icon?: any; accent?: string }) {
   return (
@@ -90,30 +90,32 @@ export default function QuizList({ coupleId }: { coupleId: string }) {
          if (data.questionIds && Array.isArray(data.questionIds)) {
            setRecentQuestionIds(prev => [...prev, ...data.questionIds]);
          }
-       } else {
-         const staticQs = getRandomQuestions(10, recentQuestionIds.slice(-50));
-         if (staticQs.length > 0) {
-           const quizData = toFirestoreQuizBatch(staticQs, 'Couples Quiz', 'Fun questions for you both', user.uid);
-           await addDoc(collection(db, 'quizzes'), {
-             ...quizData,
-             createdAt: Date.now()
-           });
-           setRecentQuestionIds(prev => [...prev, ...staticQs.map(q => q.id)]);
-         }
-       }
+        } else {
+          const staticQs = getRandomQuestions(10, recentQuestionIds.slice(-50));
+          if (staticQs.length > 0 && user) {
+            const meta = generateFallbackQuizMetadata(staticQs);
+            const quizData = toFirestoreQuizBatch(staticQs, meta.title, meta.description, user.uid);
+            await addDoc(collection(db, 'quizzes'), {
+              ...quizData,
+              createdAt: Date.now()
+            });
+            setRecentQuestionIds(prev => [...prev, ...staticQs.map(q => q.id)]);
+          }
+        }
      } catch (e) {
        console.error("Failed to fetch new quiz", e);
-       try {
-         const staticQs = getRandomQuestions(10, recentQuestionIds.slice(-50));
-         if (staticQs.length > 0 && user) {
-           const quizData = toFirestoreQuizBatch(staticQs, 'Couples Quiz', 'Fun questions for you both', user.uid);
-           await addDoc(collection(db, 'quizzes'), {
-             ...quizData,
-             createdAt: Date.now()
-           });
-           setRecentQuestionIds(prev => [...prev, ...staticQs.map(q => q.id)]);
-         }
-       } catch (fallbackErr) {
+        try {
+          const staticQs = getRandomQuestions(10, recentQuestionIds.slice(-50));
+          if (staticQs.length > 0 && user) {
+            const meta = generateFallbackQuizMetadata(staticQs);
+            const quizData = toFirestoreQuizBatch(staticQs, meta.title, meta.description, user.uid);
+            await addDoc(collection(db, 'quizzes'), {
+              ...quizData,
+              createdAt: Date.now()
+            });
+            setRecentQuestionIds(prev => [...prev, ...staticQs.map(q => q.id)]);
+          }
+        } catch (fallbackErr) {
          console.error("Fallback also failed", fallbackErr);
        }
      } finally {
