@@ -10,6 +10,7 @@ export interface UserProfile {
   points: number;
   pairedCoupleId?: string;
   streak?: number;
+  lastActiveDate?: string; // ISO date "YYYY-MM-DD"
   createdAt: number;
   updatedAt: number;
 }
@@ -70,6 +71,14 @@ export interface Achievement {
   title: string;
   description: string;
   unlockedAt?: number;
+}
+
+export interface AchievementDefinition {
+  id: string;
+  title: string;
+  description: string;
+  icon: string;          // emoji string
+  category: 'participation' | 'streak' | 'milestone' | 'social';
 }
 
 export interface PairingCode {

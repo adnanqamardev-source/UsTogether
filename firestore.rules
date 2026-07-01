@@ -46,7 +46,7 @@ service cloud.firestore {
                     
       // Allow updates that only modify allowed fields. Skip full user validation to permit partial updates.
       allow update: if isAuthenticated() &&
-            incoming().diff(existing()).affectedKeys().hasOnly(['displayName', 'pairedCoupleId', 'points', 'streak', 'updatedAt']);
+            incoming().diff(existing()).affectedKeys().hasOnly(['displayName', 'pairedCoupleId', 'points', 'streak', 'lastActiveDate', 'updatedAt']);
     }
 
     // ------------------------------------------------------------

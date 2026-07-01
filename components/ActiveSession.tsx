@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Heart, CheckCircle2 } from 'lucide-react';
 import { handleFirestoreError, OperationType } from '@/lib/firestore-errors';
 import { useFirestoreDocument, batchWrite } from '@/lib/firebase';
+import { checkAndAwardAchievements } from '@/lib/achievements';
 import type { Session, Quiz } from '../global.d';
 import { doc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
@@ -59,6 +60,10 @@ export default function ActiveSession({ coupleId, sessionId }: { coupleId: strin
         await batchWrite([
           { type: 'update', ref: sessionRef, data: { status: 'finished', updatedAt: Date.now() } },
         ]);
+        if (user && partnerId) {
+          await checkAndAwardAchievements(user.uid, { sessionsFinished: 1 });
+          await checkAndAwardAchievements(partnerId, { sessionsFinished: 1 });
+        }
       } else {
         await batchWrite([
           { type: 'update', ref: sessionRef, data: { 'state.currentQuestion': currentQIndex + 1, updatedAt: Date.now() } },
@@ -75,6 +80,10 @@ export default function ActiveSession({ coupleId, sessionId }: { coupleId: strin
       await batchWrite([
         { type: 'update', ref: sessionRef, data: { status: 'finished', updatedAt: Date.now() } },
       ]);
+      if (user && partnerId) {
+        await checkAndAwardAchievements(user.uid, { sessionsFinished: 1 });
+        await checkAndAwardAchievements(partnerId, { sessionsFinished: 1 });
+      }
     } catch (e) {
       handleFirestoreError(e, OperationType.UPDATE, `couples/${coupleId}/sessions/${sessionId}`);
     }

@@ -4,7 +4,7 @@ import { useState, useEffect, Suspense } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useAuth } from './AuthProvider';
 import { MessageCircle, LogOut, UserMinus, Loader, Menu, X } from 'lucide-react';
-import { doc } from 'firebase/firestore';
+import { doc, where } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import {
   useFirestoreDocument,
@@ -12,7 +12,9 @@ import {
   batchWrite,
   deletePairingCode,
 } from '@/lib/firebase';
-import type { Couple, UserProfile, Achievement } from '../global.d';
+import { updateStreak } from '@/lib/streak';
+import { checkAndAwardAchievements } from '@/lib/achievements';
+import type { Couple, UserProfile, Achievement, Session } from '../global.d';
 import dynamic from 'next/dynamic';
 import QuizList from './QuizList';
 import StreakCounter from './StreakCounter';
@@ -83,6 +85,8 @@ export default function CoupleDashboard({ coupleId }: { coupleId: string }) {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [activeHash, setActiveHash] = useState('');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [sessionsFinished, setSessionsFinished] = useState(0);
+  const [quizzesCompleted, setQuizzesCompleted] = useState(0);
 
   const { data: couple, loading: coupleLoading } = useFirestoreDocument<Couple>(['couples', coupleId]);
   const { data: userProfile, loading: userLoading } = useFirestoreDocument<UserProfile>(['users', user?.uid || '']);
@@ -92,12 +96,15 @@ export default function CoupleDashboard({ coupleId }: { coupleId: string }) {
     (id, data) => ({ id, ...(data as Omit<Achievement, 'id'>) } as Achievement)
   );
 
-  const partnerId =
-    couple && user
-      ? couple.user1Id === user.uid
-        ? couple.user2Id
-        : couple.user1Id
-      : '';
+  const finishedConstraints = user && coupleId
+    ? [where('coupleId', '==', coupleId), where('status', '==', 'finished')]
+    : undefined as any;
+
+  const { data: finishedSessions } = useFirestoreCollection<Session>(
+    user && coupleId ? ['sessions'] : [],
+    finishedConstraints,
+    (id, data) => ({ id, ...(data as Omit<Session, 'id'>) } as Session)
+  );
 
   useEffect(() => {
     setActiveHash(window.location.hash);
@@ -105,6 +112,21 @@ export default function CoupleDashboard({ coupleId }: { coupleId: string }) {
     window.addEventListener('hashchange', handleHash);
     return () => window.removeEventListener('hashchange', handleHash);
   }, []);
+
+  useEffect(() => {
+    if (finishedSessions) {
+      setSessionsFinished(finishedSessions.length);
+      const qCount = finishedSessions.reduce((acc, s) => acc + (s.quizTitle ? 1 : 0), 0);
+      setQuizzesCompleted(qCount);
+    }
+  }, [finishedSessions]);
+
+  const partnerId =
+    couple && user
+      ? couple.user1Id === user.uid
+        ? couple.user2Id
+        : couple.user1Id
+      : '';
 
   const sessionMatch = activeHash.match(/^#session\/(.+)$/);
   const sessionId = sessionMatch ? sessionMatch[1] : null;
@@ -130,6 +152,23 @@ export default function CoupleDashboard({ coupleId }: { coupleId: string }) {
       console.error('Unpair failed', e);
     }
   };
+
+  useEffect(() => {
+    if (!user || !userProfile) return;
+    (async () => {
+      try {
+        const result = await updateStreak(user.uid);
+        await checkAndAwardAchievements(user.uid, {
+          currentStreak: result.streak,
+          quizzesCompleted,
+          sessionsFinished,
+          paired: !!userProfile.pairedCoupleId,
+        });
+      } catch (e) {
+        console.error('Streak or achievement check failed', e);
+      }
+    })();
+  }, [user?.uid, userProfile?.pairedCoupleId]);
 
   const isLoading = coupleLoading || userLoading;
 
@@ -217,7 +256,7 @@ export default function CoupleDashboard({ coupleId }: { coupleId: string }) {
               <p className="text-slate-400 text-sm md:text-base">Pick a quiz or game to challenge your partner.</p>
             </header>
 
-            {/* Widgts Row with improved grid spacing */}
+            {/* Widgets Row with improved grid spacing */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 mb-12">
               <StreakCounter streak={userProfile?.streak || 0} />
               <AchievementsPanel achievements={achievements} />

@@ -1,110 +1,50 @@
-1. Current Work
-Creating a hybrid static + AI quiz system for the UsTogether app. Deliver static JSON files with 300 Indian-context relationship questions (45-question sample first), add a type adapter, update QuizList.tsx to use a static fallback, and enhance the AI generation endpoint with context-awareness (recent history exclusion, dynamic cultural variables, category rotation, temperature tuning).
+# Implementation Plan
 
-2. Key Technical Concepts
-Static JSON data import in Next.js
+[Overview]
+Add comprehensive Vitest unit tests for `lib/streak.ts` and `lib/achievements.ts`, plus Playwright E2E tests for `CoupleDashboard.tsx` and `ActiveSession.tsx` streak/achievement integration.
 
-Firestore document schema (Quiz, QuizQuestion)
+The project previously had only Playwright E2E tests with no unit test runner. This implementation adds Vitest with jsdom, creates unit tests covering date math edge cases (leap years, month transitions, year boundaries), achievement threshold logic, and deduplication, plus E2E tests for session completion flows. A minor source fix was applied to `lib/streak.ts` to avoid unnecessary Firestore writes on same-day activity.
 
-TypeScript interfaces (StaticQuizQuestion, QuizQuestion)
+[Types]
+No new types needed. Existing types in `global.d.ts` (`UserProfile`, `Achievement`, `AchievementDefinition`, `AchievementContext`, `Session`, `Quiz`) are used directly.
 
-React functional components with useState
+[Files]
 
-MCQ multiple-choice rendering
+New files:
+1. `vitest.config.ts` — Vitest config: jsdom environment, globals enabled, `@` path alias matching tsconfig, excludes `tests/e2e/`
+2. `tests/unit/streak.test.ts` — 8 unit tests for `updateStreak()` covering: first-time user, same-day no-op, consecutive increment, missed-day reset, month transition (Feb 29 → Mar 1), leap year (Feb 28 → Feb 29), year boundary (Dec 31 → Jan 1), missing profile error
+3. `tests/unit/achievements.test.ts` — 10 unit tests for `getEligibleAchievements()` and `checkAndAwardAchievements()` covering: multi-award, deduplication, missing doc, threshold boundaries, all achievement types
+4. `tests/e2e/dashboard-and-sessions.spec.ts` — 3 Playwright E2E tests: dashboard mount triggers streak/achievement updates, finish session awards both users, end-early awards both users
 
-Tailwind CSS styling
+Modified files:
+1. `lib/streak.ts` — Added early return on same-day activity to avoid unnecessary `setDoc` write
+2. `package.json` — Added `test:unit` and `test:unit:watch` scripts
 
-Firebase client SDK (getFirestore, collection, addDoc, onSnapshot)
+[Functions]
 
-Framer Motion (motion, AnimatePresence)
+New (test functions):
+- `tests/unit/streak.test.ts`: `describe('updateStreak()')` with 8 `it()` tests
+- `tests/unit/achievements.test.ts`: `describe('getEligibleAchievements()')` with 3 tests, `describe('checkAndAwardAchievements()')` with 7 tests
+- `tests/e2e/dashboard-and-sessions.spec.ts`: 3 Playwright `test()` cases
 
-Lucide React icons
+Modified:
+- `lib/streak.ts`: `updateStreak()` now returns early when `lastActiveDate === today`
 
-API route enhancement with request body parsing
+[Classes]
+No new classes. No class modifications.
 
-3. Relevant Files and Code
-global.d.ts
+[Dependencies]
+Installed dev dependencies: `vitest`, `@vitejs/plugin-react`, `@testing-library/react`, `@testing-library/jest-dom`, `jsdom`
 
-Current: Contains existing QuizQuestion interface: { q: string; type: 'text' | 'multiple'; options?: string[] }
+[Testing]
+Unit tests run via `npx vitest run tests/unit` — all 18 tests pass. E2E tests in `tests/e2e/dashboard-and-sessions.spec.ts` intercept Playwright route calls and verify UI integration without requiring real Firebase credentials.
 
-Needs: StaticQuizQuestion interface added: { id: number; category: string; question: string; type: 'mcq'; options: string[]; text_fallback_allowed: boolean }
-
-components/QuizList.tsx
-
-Current: Fetches quizzes from Firestore collection 'quizzes' where isPublic == true. Has fetchNewQuiz() that POSTs to /api/generate-quiz and saves result to Firestore.
-
-Needs: Modification to track and pass recentQTopics array to the API and fall back to static data when needed.
-
-components/ActiveSession.tsx
-
-Current: Renders quiz using question.q and question.options.
-
-Needs: Ensure the adapter translates the static schema perfectly so this component requires zero changes.
-
-app/api/generate-quiz/route.ts
-
-Current: POST endpoint calling Google GenAI.
-
-Needs: Accept body: { recentTopics?: string[], preferredCategory?: string }. Set temperature to 0.8, inject dynamic Indian cultural variables, rotate categories, and explicitly instruct "Do not generate topics related to..."
-
-lib/firestore-helpers.ts
-
-Current: Has getUserProfile, getCouple, getQuiz, batchWrite, etc.
-
-components/QuizCard.tsx
-
-Current: Displays quiz title/description, start button.
-
-4. Problem Solving (The Strategy)
-We want static questions as the base content (300 total, Indian cultural contexts like chai/coffee, local transit, family dynamics, wedding traditions) with AI as an add-on when static content runs out.
-
-The AI endpoint must avoid generic outputs by:
-
-Passing the recent 15-20 answered question topics to exclude them.
-
-Injecting dynamic cultural scenarios (e.g., "Jaipur to Delhi sleeper train journey", "chaotic joint family wedding").
-
-Rotating categories randomly if the user repeatedly clicks "Fetch New".
-
-Setting temperature 0.8 for creativity while strictly enforcing JSON output mode.
-
-🚨 5. Architectural Do's and Don'ts
-DO's:
-
-DO use the Adapter Pattern: Write a robust toFirestoreQuiz() adapter in lib/quiz-data.ts that safely maps StaticQuizQuestion fields to the existing QuizQuestion format. This protects ActiveSession.tsx from needing UI changes.
-
-DO enforce strict JSON mode for AI: Because you are raising the LLM temperature to 0.8 for creativity, you must use Google GenAI's responseMimeType: "application/json" (or structured outputs) to prevent the schema from breaking.
-
-DO prioritize batch operations: If creating a seed script to push the 300 static questions to Firestore, use Firebase writeBatch() to avoid hitting rate limits or causing excessive separate writes.
-
-DO track question history: Keep a lightweight state array of recently answered question.ids or categories in the frontend (or fetched from Firestore) so you can pass them to the AI endpoint as recentTopics.
-
-DO keep cultural context natural: Use relatable Indian contexts (e.g., jugaad, UPI payments, local transit, joint families) but avoid cartoonish stereotypes.
-
-DON'Ts:
-
-DON'T alter QuizQuestion in global.d.ts: Leave the existing interface exactly as it is. Only add the new StaticQuizQuestion interface. Modifying the old one could break legacy quizzes already stored in your database.
-
-DON'T fetch all 300 JSON objects into memory at once on the client: If serving directly from Next.js, paginate the static JSON array or lazy-load it to keep the initial JS bundle small.
-
-DON'T allow AI open-ended questions: Ensure your API route's system prompt explicitly bans type: "text" generation. It must strictly return the MCQ format.
-
-DON'T block the UI while AI loads: AI generation takes 3-5 seconds. Ensure QuizList.tsx has a clear, non-blocking loading state (e.g., a skeleton loader or a spinner on the "Fetch New" button) while waiting for the AI response.
-
-DON'T write static questions to Firestore on every load: Ensure your logic checks if the static questions already exist in the database before attempting to upload/seed them to save read/write costs.
-
-6. Pending Tasks and Next Steps
-
-[ ] Step 1: Add StaticQuizQuestion interface to global.d.ts.
-
-[ ] Step 2: Create data/quiz-questions-sample.json (45 questions, first batch).
-
-[ ] Step 3: Create data/quiz-questions.json (300 questions total).
-
-[ ] Step 4: Create lib/quiz-data.ts with getStaticQuizQuestions, getSampleQuestions, and the toFirestoreQuiz adapter.
-
-[ ] Step 5: Update QuizList.tsx to pass recent history to the API and handle the static data fallback logic.
-
-[ ] Step 6: Update app/api/generate-quiz/route.ts for context-aware generation (history exclusion, category rotation, temperature).
-
-[ ] Step 7: Verify JSON schema and rendering via existing e2e tests.
+[Implementation Order]
+1. Install vitest + plugins via npm
+2. Create `vitest.config.ts`
+3. Create `tests/unit/streak.test.ts`
+4. Create `tests/unit/achievements.test.ts`
+5. Create `tests/e2e/dashboard-and-sessions.spec.ts`
+6. Fix `lib/streak.ts` same-day early return
+7. Update `package.json` scripts
+8. Run `npx vitest run tests/unit` — 18/18 pass
