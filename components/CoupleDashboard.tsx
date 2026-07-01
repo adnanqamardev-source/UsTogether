@@ -87,6 +87,7 @@ export default function CoupleDashboard({ coupleId }: { coupleId: string }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [sessionsFinished, setSessionsFinished] = useState(0);
   const [quizzesCompleted, setQuizzesCompleted] = useState(0);
+  const [isOffline, setIsOffline] = useState(false);
 
   const { data: couple, loading: coupleLoading } = useFirestoreDocument<Couple>(['couples', coupleId]);
   const { data: userProfile, loading: userLoading } = useFirestoreDocument<UserProfile>(['users', user?.uid || '']);
@@ -111,6 +112,20 @@ export default function CoupleDashboard({ coupleId }: { coupleId: string }) {
     const handleHash = () => setActiveHash(window.location.hash);
     window.addEventListener('hashchange', handleHash);
     return () => window.removeEventListener('hashchange', handleHash);
+  }, []);
+
+  useEffect(() => {
+    if (typeof navigator !== 'undefined') {
+      setIsOffline(!navigator.onLine);
+      const goOnline = () => setIsOffline(false);
+      const goOffline = () => setIsOffline(true);
+      window.addEventListener('online', goOnline);
+      window.addEventListener('offline', goOffline);
+      return () => {
+        window.removeEventListener('online', goOnline);
+        window.removeEventListener('offline', goOffline);
+      };
+    }
   }, []);
 
   useEffect(() => {
@@ -183,6 +198,12 @@ export default function CoupleDashboard({ coupleId }: { coupleId: string }) {
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40" onClick={() => setIsChatOpen(false)} />
       )}
 
+      {isOffline && (
+        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-amber-500/90 text-white text-xs font-bold uppercase tracking-widest px-4 py-2 rounded-full shadow-lg backdrop-blur-sm">
+          You're offline — changes will sync when reconnected
+        </div>
+      )}
+
       {/* Main Navigation */}
       <nav className="flex justify-between items-center mb-6 relative z-10 pt-6 px-5 sm:px-10">
         {/* Logo Section */}
@@ -209,7 +230,7 @@ export default function CoupleDashboard({ coupleId }: { coupleId: string }) {
           </button>
           <button onClick={logOut} className="hover:text-white transition-colors">Log Out</button>
           <div className="w-10 h-10 rounded-full bg-indigo-500 flex items-center justify-center text-sm font-bold text-white shadow-md">
-            {user?.displayName?.[0].toUpperCase() || user?.email?.[0].toUpperCase() || 'U'}
+            {(user?.displayName || user?.email || 'U')[0].toUpperCase()}
           </div>
         </div>
 

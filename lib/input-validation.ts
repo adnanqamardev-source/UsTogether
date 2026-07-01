@@ -1,5 +1,13 @@
 import { NextRequest } from 'next/server';
 
+const MAX_CHARS_PER_MESSAGE = 2000;
+const CONTROL_TOKEN_REGEX = /(\[SYSTEM\]|<\|im_start\|>|{system:|<\|im_end\|>|\[INST\]|\[SYS\]|<<SYS>>|### Instruction:)/gi;
+
+function sanitizeText(text: string): string {
+  const trimmed = text.trim().slice(0, MAX_CHARS_PER_MESSAGE);
+  return trimmed.replace(CONTROL_TOKEN_REGEX, '').trim();
+}
+
 export function validateChatBody(body: unknown) {
   if (!body || typeof body !== 'object') {
     return { ok: false as const, error: 'Invalid JSON body.' };
@@ -20,6 +28,9 @@ export function validateChatBody(body: unknown) {
     if (typeof msg.role !== 'string' || typeof msg.text !== 'string') {
       return { ok: false as const, error: 'Each message must include string role and text.' };
     }
+    if (msg.text.length > MAX_CHARS_PER_MESSAGE) {
+      return { ok: false as const, error: 'Message exceeds maximum allowed length.' };
+    }
   }
 
   if (maybe.coupleId !== undefined && typeof maybe.coupleId !== 'string') {
@@ -28,6 +39,8 @@ export function validateChatBody(body: unknown) {
 
   return { ok: true as const, messages, coupleId: typeof maybe.coupleId === 'string' ? maybe.coupleId : null };
 }
+
+export { sanitizeText, MAX_CHARS_PER_MESSAGE };
 
 export function validateHistoryBody(body: unknown) {
   if (!body || typeof body !== 'object' || !Array.isArray((body as Record<string, unknown>).history)) {
