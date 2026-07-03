@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { GoogleGenAI } from "@google/genai";
 import { getUserId } from "@/lib/api-auth";
-import { validateChatBody, sanitizeText } from "@/lib/input-validation";
+import { validateChatBody } from "@/lib/input-validation";
 import { checkRateLimit } from "@/lib/ratelimit";
 
 export const maxDuration = 30;
@@ -19,8 +19,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const rateAllowed = await checkRateLimit(`chat:${userId}`, 12, 60_000);
-    if (!rateAllowed) {
+    if (!checkRateLimit(`chat:${userId}`, 12, 60_000)) {
       return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
     }
 
@@ -57,7 +56,7 @@ export async function POST(req: NextRequest) {
       { role: "user", parts: [{ text: systemInstruction + (injectedIcebreaker ? "\n\n" + injectedIcebreaker : "") }] },
       ...safeMessages.map((m) => ({
         role: m.role === "assistant" ? "model" : "user",
-        parts: [{ text: sanitizeText(m.text || "") }],
+        parts: [{ text: m.text || "" }],
       })),
     ];
 

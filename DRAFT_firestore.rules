@@ -1,0 +1,63 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 0. Global Safety Net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Phase 3 Primitive Helpers
+    function isValidId(id) { return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$'); }
+    function incoming() { return request.resource.data; }
+    function existing() { return resource.data; }
+    function isSignedIn() { return request.auth != null; }
+    function isEmailVerified() { return request.auth.token.email_verified == true; }
+    function isOptionalString(data, key, maxSize) {
+      return !data.keys().hasAny([key]) || (data[key] is string && data[key].size() <= maxSize);
+    }
+    
+    // User validation
+    function isValidUser(data) {
+      return data.keys().hasAll(['email', 'points', 'createdAt', 'updatedAt']) &&
+             data.size() >= 4 && data.size() <= 6 &&
+             data.email is string && data.email.size() <= 256 &&
+             data.points is number && data.points >= 0 &&
+             data.createdAt == request.time.toMillis() && // only valid precisely at request.time for create, Wait!
+             // well, request.time is timestamp. toMillis() converts to number. Let's use request.time for timestamps OR numbers
+             // let's just make it exact matching.
+             true;
+    }
+
+    // Wait, let's refine timestamp rules inside the match blocks.
+    
+    match /users/{userId} {
+      function isOwner() {
+        return isSignedIn() && isEmailVerified() && request.auth.uid == userId;
+      }
+      function isValidUserCreate(data) {
+        return data.keys().hasAll(['email', 'points', 'createdAt', 'updatedAt']) &&
+               data.size() >= 4 && data.size() <= 6 &&
+               data.email is string && data.email.size() <= 256 &&
+               data.points is number && data.points >= 0 &&
+               data.createdAt is number && data.updatedAt is number &&
+               isOptionalString(data, 'displayName', 100) &&
+               isOptionalString(data, 'pairedCoupleId', 128);
+      }
+      
+      allow get: if isOwner();
+      allow list: if false; // no blanket reads on users (PII isolation)
+      
+      allow create: if isOwner() && isValidId(userId) && isValidUserCreate(incoming()) &&
+                    incoming().email == request.auth.token.email; // email must match
+                    
+      allow update: if isOwner() && isValidUserCreate(incoming()) &&
+                    incoming().diff(existing()).affectedKeys().hasOnly(['displayName', 'pairedCoupleId', 'points', 'updatedAt']) &&
+                    incoming().email == existing().email &&
+                    incoming().createdAt == existing().createdAt;
+    }
+
+    match /couples/{coupleId} {
+       // ... implement couple ...
+    }
+  }
+}

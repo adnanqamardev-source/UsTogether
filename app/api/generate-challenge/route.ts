@@ -14,8 +14,7 @@ const requireUserId = async (req: NextRequest) => {
   if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-  const rateAllowed = await checkRateLimit(`challenge:${userId}`, 12, 60_000);
-  if (!rateAllowed) {
+  if (!checkRateLimit(`challenge:${userId}`, 12, 60_000)) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
   return null;

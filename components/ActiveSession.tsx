@@ -14,43 +14,26 @@ import { db } from '@/lib/firebase';
 export default function ActiveSession({ coupleId, sessionId }: { coupleId: string; sessionId: string }) {
   const { user } = useAuth();
   const [textAnswer, setTextAnswer] = useState('');
-  const [isOffline, setIsOffline] = useState(false);
 
   const { data: session, loading: sessionLoading } = useFirestoreDocument<Session>([`couples/${coupleId}/sessions/${sessionId}`]);
   const quizId = session?.state?.quizId;
   const { data: quiz, loading: quizLoading } = useFirestoreDocument<Quiz>(quizId ? ['quizzes', quizId] : []);
 
+  const currentQIndex = session?.state?.currentQuestion || 0;
   useEffect(() => {
-    if (typeof navigator !== 'undefined') {
-      setIsOffline(!navigator.onLine);
-      const goOnline = () => setIsOffline(false);
-      const goOffline = () => setIsOffline(true);
-      window.addEventListener('online', goOnline);
-      window.addEventListener('offline', goOffline);
-      return () => {
-        window.removeEventListener('online', goOnline);
-        window.removeEventListener('offline', goOffline);
-      };
-    }
-  }, []);
+    setTextAnswer('');
+  }, [currentQIndex]);
 
   if (sessionLoading || quizLoading || !session || !quiz || !user) {
     return <div className="text-gray-500 animate-pulse">Loading session...</div>;
   }
 
-  const sessionData = session as Session;
-  const quizData = quiz as Quiz;
-  const userData = user as { uid: string };
+  const question = quiz.questions[currentQIndex];
+  const isFinished = currentQIndex >= quiz.questions.length;
 
-  const currentQIndex = sessionData.state.currentQuestion || 0;
-  useEffect(() => {
-    setTextAnswer('');
-  }, [currentQIndex]);
-
-  const question = quizData.questions[currentQIndex];
-  const myAnswer = sessionData.state.answers?.[currentQIndex]?.[userData.uid];
-  const partnerId = [sessionData.coupleId.split('_')].flat().find((id) => id !== userData.uid) || 'partner';
-  const partnerAnswer = sessionData.state.answers?.[currentQIndex]?.[partnerId];
+  const myAnswer = session.state.answers?.[currentQIndex]?.[user.uid];
+  const partnerId = [session.coupleId.split('_')].flat().find(id => id !== user.uid) || 'partner';
+  const partnerAnswer = session.state.answers?.[currentQIndex]?.[partnerId];
 
   const bothAnswered = myAnswer !== undefined && partnerAnswer !== undefined;
 
@@ -59,10 +42,10 @@ export default function ActiveSession({ coupleId, sessionId }: { coupleId: strin
   const handleAnswer = async (answerVal: any) => {
     if (myAnswer !== undefined) return;
     try {
-      const newState = { ...sessionData.state };
+      const newState = { ...session.state };
       if (!newState.answers) newState.answers = {};
       if (!newState.answers[currentQIndex]) newState.answers[currentQIndex] = {};
-      newState.answers[currentQIndex][userData.uid] = answerVal;
+      newState.answers[currentQIndex][user.uid] = answerVal;
       await batchWrite([
         { type: 'update', ref: sessionRef, data: { state: newState, updatedAt: Date.now() } },
       ]);
@@ -73,12 +56,12 @@ export default function ActiveSession({ coupleId, sessionId }: { coupleId: strin
 
   const nextQuestion = async () => {
     try {
-      if (currentQIndex + 1 >= quizData.questions.length) {
+      if (currentQIndex + 1 >= quiz.questions.length) {
         await batchWrite([
           { type: 'update', ref: sessionRef, data: { status: 'finished', updatedAt: Date.now() } },
         ]);
         if (user && partnerId) {
-          await checkAndAwardAchievements(userData.uid, { sessionsFinished: 1 });
+          await checkAndAwardAchievements(user.uid, { sessionsFinished: 1 });
           await checkAndAwardAchievements(partnerId, { sessionsFinished: 1 });
         }
       } else {
@@ -98,7 +81,7 @@ export default function ActiveSession({ coupleId, sessionId }: { coupleId: strin
         { type: 'update', ref: sessionRef, data: { status: 'finished', updatedAt: Date.now() } },
       ]);
       if (user && partnerId) {
-        await checkAndAwardAchievements(userData.uid, { sessionsFinished: 1 });
+        await checkAndAwardAchievements(user.uid, { sessionsFinished: 1 });
         await checkAndAwardAchievements(partnerId, { sessionsFinished: 1 });
       }
     } catch (e) {
@@ -106,25 +89,20 @@ export default function ActiveSession({ coupleId, sessionId }: { coupleId: strin
     }
   };
 
-  if (sessionData.status === 'finished') {
-    const allAnswers = sessionData.state.answers || {};
+  if (session.status === 'finished') {
+    const allAnswers = session.state.answers || {};
 
     return (
       <div className="flex flex-col items-center justify-center text-center mt-10 p-4 md:p-8 w-full max-w-4xl mx-auto">
-        {isOffline && (
-          <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-amber-500/90 text-white text-xs font-bold uppercase tracking-widest px-4 py-2 rounded-full shadow-lg backdrop-blur-sm">
-            You're offline — changes will sync when reconnected
-          </div>
-        )}
         <div className="w-20 h-20 bg-rose-500/20 rounded-full flex items-center justify-center mb-6 shadow-[0_0_50px_rgba(244,63,94,0.3)]">
           <Heart className="w-10 h-10 text-rose-500 mx-auto" />
         </div>
         <h2 className="text-3xl md:text-5xl font-serif italic mb-2 text-[#F8FAFC]">Quiz Finished!</h2>
-        <p className="text-indigo-200/80 mb-8 max-w-md">You've completed "{quizData.title}". Let's see your shared answers.</p>
+        <p className="text-indigo-200/80 mb-8 max-w-md">You've completed "{quiz.title}". Let's see your shared answers.</p>
 
         <div className="w-full space-y-6 mb-10 text-left">
-          {quizData.questions.map((q, i) => {
-            const mAns = allAnswers[i]?.[userData.uid];
+          {quiz.questions.map((q, i) => {
+            const mAns = allAnswers[i]?.[user.uid];
             const pAns = allAnswers[i]?.[partnerId];
 
             const resolveAns = (a: any) => {
@@ -160,19 +138,13 @@ export default function ActiveSession({ coupleId, sessionId }: { coupleId: strin
 
   return (
     <div className="max-w-3xl mx-auto py-8 md:py-12 flex flex-col h-full justify-center">
-      {isOffline && (
-        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-amber-500/90 text-white text-xs font-bold uppercase tracking-widest px-4 py-2 rounded-full shadow-lg backdrop-blur-sm">
-          You're offline — changes will sync when reconnected
-        </div>
-      )}
-
       <div className="flex flex-col md:flex-row md:items-center justify-between mb-12 gap-4">
         <h2 className="font-bold text-indigo-300 uppercase tracking-[0.2em] text-xs flex items-center space-x-4">
-          <span>{quizData.title}</span>
+          <span>{quiz.title}</span>
           <button onClick={endSessionEarly} className="text-white/30 hover:text-rose-400 font-normal underline underline-offset-4">End Session</button>
         </h2>
         <span className="text-xs font-bold px-3 py-1 bg-white/10 text-white rounded-full border border-white/5 uppercase tracking-widest whitespace-nowrap">
-          Question {currentQIndex + 1} of {quizData.questions.length}
+          Question {currentQIndex + 1} of {quiz.questions.length}
         </span>
       </div>
 
@@ -283,13 +255,13 @@ export default function ActiveSession({ coupleId, sessionId }: { coupleId: strin
                 whileTap={{ scale: 0.97 }}
                 className="bg-gradient-to-r from-white to-indigo-50 text-[#0F0A1F] font-bold uppercase tracking-[0.2em] text-sm rounded-full px-10 py-4 w-full max-w-xs hover:scale-105 hover:shadow-[0_0_35px_rgba(99,102,241,0.4)] transition-all shadow-[0_0_25px_rgba(255,255,255,0.15)]"
               >
-                {currentQIndex + 1 >= quizData.questions.length ? 'Finish Quiz' : 'Next Question →'}
+                {currentQIndex + 1 >= quiz.questions.length ? 'Finish Quiz' : 'Next Question →'}
               </motion.button>
             )}
           </div>
 
           <div className="mt-8 pt-8 border-t border-white/10 flex items-center justify-center space-x-2">
-            {quizData.questions.map((_: any, idx: number) => (
+            {quiz.questions.map((_: any, idx: number) => (
               <motion.div
                 key={idx}
                 initial={{ scaleX: 0 }}
