@@ -1,18 +1,22 @@
-"use client";
+'use client';
 
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Send } from 'lucide-react';
 import { useAuth } from './AuthProvider';
-import { useFirestoreCollection, addMessage } from '@/lib/firebase';
-import { orderBy } from 'firebase/firestore';
-import type { ChatMessage } from '../global.d';
+import { useFirestoreCollection, useFirestoreDocument, addMessage } from '@/lib/firebase';
+import { doc, setDoc, orderBy } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
+import type { ChatMessage, Couple } from '../global.d';
 
 export default function ChatDrawer({ coupleId, onClose }: { coupleId: string; onClose: () => void }) {
   const { user } = useAuth();
   const [text, setText] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
+
+  const { data: couple } = useFirestoreDocument<Couple>(['couples', coupleId]);
+  const partnerId = couple && user ? (couple.user1Id === user.uid ? couple.user2Id : couple.user1Id) : '';
 
   const { data: messages } = useFirestoreCollection<ChatMessage>(
     ['couples', coupleId, 'messages'],
@@ -25,9 +29,39 @@ export default function ChatDrawer({ coupleId, onClose }: { coupleId: string; on
     } as ChatMessage)
   );
 
+  const { data: partnerTyping } = useFirestoreCollection<{ isTyping: boolean; updatedAt: number }>(
+    partnerId ? ['couples', coupleId, 'typing', partnerId] : [],
+    [],
+    (id, data) => ({ ...data } as { isTyping: boolean; updatedAt: number })
+  );
+
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, isTyping]);
+
+  // Sync typing state to Firestore for partner
+  useEffect(() => {
+    if (!user || !coupleId) return;
+    const typingPath = `couples/${coupleId}/typing/${user.uid}`;
+    let timeout: NodeJS.Timeout;
+    const updateTyping = async () => {
+      try {
+        await setDoc(doc(db, typingPath), { isTyping: isTyping, updatedAt: Date.now() }, { merge: true });
+      } catch (err) {
+        console.error('Typing sync failed', err);
+      }
+    };
+    if (isTyping) {
+      updateTyping();
+      timeout = setTimeout(() => setIsTyping(false), 3000);
+    } else {
+      updateTyping();
+    }
+    return () => clearTimeout(timeout);
+  }, [isTyping, user, coupleId]);
+
+  const partnerTypingDoc = partnerTyping[0];
+  const partnerIsTyping = partnerTypingDoc?.isTyping && (Date.now() - (partnerTypingDoc?.updatedAt || 0)) < 3000;
 
   const handleSend = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -95,7 +129,7 @@ export default function ChatDrawer({ coupleId, onClose }: { coupleId: string; on
           })}
         </AnimatePresence>
 
-        {isTyping && (
+        {partnerIsTyping && (
           <motion.div
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}

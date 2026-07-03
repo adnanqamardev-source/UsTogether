@@ -19,6 +19,7 @@ import dynamic from 'next/dynamic';
 import QuizList from './QuizList';
 import StreakCounter from './StreakCounter';
 import AchievementsPanel from './AchievementsPanel';
+import ErrorBoundary from './ErrorBoundary';
 
 const ChatDrawer = dynamic(() => import('./ChatDrawer'), {
   ssr: false,
@@ -38,12 +39,13 @@ type MobileMenuProps = {
   onClose: () => void;
   sessionId: string | null;
   isMemories: boolean;
+  isStats: boolean;
   onUnpair: () => void;
   onLogout: () => void;
   onOpenChat: () => void;
 };
 
-const MobileMenu = ({ isOpen, onClose, sessionId, isMemories, onUnpair, onLogout, onOpenChat }: MobileMenuProps) => (
+const MobileMenu = ({ isOpen, onClose, sessionId, isMemories, isStats, onUnpair, onLogout, onOpenChat }: MobileMenuProps) => (
   <AnimatePresence>
     {isOpen && (
       <>
@@ -61,8 +63,9 @@ const MobileMenu = ({ isOpen, onClose, sessionId, isMemories, onUnpair, onLogout
           className="md:hidden fixed top-24 left-4 right-4 bg-slate-900/95 backdrop-blur-xl z-50 rounded-2xl border border-white/10 shadow-2xl p-6"
         >
           <div className="flex flex-col gap-6 text-sm uppercase tracking-widest font-bold">
-            <a href="#" onClick={() => { window.location.hash = ''; onClose(); }} className={`${!sessionId && !isMemories ? 'text-rose-400' : 'text-slate-300'}`}>Quizzes</a>
+            <a href="#" onClick={() => { window.location.hash = ''; onClose(); }} className={`${!sessionId && !isMemories && !isStats ? 'text-rose-400' : 'text-slate-300'}`}>Quizzes</a>
             <a href="#memories" onClick={onClose} className={`${isMemories ? 'text-rose-400' : 'text-slate-300'}`}>Memories</a>
+            <a href="#stats" onClick={onClose} className={`${isStats ? 'text-rose-400' : 'text-slate-300'}`}>Stats</a>
             <button onClick={() => { onOpenChat(); onClose(); }} className="text-left text-slate-300 flex items-center gap-3">
               <MessageCircle size={18} /> Chat
             </button>
@@ -131,6 +134,7 @@ export default function CoupleDashboard({ coupleId }: { coupleId: string }) {
   const sessionMatch = activeHash.match(/^#session\/(.+)$/);
   const sessionId = sessionMatch ? sessionMatch[1] : null;
   const isMemories = activeHash === '#memories';
+  const isStats = activeHash === '#stats';
 
   const handleUnpair = async () => {
     if (!window.confirm('Are you sure you want to disconnect from your partner?')) return;
@@ -197,6 +201,7 @@ export default function CoupleDashboard({ coupleId }: { coupleId: string }) {
         <div className="hidden md:flex items-center space-x-10 text-xs uppercase tracking-[0.15em] font-bold text-slate-400">
           <a href="#" onClick={() => window.location.hash = ''} className={`transition-all pb-2 border-b-2 ${!sessionId && !isMemories ? 'text-rose-400 border-rose-400' : 'border-transparent hover:text-white'}`}>Quizzes</a>
           <a href="#memories" className={`transition-all pb-2 border-b-2 ${isMemories ? 'text-rose-400 border-rose-400' : 'border-transparent hover:text-white'}`}>Memories</a>
+          <a href="#stats" className="hover:text-white transition-colors flex items-center gap-2 pb-2 border-b-2 border-transparent">Stats</a>
           <button onClick={() => setIsChatOpen(true)} className="hover:text-white transition-colors flex items-center gap-2 pb-2 border-b-2 border-transparent">
             <MessageCircle className="w-4 h-4" /> Chat
           </button>
@@ -229,6 +234,7 @@ export default function CoupleDashboard({ coupleId }: { coupleId: string }) {
         onClose={() => setMobileMenuOpen(false)}
         sessionId={sessionId}
         isMemories={isMemories}
+        isStats={isStats}
         onUnpair={handleUnpair}
         onLogout={logOut}
         onOpenChat={() => setIsChatOpen(true)}
@@ -245,7 +251,12 @@ export default function CoupleDashboard({ coupleId }: { coupleId: string }) {
 
       {/* Main Content */}
       <main className="flex-1 relative z-10 w-full p-5 sm:p-10">
-        {isMemories ? (
+        {isStats ? (
+          <div className="py-8 md:py-12 w-full max-w-4xl mx-auto">
+            <h1 className="text-4xl md:text-5xl font-serif italic mb-6 text-white">Stats</h1>
+            <p className="text-slate-400">Analytics coming soon. This page will show your couple's progress, streak, and achievements.</p>
+          </div>
+        ) : isMemories ? (
           <MemoryBoard coupleId={coupleId} />
         ) : !sessionId ? (
           <>
@@ -265,7 +276,9 @@ export default function CoupleDashboard({ coupleId }: { coupleId: string }) {
             <QuizList coupleId={coupleId} />
           </>
         ) : (
-          <ActiveSession coupleId={coupleId} sessionId={sessionId} />
+          <ErrorBoundary>
+            <ActiveSession coupleId={coupleId} sessionId={sessionId} couple={couple} />
+          </ErrorBoundary>
         )}
       </main>
     </div>

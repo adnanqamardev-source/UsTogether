@@ -7,11 +7,11 @@ import { Heart, CheckCircle2 } from 'lucide-react';
 import { handleFirestoreError, OperationType } from '@/lib/firestore-errors';
 import { useFirestoreDocument, batchWrite } from '@/lib/firebase';
 import { checkAndAwardAchievements } from '@/lib/achievements';
-import type { Session, Quiz } from '../global.d';
+import type { Session, Quiz, Couple } from '../global.d';
 import { doc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 
-export default function ActiveSession({ coupleId, sessionId }: { coupleId: string; sessionId: string }) {
+export default function ActiveSession({ coupleId, sessionId, couple }: { coupleId: string; sessionId: string; couple?: Couple | null }) {
   const { user } = useAuth();
   const [textAnswer, setTextAnswer] = useState('');
 
@@ -32,8 +32,13 @@ export default function ActiveSession({ coupleId, sessionId }: { coupleId: strin
   const isFinished = currentQIndex >= quiz.questions.length;
 
   const myAnswer = session.state.answers?.[currentQIndex]?.[user.uid];
-  const partnerId = [session.coupleId.split('_')].flat().find(id => id !== user.uid) || 'partner';
-  const partnerAnswer = session.state.answers?.[currentQIndex]?.[partnerId];
+  const partnerId =
+    couple && user
+      ? couple.user1Id === user.uid
+        ? couple.user2Id
+        : couple.user1Id
+      : '';
+  const partnerAnswer = partnerId ? session.state.answers?.[currentQIndex]?.[partnerId] : undefined;
 
   const bothAnswered = myAnswer !== undefined && partnerAnswer !== undefined;
 
