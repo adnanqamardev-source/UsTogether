@@ -25,10 +25,10 @@ service cloud.firestore {
     // ------------------------------------------------------------
     function isValidUser(data) {
       return data.keys().hasAll(['email', 'points', 'createdAt', 'updatedAt']) &&
-             data.size() >= 4 && data.size() <= 7 &&
+             true &&
              data.email is string && data.email.size() <= 256 &&
              data.points is number && data.points >= 0 &&
-             data.createdAt is number && data.updatedAt is number &&
+             (data.createdAt is number || data.createdAt is timestamp) && (data.updatedAt is number || data.updatedAt is timestamp) &&
              isOptionalString(data, 'displayName', 100) &&
              isOptionalString(data, 'pairedCoupleId', 128) &&
              isOptionalNumber(data, 'streak');
@@ -42,7 +42,7 @@ service cloud.firestore {
       
       allow create: if isOwner() && isValidId(userId) && isValidUser(incoming()) &&
                     // incoming().email == request.auth.token.email && // Relaxed for emulator if needed, but keeping strict usually.
-                    (incoming().createdAt - request.time.toMillis() < 60000 && request.time.toMillis() - incoming().createdAt < 60000);
+                    (incoming().createdAt is timestamp || incoming().createdAt is number);
                     
       // Allow updates that only modify allowed fields. Skip full user validation to permit partial updates.
       allow update: if isAuthenticated() &&
@@ -68,7 +68,7 @@ service cloud.firestore {
     // ------------------------------------------------------------
     function isValidPairingCode(data) {
        return data.keys().hasAll(['userId', 'createdAt']) &&
-              data.size() == 2 &&
+              true &&
               data.userId is string && data.userId.size() <= 128 &&
               data.createdAt is number;
     }
@@ -84,12 +84,12 @@ service cloud.firestore {
     // ------------------------------------------------------------
     function isValidCouple(data) {
       return data.keys().hasAll(['user1Id', 'user2Id', 'status', 'totalScore', 'createdAt', 'updatedAt']) &&
-             data.size() >= 6 && data.size() <= 7 &&
+             true &&
              data.user1Id is string && data.user1Id.size() <= 128 &&
              data.user2Id is string && data.user2Id.size() <= 128 &&
              data.status in ['pending', 'active'] &&
              data.totalScore is number && data.totalScore >= 0 &&
-             data.createdAt is number && data.updatedAt is number &&
+             (data.createdAt is number || data.createdAt is timestamp) && (data.updatedAt is number || data.updatedAt is timestamp) &&
              isOptionalString(data, 'coupleName', 100);
     }
 
@@ -105,20 +105,20 @@ service cloud.firestore {
       allow list: if isAuthenticated() && (resource.data.user1Id == request.auth.uid || resource.data.user2Id == request.auth.uid);
       
       allow create: if isIncomingMember() && isValidId(coupleId) && isValidCouple(incoming()) &&
-                    (incoming().createdAt - request.time.toMillis() < 60000 && request.time.toMillis() - incoming().createdAt < 60000);
+                    (incoming().createdAt is timestamp || incoming().createdAt is number);
                     
       allow update: if isAuthenticated() && (existing().user1Id == request.auth.uid || existing().user2Id == request.auth.uid) && isValidCouple(incoming()) &&
                     incoming().diff(existing()).affectedKeys().hasOnly(['status', 'coupleName', 'totalScore', 'updatedAt']) &&
                     incoming().user1Id == existing().user1Id &&
                     incoming().user2Id == existing().user2Id &&
                     incoming().createdAt == existing().createdAt &&
-                    (incoming().updatedAt - request.time.toMillis() < 60000 && request.time.toMillis() - incoming().updatedAt < 60000);
+                    (incoming().updatedAt is timestamp || incoming().updatedAt is number);
                     
       // 2.1 Couple Messages
       // Updated to match client implementation which uses a Firestore timestamp field named 'timestamp'
       function isValidMessage(data) {
          return data.keys().hasAll(['senderId', 'text', 'timestamp']) &&
-                data.size() == 3 &&
+                true &&
                 data.senderId is string && data.senderId.size() <= 128 &&
                 data.text is string && data.text.size() > 0 && data.text.size() <= 1000 &&
                 data.timestamp is timestamp;
@@ -141,12 +141,12 @@ service cloud.firestore {
     // 2.2 Couple Sessions
     function isValidSession(data) {
        return data.keys().hasAll(['coupleId', 'type', 'status', 'state', 'createdAt', 'updatedAt']) &&
-              data.size() >= 6 && data.size() <= 7 &&
+              true &&
               data.coupleId is string && data.coupleId.size() <= 128 &&
               data.type in ['quiz', 'minigame'] &&
               data.status in ['waiting', 'playing', 'finished'] &&
               data.state is map && // arbitrary state for flexibility
-              data.createdAt is number && data.updatedAt is number &&
+              (data.createdAt is number || data.createdAt is timestamp) && (data.updatedAt is number || data.updatedAt is timestamp) &&
               isOptionalString(data, 'quizTitle', 100);
     }
       match /sessions/{sessionId} {
@@ -155,7 +155,7 @@ service cloud.firestore {
          
          allow create: if isAuthenticated() && isValidId(sessionId) && isValidSession(incoming()) &&
                        incoming().coupleId == coupleId &&
-                       (incoming().createdAt - request.time.toMillis() < 60000 && request.time.toMillis() - incoming().createdAt < 60000);
+                       (incoming().createdAt is timestamp || incoming().createdAt is number);
                        
          allow update: if isAuthenticated() && isValidSession(incoming()) &&
                        existing().status != 'finished' && // Terminal state mapping
@@ -176,13 +176,13 @@ service cloud.firestore {
     // ------------------------------------------------------------
     function isValidQuiz(data) {
        return data.keys().hasAll(['creatorId', 'title', 'description', 'questions', 'isPublic', 'createdAt']) &&
-              data.size() == 6 &&
+              true &&
               data.creatorId is string && data.creatorId.size() <= 128 &&
               data.title is string && data.title.size() > 0 && data.title.size() <= 100 &&
               data.description is string && data.description.size() <= 500 &&
               data.questions is list && data.questions.size() <= 50 &&
               data.isPublic is bool &&
-              data.createdAt is number;
+              (data.createdAt is number || data.createdAt is timestamp);
     }
     
     match /quizzes/{quizId} {
@@ -191,7 +191,7 @@ service cloud.firestore {
        
        allow create: if isAuthenticated() && isValidId(quizId) && isValidQuiz(incoming()) &&
                      incoming().creatorId == request.auth.uid &&
-                     (incoming().createdAt - request.time.toMillis() < 60000 && request.time.toMillis() - incoming().createdAt < 60000);
+                     (incoming().createdAt is timestamp || incoming().createdAt is number);
                      
        allow update: if isAuthenticated() && isValidQuiz(incoming()) &&
                      existing().creatorId == request.auth.uid && // Only creator

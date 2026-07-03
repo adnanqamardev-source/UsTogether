@@ -92,9 +92,9 @@ export default function CoupleDashboard({ coupleId }: { coupleId: string }) {
   const [quizzesCompleted, setQuizzesCompleted] = useState(0);
 
   const { data: couple, loading: coupleLoading } = useFirestoreDocument<Couple>(['couples', coupleId]);
-  const { data: userProfile, loading: userLoading } = useFirestoreDocument<UserProfile>(['users', user?.uid || '']);
+  const { data: userProfile, loading: userLoading } = useFirestoreDocument<UserProfile>(user ? ['users', user.uid] : []);
   const { data: achievements } = useFirestoreCollection<Achievement>(
-    user ? ['achievements', user.uid, 'items'] : [],
+    user ? ['achievements', user.uid, 'items'] : undefined as any,
     [],
     (id, data) => ({ id, ...(data as Omit<Achievement, 'id'>) } as Achievement)
   );

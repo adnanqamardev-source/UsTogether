@@ -29,10 +29,8 @@ export default function ChatDrawer({ coupleId, onClose }: { coupleId: string; on
     } as ChatMessage)
   );
 
-  const { data: partnerTyping } = useFirestoreCollection<{ isTyping: boolean; updatedAt: number }>(
-    partnerId ? ['couples', coupleId, 'typing', partnerId] : [],
-    [],
-    (id, data) => ({ ...data } as { isTyping: boolean; updatedAt: number })
+  const { data: partnerTyping } = useFirestoreDocument<{ isTyping: boolean; updatedAt: number }>(
+    partnerId ? ['couples', coupleId, 'typing', partnerId] : []
   );
 
   useEffect(() => {
@@ -60,8 +58,7 @@ export default function ChatDrawer({ coupleId, onClose }: { coupleId: string; on
     return () => clearTimeout(timeout);
   }, [isTyping, user, coupleId]);
 
-  const partnerTypingDoc = partnerTyping[0];
-  const partnerIsTyping = partnerTypingDoc?.isTyping && (Date.now() - (partnerTypingDoc?.updatedAt || 0)) < 3000;
+  const partnerIsTyping = partnerTyping?.isTyping && (Date.now() - (partnerTyping?.updatedAt || 0)) < 3000;
 
   const handleSend = async (e: React.FormEvent) => {
     e.preventDefault();
