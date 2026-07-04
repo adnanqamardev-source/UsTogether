@@ -32,6 +32,8 @@ export default function Dashboard() {
   // If partner connects, AuthProvider updates dbUser automatically.
   // No need to query couples manually.
 
+  if (!user) return null;
+
   // If user is already paired
   if (dbUser?.pairedCoupleId) {
     return <CoupleDashboard coupleId={dbUser.pairedCoupleId} />;
@@ -40,7 +42,7 @@ export default function Dashboard() {
   const handlePair = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg('');
-    if (!partnerCode || !user?.uid) return;
+    if (!partnerCode || !user.uid) return;
     const codeStr = partnerCode.trim().toUpperCase();
     if (codeStr === myCode) {
       setErrorMsg("You can't pair with yourself!");

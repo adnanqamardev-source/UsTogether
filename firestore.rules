@@ -114,7 +114,13 @@ service cloud.firestore {
                     incoming().createdAt == existing().createdAt &&
                     (incoming().updatedAt is timestamp || incoming().updatedAt is number);
                     
-      // 2.1 Couple Messages
+     // 2.2 Couple Typing Status
+     match /typing/{uid} {
+       allow read: if isAuthenticated();
+       allow write: if isAuthenticated() && request.auth.uid == uid;
+     }
+
+     // 2.1 Couple Messages
       // Updated to match client implementation which uses a Firestore timestamp field named 'timestamp'
       function isValidMessage(data) {
          return data.keys().hasAll(['senderId', 'text', 'timestamp']) &&
@@ -140,14 +146,14 @@ service cloud.firestore {
       
     // 2.2 Couple Sessions
     function isValidSession(data) {
-       return data.keys().hasAll(['coupleId', 'type', 'status', 'state', 'createdAt', 'updatedAt']) &&
-              true &&
-              data.coupleId is string && data.coupleId.size() <= 128 &&
-              data.type in ['quiz', 'minigame'] &&
-              data.status in ['waiting', 'playing', 'finished'] &&
-              data.state is map && // arbitrary state for flexibility
-              (data.createdAt is number || data.createdAt is timestamp) && (data.updatedAt is number || data.updatedAt is timestamp) &&
-              isOptionalString(data, 'quizTitle', 100);
+    return data.keys().hasAll(['coupleId', 'type', 'status', 'state', 'createdAt', 'updatedAt']) &&
+           true &&
+           data.coupleId is string && data.coupleId.size() <= 128 &&
+           data.type in ['quiz', 'minigame'] &&
+           data.status in ['waiting', 'playing', 'finished'] &&
+           data.state is map && // arbitrary state for flexibility
+           (data.createdAt is number || data.createdAt is timestamp) && (data.updatedAt is number || data.updatedAt is timestamp) &&
+           isOptionalString(data, 'quizTitle', 250);
     }
       match /sessions/{sessionId} {
          allow get: if isAuthenticated();

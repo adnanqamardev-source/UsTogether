@@ -25,7 +25,7 @@ export default function StatsPage() {
     : undefined as any;
 
   const { data: finishedSessions } = useFirestoreCollection<Session>(
-    coupleId ? ['sessions'] : [],
+    coupleId ? ['couples', coupleId, 'sessions'] : [],
     finishedConstraints,
     (id, data) => ({ id, ...(data as Omit<Session, 'id'>) } as Session)
   );

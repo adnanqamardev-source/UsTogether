@@ -48,8 +48,8 @@ export default function ActiveSession({ coupleId, sessionId, couple }: { coupleI
     if (myAnswer !== undefined) return;
     try {
       const newState = { ...session.state };
-      if (!newState.answers) newState.answers = {};
-      if (!newState.answers[currentQIndex]) newState.answers[currentQIndex] = {};
+      newState.answers = { ...(newState.answers || {}) };
+      newState.answers[currentQIndex] = { ...(newState.answers[currentQIndex] || {}) };
       newState.answers[currentQIndex][user.uid] = answerVal;
       await batchWrite([
         { type: 'update', ref: sessionRef, data: { state: newState, updatedAt: Date.now() } },
