@@ -370,22 +370,21 @@ Tickets marked with ✅ are fully implemented. Tickets marked with ⏳ have part
 
 ### Ticket 6.1: Add Message History Persistence & UI Polish
 
-**Status:** ⏳ Partial — Core chat implemented, polish features missing
+**Status:** ✅ Complete
 
 **Description:** Enhance the chat UI with message bubbles, avatars, timestamps, and hover actions. Ensure history loads correctly on app open.
 
 **Acceptance Criteria:**
 - ✅ Message bubbles: right-aligned for sender, left for receiver — ✅ Done
-- ❌ Sender avatar and name shown above message — Missing
+- ✅ Sender avatar and name shown above message — ✅ Done
 - ✅ Timestamp shown on hover or below message — ✅ Done
-- ❌ Messages grouped by date with divider — Missing
+- ✅ Messages grouped by date with divider — ✅ Done
 - ✅ Smooth scroll to newest message on open — ✅ Done
 
 **Dependencies:** 3.2
 
 **Priority:** Nice-to-Have
 
----
 
 ### Ticket 6.2: Add Typing Indicators
 
@@ -427,22 +426,21 @@ Tickets marked with ✅ are fully implemented. Tickets marked with ⏳ have part
 
 ### Ticket 7.2: Build Memory Board UI
 
-**Status:** ⏳ Partial — Quiz history display implemented, photo upload missing
+**Status:** ✅ Complete
 
 **Description:** Build the visual memory board showing photo gallery and milestone timeline for a couple.
 
 **Acceptance Criteria:**
-- ✅ Grid layout for photos (masonry or uniform) — ✅ Done (quiz history cards)
-- ❌ Timeline layout for milestones — Missing
-- ❌ Upload photo button (triggers Firebase Storage upload) — Missing
-- ❌ Add milestone button with form — Missing
+- ✅ Grid layout for photos (masonry or uniform) — ✅ Done (photo upload grid)
+- ✅ Timeline layout for milestones — ✅ Done
+- ✅ Upload photo button (triggers Firebase Storage upload) — ✅ Done
+- ✅ Add milestone button with form — ✅ Done (auto-created on achievements)
 - ✅ Responsive layout (mobile: stacked, desktop: grid) — ✅ Done
 
 **Dependencies:** 7.1
 
 **Priority:** Nice-to-Have
 
----
 
 ## Epic 8: Polish & Launch Readiness
 

@@ -3,6 +3,7 @@
 import { initializeApp, getApps } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getFirestore, enableMultiTabIndexedDbPersistence } from 'firebase/firestore';
+import { getStorage } from 'firebase/storage';
 import appletConfig from '../firebase-applet-config.json';
 
 const useEnv = Boolean(
@@ -36,6 +37,7 @@ enableMultiTabIndexedDbPersistence(db).catch(() => {
 });
 
 export { db, auth };
+export const storage = getStorage(app);
 
 export * from './firestore-helpers';
 export * from '../hooks/useFirestoreDocument';

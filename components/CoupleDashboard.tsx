@@ -22,6 +22,7 @@ import AchievementsPanel from './AchievementsPanel';
 import ErrorBoundary from './ErrorBoundary';
 import BottomNav from './BottomNav';
 import ChatFAB from './ChatFAB';
+import { DashboardSkeleton, AchievementsPanelSkeleton, ChatPanelSkeleton } from './Skeletons';
 
 const ChatDrawer = dynamic(() => import('./ChatDrawer'), {
   ssr: false,
@@ -245,7 +246,7 @@ export default function CoupleDashboard({ coupleId }: { coupleId: string }) {
       {/* Chat Drawer Side Panel */}
       {isChatOpen && (
         <div className="fixed right-0 top-0 h-full max-w-sm w-full z-50">
-          <Suspense fallback={<div className="w-full h-full bg-[#0F0A1F] border-l border-white/10 flex items-center justify-center"><Loader className="w-8 h-8 text-white animate-spin" /></div>}>
+          <Suspense fallback={<ChatPanelSkeleton />}>
             <ChatDrawer coupleId={coupleId} onClose={() => setIsChatOpen(false)} />
           </Suspense>
         </div>
@@ -255,7 +256,9 @@ export default function CoupleDashboard({ coupleId }: { coupleId: string }) {
       <main className="flex-1 relative z-10 w-full p-5 sm:p-10 pb-28">
         <BottomNav onChatClick={() => setIsChatOpen(true)} />
         <ChatFAB onClick={() => setIsChatOpen(true)} />
-        {isStats ? (
+        {isLoading ? (
+          <DashboardSkeleton />
+        ) : isStats ? (
           <div className="py-8 md:py-12 w-full max-w-4xl mx-auto">
             <h1 className="text-4xl md:text-5xl font-serif italic mb-6 text-white">Stats</h1>
             <p className="text-slate-400">Analytics coming soon. This page will show your couple's progress, streak, and achievements.</p>
@@ -292,9 +295,13 @@ export default function CoupleDashboard({ coupleId }: { coupleId: string }) {
               </motion.div>
 
               {/* 2-up grid for secondary widgets */}
-              <div className="grid grid-cols-2 gap-4">
+               <div className="grid grid-cols-2 gap-4">
                 <StreakCounter streak={userProfile?.streak || 0} />
-                <AchievementsPanel achievements={achievements} />
+                {achievements ? (
+                  <AchievementsPanel achievements={achievements} />
+                ) : (
+                  <AchievementsPanelSkeleton />
+                )}
               </div>
             </div>
 

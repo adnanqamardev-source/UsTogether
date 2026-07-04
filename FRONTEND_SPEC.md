@@ -699,10 +699,10 @@ UsTogether uses a custom component layer on top of Tailwind. All components are 
 |-----------|------|---------|--------|
 | **Dashboard** | `components/Dashboard.tsx` | Pre-pairing dashboard with pairing code display and partner code input | ✅ Live |
 | **CoupleDashboard** | `components/CoupleDashboard.tsx` | Main dashboard shell with navigation, widgets, mobile menu | ✅ Live |
-| **ChatDrawer** | `components/ChatDrawer.tsx` | Slide-in chat panel with typing indicators, message bubbles | ✅ Live |
+| **ChatDrawer** | `components/ChatDrawer.tsx` | Slide-in chat panel with typing indicators, read receipts, emoji picker, date grouping, sender avatars | ✅ Live |
 | **ChatPanel** | `components/ChatPanel.tsx` | Message list with Virtuoso virtualized list, print/PDF support | ✅ Live |
 | **QuizList** | `components/QuizList.tsx` | Quiz selection screen with AI generation trigger, live session display | ✅ Live |
-| **ActiveSession** | `components/ActiveSession.tsx` | Real-time multiplayer quiz session with answer sync | ✅ Live |
+| **ActiveSession** | `components/ActiveSession.tsx` | Real-time multiplayer quiz session with transaction-based answer sync and debounce | ✅ Live |
 | **QuizCard** | `components/QuizCard.tsx` | Single quiz card with hover effects, delete, start actions | ✅ Live |
 | **StreakCounter** | `components/StreakCounter.tsx` | Streak display with animated flame icon and progress bar | ✅ Live |
 | **AchievementsPanel** | `components/AchievementsPanel.tsx` | Achievement grid with expand/collapse | ✅ Live |
@@ -716,10 +716,10 @@ UsTogether uses a custom component layer on top of Tailwind. All components are 
 | Component | Path | Purpose | Status |
 |-----------|------|---------|--------|
 | **QuizCardSkeleton** | `components/QuizCardSkeleton.tsx` | Loading state for quiz card | ✅ Live |
-| **Skeletons** | `components/Skeletons.tsx` | Shared skeleton components | ✅ Live |
-| **ChatPanelSkeleton** | (not implemented) | Loading state for chat | ❌ Missing |
-| **DashboardSkeleton** | (not implemented) | Loading state for dashboard | ❌ Missing |
-| **AchievementsPanelSkeleton** | (not implemented) | Loading state for achievements | ❌ Missing |
+| **Skeletons** | `components/Skeletons.tsx` | Shared skeleton components (ChatPanelSkeleton, DashboardSkeleton, AchievementsPanelSkeleton) | ✅ Live |
+| **ChatPanelSkeleton** | `components/Skeletons.tsx` | Loading state for chat | ✅ Live |
+| **DashboardSkeleton** | `components/Skeletons.tsx` | Loading state for dashboard | ✅ Live |
+| **AchievementsPanelSkeleton** | `components/Skeletons.tsx` | Loading state for achievements | ✅ Live |
 
 ---
 

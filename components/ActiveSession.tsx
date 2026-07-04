@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useAuth } from './AuthProvider';
 import { motion, AnimatePresence } from 'motion/react';
 import { Heart, CheckCircle2 } from 'lucide-react';
@@ -8,7 +8,7 @@ import { handleFirestoreError, OperationType } from '@/lib/firestore-errors';
 import { useFirestoreDocument, batchWrite } from '@/lib/firebase';
 import { checkAndAwardAchievements } from '@/lib/achievements';
 import type { Session, Quiz, Couple } from '../global.d';
-import { doc } from 'firebase/firestore';
+import { doc, runTransaction } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 
 export default function ActiveSession({ coupleId, sessionId, couple }: { coupleId: string; sessionId: string; couple?: Couple | null }) {
@@ -18,6 +18,7 @@ export default function ActiveSession({ coupleId, sessionId, couple }: { coupleI
   const { data: session, loading: sessionLoading } = useFirestoreDocument<Session>([`couples/${coupleId}/sessions/${sessionId}`]);
   const quizId = session?.state?.quizId;
   const { data: quiz, loading: quizLoading } = useFirestoreDocument<Quiz>(quizId ? ['quizzes', quizId] : []);
+  const submittingRef = useRef(false);
 
   const currentQIndex = session?.state?.currentQuestion || 0;
   useEffect(() => {
@@ -46,16 +47,31 @@ export default function ActiveSession({ coupleId, sessionId, couple }: { coupleI
 
   const handleAnswer = async (answerVal: any) => {
     if (myAnswer !== undefined) return;
+    if (submittingRef.current) return;
+    submittingRef.current = true;
     try {
-      const newState = { ...session.state };
-      newState.answers = { ...(newState.answers || {}) };
-      newState.answers[currentQIndex] = { ...(newState.answers[currentQIndex] || {}) };
-      newState.answers[currentQIndex][user.uid] = answerVal;
-      await batchWrite([
-        { type: 'update', ref: sessionRef, data: { state: newState, updatedAt: Date.now() } },
-      ]);
+      await runTransaction(db, async (transaction) => {
+        const sessionDocRef = doc(db, 'couples', coupleId, 'sessions', sessionId);
+        const serverDoc = await transaction.get(sessionDocRef);
+        if (!serverDoc.exists()) return;
+        const serverState = serverDoc.data()?.state || {};
+        const qIndex = serverState.currentQuestion ?? 0;
+        const mergedAnswers = { ...(serverState.answers || {}) };
+        mergedAnswers[qIndex] = { ...(mergedAnswers[qIndex] || {}) };
+        mergedAnswers[qIndex][user.uid] = answerVal;
+
+        transaction.update(sessionDocRef, {
+          state: {
+            ...serverState,
+            answers: mergedAnswers,
+          },
+          updatedAt: Date.now(),
+        });
+      });
     } catch (e) {
       handleFirestoreError(e, OperationType.UPDATE, `couples/${coupleId}/sessions/${sessionId}`);
+    } finally {
+      setTimeout(() => { submittingRef.current = false; }, 800);
     }
   };
 

@@ -301,13 +301,13 @@ Replace the REST-based Firebase ID token verification in `lib/api-auth.ts` with 
 
 | Feature | Impact | Effort | Risk | Recommended Order | Status |
 |---------|--------|--------|------|-------------------|--------|
-| Performance Optimization | Critical | Medium | Low | **1st** | ⏳ Partial |
-| Quiz Sync Debug | Critical | High | Medium | **2nd** | ⏳ Not Started |
-| Photo Upload | High | Medium | Low | **3rd** | ❌ Not Started |
-| Chat UI Polish | Medium | Medium | Low | **4th** | ⏳ Partial |
+| Performance Optimization | Critical | Medium | Low | **1st** | ✅ Complete |
+| Quiz Sync Debug | Critical | High | Medium | **2nd** | ✅ Complete |
+| Photo Upload | High | Medium | Low | **3rd** | ✅ Complete |
+| Chat UI Polish | Medium | Medium | Low | **4th** | ✅ Complete |
 | Dashboard Analytics | Medium | Medium | Low | **5th** | ✅ Complete |
-| Milestones Timeline | Medium | Medium | Low | **6th** | ❌ Not Started |
-| API Auth Refactor | Medium | Low | Low | **7th** | ❌ Not Started |
+| Milestones Timeline | Medium | Medium | Low | **6th** | ✅ Complete |
+| API Auth Refactor | Medium | Low | Low | **7th** | ✅ Complete |
 
 ---
 

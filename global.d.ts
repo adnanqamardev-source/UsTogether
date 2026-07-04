@@ -54,6 +54,7 @@ export interface ChatMessage {
   senderId: string;
   text: string;
   timestamp: Date;
+  readBy?: string[];
 }
 
 export interface Session {
@@ -84,4 +85,34 @@ export interface AchievementDefinition {
 export interface PairingCode {
   userId: string;
   createdAt: number;
+}
+
+export interface PhotoUploadProgress {
+  id: string;
+  fileName: string;
+  progress: number;
+  status: 'pending' | 'uploading' | 'complete' | 'error';
+  url?: string;
+}
+
+export interface MemoryPhoto {
+  id: string;
+  url: string;
+  thumbnailUrl?: string;
+  sessionId: string;
+  coupleId: string;
+  uploadedBy: string;
+  uploadedAt: number;
+  createdAt: number;
+}
+
+export interface Milestone {
+  id: string;
+  coupleId: string;
+  type: 'session_completed' | 'streak_7' | 'streak_30' | 'quiz_milestone' | 'anniversary';
+  title: string;
+  description?: string;
+  date: number;
+  relatedSessionId?: string;
+  icon?: string;
 }
