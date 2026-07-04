@@ -13,6 +13,9 @@ export function QuizCardSkeleton() {
         <div className="h-12 bg-white/10 rounded-xl" />
         <div className="h-12 bg-white/10 rounded-xl" />
       </div>
+      <div className="mt-6 h-10 bg-white/5 rounded-xl border border-dashed border-white/10 flex items-center justify-center text-white/20">
+        <span className="text-xs uppercase tracking-widest">☕ Chai Time</span>
+      </div>
     </div>
   );
 }

@@ -1,8 +1,8 @@
 # Frontend Specification Document — UsTogether
 
-**Version:** 1.1  
+**Version:** 2.0  
 **Date:** 2026-07-04  
-**Status:** Active — Post-Audit
+**Status:** Active
 
 ---
 
@@ -708,6 +708,8 @@ UsTogether uses a custom component layer on top of Tailwind. All components are 
 | **AchievementsPanel** | `components/AchievementsPanel.tsx` | Achievement grid with expand/collapse | ✅ Live |
 | **MemoryBoard** | `components/MemoryBoard.tsx` | Quiz history display with AI-generated couple challenges | ✅ Live |
 | **StatsPage** | `app/stats/page.tsx` | Dedicated stats page with activity heatmap and metrics | ✅ Live |
+| **BottomNav** | `components/BottomNav.tsx` | Mobile bottom nav with pill `layoutId` indicator | ✅ Live |
+| **ChatFAB** | `components/ChatFAB.tsx` | Floating chat action button above bottom nav | ✅ Live |
 
 ### 6.3 Skeleton Components
 

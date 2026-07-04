@@ -208,7 +208,9 @@ export default function QuizList({ coupleId }: { coupleId: string }) {
     <div className="space-y-12">
       {activeSessions.length > 0 && (
         <section>
-          <SectionHeader title="Live Sessions" badge={activeSessions.length} icon={Flame} accent="text-green-400" />
+          <div className="sticky top-0 z-20 bg-[#0F0A1F]/80 backdrop-blur-md border-b border-white/5 -mx-5 sm:-mx-10 px-5 sm:px-10 py-3 mb-6">
+            <SectionHeader title="Live Sessions" badge={activeSessions.length} icon={Flame} accent="text-green-400" />
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
              {activeSessions.map(s => (
                 <div key={s.id} onClick={() => window.location.hash = `#session/${s.id}`} className="relative bg-rose-500/10 border border-rose-500/30 p-5 rounded-3xl cursor-pointer hover:bg-rose-500/20 hover:scale-[1.02] transition-all duration-300 shadow-[0_0_15px_rgba(244,63,94,0.1)] hover:shadow-[0_0_25px_rgba(244,63,94,0.3)] group">
@@ -229,7 +231,9 @@ export default function QuizList({ coupleId }: { coupleId: string }) {
       )}
 
       <section>
-        <SectionHeader title="Featured Quizzes" />
+        <div className="sticky top-0 z-20 bg-[#0F0A1F]/80 backdrop-blur-md border-b border-white/5 -mx-5 sm:-mx-10 px-5 sm:px-10 py-3 mb-6">
+          <SectionHeader title="Featured Quizzes" />
+        </div>
         <div className="flex items-center justify-end mb-2">
            <button onClick={fetchNewQuiz} disabled={generatingQuiz} className="text-xs font-bold uppercase tracking-[0.2em] text-rose-400 hover:text-rose-300 transition-colors flex items-center gap-2">
              <Sparkles className="w-3 h-3" /> {generatingQuiz ? '...' : 'Fetch New'}
@@ -238,10 +242,13 @@ export default function QuizList({ coupleId }: { coupleId: string }) {
         
         {quizzes.length === 0 ? (
            <div className="text-center p-10 border border-white/10 rounded-3xl bg-white/5">
-             <p className="text-indigo-200 mb-4 font-light">Loading quizzes or no quizzes available...</p>
-             <button onClick={fetchNewQuiz} disabled={generatingQuiz} className="bg-indigo-500 hover:bg-indigo-400 text-white font-bold py-2 px-6 rounded-full text-sm uppercase tracking-widest transition-all">{generatingQuiz ? 'Generating...' : 'Reload Quizzes'}</button>
+             <div className="flex justify-center mb-4">
+               <div className="w-14 h-14 rounded-full border border-dashed border-white/20 flex items-center justify-center text-xl">🛺</div>
+             </div>
+             <p className="text-indigo-200 mb-4 font-light">No quizzes in the queue — time for a chai break?</p>
+             <button onClick={fetchNewQuiz} disabled={generatingQuiz} className="bg-indigo-500 hover:bg-indigo-400 text-white font-bold py-2 px-6 rounded-full text-sm uppercase tracking-widest transition-all">{generatingQuiz ? 'Generating...' : 'Fetch New Quiz'}</button>
            </div>
-        ) : (
+         ) : (
           <>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {quizzes.map(q => (

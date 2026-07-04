@@ -111,12 +111,14 @@ export default function MemoryBoard({ coupleId }: { coupleId: string }) {
         </div>
       )}
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="columns-2 md:columns-3 gap-6 space-y-6">
           {finishedSessions.length === 0 ? (
-            <div className="col-span-full text-center py-20 bg-white/5 border border-white/10 rounded-3xl">
-               <Images className="w-12 h-12 text-indigo-400/50 mx-auto mb-4" />
-               <p className="text-indigo-200/50">You haven't finished any quizzes yet.</p>
-            </div>
+        <div className="col-span-full text-center py-20 bg-white/5 border border-white/10 rounded-3xl">
+           <div className="mx-auto mb-4 flex items-center justify-center">
+             <div className="w-16 h-16 rounded-full border border-dashed border-white/20 flex items-center justify-center text-2xl">☕</div>
+           </div>
+           <p className="text-indigo-200/50">No chai-sipped quizzes yet — start one and make some memories.</p>
+        </div>
           ) : (
             finishedSessions.map(s => (
               <motion.div

@@ -20,6 +20,8 @@ import QuizList from './QuizList';
 import StreakCounter from './StreakCounter';
 import AchievementsPanel from './AchievementsPanel';
 import ErrorBoundary from './ErrorBoundary';
+import BottomNav from './BottomNav';
+import ChatFAB from './ChatFAB';
 
 const ChatDrawer = dynamic(() => import('./ChatDrawer'), {
   ssr: false,
@@ -250,7 +252,9 @@ export default function CoupleDashboard({ coupleId }: { coupleId: string }) {
       )}
 
       {/* Main Content */}
-      <main className="flex-1 relative z-10 w-full p-5 sm:p-10">
+      <main className="flex-1 relative z-10 w-full p-5 sm:p-10 pb-28">
+        <BottomNav onChatClick={() => setIsChatOpen(true)} />
+        <ChatFAB onClick={() => setIsChatOpen(true)} />
         {isStats ? (
           <div className="py-8 md:py-12 w-full max-w-4xl mx-auto">
             <h1 className="text-4xl md:text-5xl font-serif italic mb-6 text-white">Stats</h1>
@@ -267,10 +271,31 @@ export default function CoupleDashboard({ coupleId }: { coupleId: string }) {
               <p className="text-slate-400 text-sm md:text-base">Pick a quiz or game to challenge your partner.</p>
             </header>
 
-            {/* Widgets Row with improved grid spacing */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 mb-12">
-              <StreakCounter streak={userProfile?.streak || 0} />
-              <AchievementsPanel achievements={achievements} />
+            {/* Asymmetrical Widgets: Hero card + 2-up grid */}
+            <div className="space-y-4 mb-12">
+              {/* Hero card: active session / unread messages */}
+              <motion.div
+                whileHover={{ scale: 1.01 }}
+                className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-white/5 p-6 shadow-xl"
+              >
+                <div className="absolute -top-10 -right-10 w-40 h-40 bg-rose-500/20 blur-[60px] rounded-full pointer-events-none" />
+                <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div>
+                    <p className="text-[10px] uppercase tracking-[0.25em] text-indigo-300 mb-1">Connection Status</p>
+                    <h3 className="text-2xl font-serif italic text-white">You & Partner are paired ✨</h3>
+                    <p className="text-indigo-200/60 text-sm mt-1">Complete a quiz together to keep the streak alive.</p>
+                  </div>
+                  <button onClick={() => { window.location.hash = ''; }} className="shrink-0 bg-indigo-500 hover:bg-indigo-400 text-white font-bold uppercase tracking-widest text-xs py-3 px-6 rounded-full transition-all shadow-[0_0_20px_rgba(99,102,241,0.3)]">
+                    Start Quiz
+                  </button>
+                </div>
+              </motion.div>
+
+              {/* 2-up grid for secondary widgets */}
+              <div className="grid grid-cols-2 gap-4">
+                <StreakCounter streak={userProfile?.streak || 0} />
+                <AchievementsPanel achievements={achievements} />
+              </div>
             </div>
 
             <QuizList coupleId={coupleId} />
