@@ -1,8 +1,8 @@
 # Product Requirements Document — UsTogether
 
-**Version:** 1.0  
-**Date:** 2026-07-03  
-**Status:** Active
+**Version:** 1.1  
+**Date:** 2026-07-04  
+**Status:** Active — Post-Audit
 
 ---
 
@@ -69,26 +69,35 @@ We're not building another chat app. We're building a **relationship OS** that c
 
 ## 4. Core Features
 
-### Must-Have (MVP)
+### Must-Have (MVP) — ✅ All Implemented
+
+| Feature | Description | Priority | Status |
+|---------|-------------|----------|--------|
+| **User Authentication** | Google OAuth login; secure, one-click sign-in | Must-Have | ✅ Live |
+| **Partner Pairing** | Couples link accounts via secure pairing code; one-to-one matching | Must-Have | ✅ Live |
+| **Real-Time Chat** | Live messaging between partners with optimistic UI, typing indicators, auto-scroll | Must-Have | ✅ Live |
+| **AI-Powered Quizzes** | Google Gemini 2.5 Flash generates personalized relationship questions on-demand | Must-Have | ✅ Live |
+| **Quiz Sessions** | Real-time synchronized quiz gameplay between both partners | Must-Have | ✅ Live |
+| **Points System** | Couples earn points for completing quizzes together | Must-Have | ✅ Live |
+| **User Profiles** | Basic profile with display name, email, points, streak, and status | Must-Have | ✅ Live |
+| **Responsive Design** | Works on mobile, tablet, and desktop | Must-Have | ✅ Live |
+
+### Nice-to-Have — Implemented (Promoted from Post-MVP)
+
+| Feature | Description | Priority | Status |
+|---------|-------------|----------|--------|
+| **Streak Tracking** | Daily activity streaks with animated counter and progress bar | Nice-to-Have | ✅ Live |
+| **Achievements System** | 8 badges across 4 categories (participation, streak, milestone, social) | Nice-to-Have | ✅ Live |
+| **Memory Board** | Quiz history display with AI-generated couple challenges | Nice-to-Have | ✅ Live |
+| **Stats Page** | Dedicated analytics page with 30-day activity heatmap and metrics | Nice-to-Have | ✅ Live |
+| **AI Challenge Generation** | Gemini-powered couple challenges based on quiz history | Nice-to-Have | ✅ Live |
+
+### Nice-to-Have (Post-MVP) — Not Yet Implemented
 
 | Feature | Description | Priority |
 |---------|-------------|----------|
-| **User Authentication** | Google OAuth login; secure, one-click sign-in | Must-Have |
-| **Partner Pairing** | Couples link accounts via secure pairing code; one-to-one matching | Must-Have |
-| **Real-Time Chat** | Live messaging between partners with optimistic UI and auto-scroll | Must-Have |
-| **AI-Powered Quizzes** | Google Gemini generates personalized relationship questions on-demand | Must-Have |
-| **Quiz Sessions** | Real-time synchronized quiz gameplay between both partners | Must-Have |
-| **Points System** | Couples earn points for completing quizzes together | Must-Have |
-| **User Profiles** | Basic profile with display name, email, points, and status | Must-Have |
-| **Responsive Design** | Works on mobile, tablet, and desktop | Must-Have |
-
-### Nice-to-Have (Post-MVP)
-
-| Feature | Description | Priority |
-|---------|-------------|----------|
-| **Streak Tracking** | Daily/weekly activity streaks for couples | Nice-to-Have |
-| **Achievements System** | Badges and milestones for relationship goals | Nice-to-Have |
-| **Memory Board** | Shared photo gallery and milestone timeline | Nice-to-Have |
+| **Photo Gallery Upload** | Upload and share photos in memory board | Nice-to-Have |
+| **Milestone Timeline** | Visual timeline of relationship milestones | Nice-to-Have |
 | **Bucket List** | Couple goals and activities to complete together | Nice-to-Have |
 | **Social Sharing** | Share achievements or milestones to external social platforms | Nice-to-Have |
 | **Custom Challenges** | User-generated challenges and quizzes | Nice-to-Have |
@@ -210,25 +219,31 @@ We're not building another chat app. We're building a **relationship OS** that c
 
 **MVP Launch Date Target:** 8 weeks from project kickoff
 
-**MVP Includes:**
+**MVP Includes (✅ All Implemented):**
 
 - Google OAuth authentication
 - One-to-one partner pairing via code
-- Real-time chat with optimistic UI
-- AI-generated quizzes with real-time sync
-- Basic points system
+- Real-time chat with optimistic UI and typing indicators
+- AI-generated quizzes with real-time sync (Gemini 2.5 Flash)
+- Points system
+- Streak tracking with animated counter
+- Achievements system (8 badges, 4 categories)
+- Memory board (quiz history + AI challenges)
+- Stats page with activity heatmap
 - Responsive web design (mobile + desktop)
 - Dark theme (brand standard)
 
-**MVP Excludes:**
+**MVP Excludes (Still Not Implemented):**
 
-- Memory board / photo gallery
-- Streak tracking and achievements
+- Photo gallery uploads
+- Milestone timeline
 - Custom quiz creation
 - Social sharing
 - Push notifications
 - Multi-language support
 - Admin panel or user management UI
+- Leaderboards
+- Bucket list
 
 ---
 
@@ -284,7 +299,7 @@ The following features are **deliberately excluded** from the initial launch to 
 
 | Risk | Likelihood | Impact | Mitigation |
 |------|-----------|--------|-----------|
-| Gemini API quota exhaustion | Medium | High | Implement rate limiting (5s between requests); cache common quiz templates |
+| Gemini API quota exhaustion | Medium | High | Implement rate limiting (12 req/min per user); cache challenge responses (24h TTL) |
 | Firestore cost overruns | Medium | High | Optimize queries; use efficient listeners; set budget alerts |
 | Low pairing completion rate | Medium | Medium | Simplify onboarding; add in-app walkthrough; reduce friction |
 | Chat moderation concerns | Low | Medium | Keep messages private between partners; implement keyword filter for safety |

@@ -1,8 +1,8 @@
 # Technical Architecture Document — UsTogether
 
-**Version:** 1.0  
-**Date:** 2026-07-03  
-**Status:** Active
+**Version:** 1.1  
+**Date:** 2026-07-04  
+**Status:** Active — Post-Audit
 
 ---
 
@@ -12,11 +12,11 @@
 
 | Technology | Version | Purpose | Rationale |
 |------------|---------|---------|-----------|
-| **Next.js** | 14.2 | React framework | Built-in SSR, App Router, API routes, optimized bundling; zero-config deployment to Vercel |
+| **Next.js** | 16.2 | React framework | Built-in SSR, App Router, API routes, optimized bundling; zero-config deployment to Vercel |
 | **React** | 18.2 | UI library | Mature ecosystem, large community, excellent TypeScript support |
 | **TypeScript** | 6.0+ | Type safety | Catches errors at compile time; improves maintainability and developer experience |
 | **Tailwind CSS** | 4.1 | Styling | Utility-first CSS; rapid UI development; small bundle size with purging |
-| **Framer Motion** | 11.x | Animations | Declarative animations; smooth transitions for chat drawer, quiz cards |
+| **Motion** | 12.23 | Animations | Successor to Framer Motion; declarative animations for chat drawer, quiz cards, streaks |
 | **Lucide React** | 0.553 | Icon library | Tree-shakeable, consistent design language, lightweight |
 
 ### Backend & Data
@@ -237,7 +237,7 @@ NOTE: The project is currently migrating sessions under `couples/{coupleId}/sess
 **Relationships:**
 - Belongs to `Couple`
 
-### 3.6 Collection: `achievements/{achievementId}`
+### 3.6 Subcollection: `achievements/{userId}/items/{achievementId}`
 
 User achievements (earned badges).
 
@@ -251,14 +251,27 @@ User achievements (earned badges).
 | `unlockedAt` | number | Yes | Unix timestamp (ms) of unlock |
 
 **Indexes:**
-- `userId` + `unlockedAt` (composite)
+- `userId` (collection group, for cross-user queries)
 
 **Relationships:**
 - Belongs to `User`
 
-**Note:** Achievement definitions are currently hardcoded in `lib/achievements.ts` (not stored in Firestore).
+**Note:** Achievement definitions are hardcoded in `lib/achievements.ts` (8 definitions across 4 categories). User-specific unlock records are stored in the `items` subcollection. The UI queries `achievements/{userId}/items` via the `useFirestoreCollection` hook.
 
-### 3.7 Collection: `pairingCodes/{code}`
+### 3.7 Subcollection: `couples/{coupleId}/typing/{userId}`
+
+Typing indicator state for chat.
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `isTyping` | boolean | Yes | Whether the user is currently typing |
+| `updatedAt` | number | Yes | Unix timestamp (ms) of last typing update |
+
+**Relationships:**
+- Belongs to `Couple` (parent)
+- Authored by `User`
+
+### 3.8 Collection: `pairingCodes/{code}`
 
 Pairing codes for linking users.
 
@@ -270,7 +283,32 @@ Pairing codes for linking users.
 
 ---
 
-## 4. Environment & Configuration
+## 4. Firestore Data Flow Summary
+
+### Real-Time Listeners Currently Active
+
+| Component | Collection Watched | Listener Type |
+|-----------|-------------------|---------------|
+| `AuthProvider` | `users/{uid}` | `onSnapshot` single doc |
+| `CoupleDashboard` | `couples/{coupleId}` | `useFirestoreDocument` |
+| `CoupleDashboard` | `achievements/{userId}/items` | `useFirestoreCollection` |
+| `CoupleDashboard` | `sessions` (filtered by coupleId + status) | `useFirestoreCollection` |
+| `ChatDrawer` | `couples/{coupleId}/messages` | `useFirestoreCollection` with `orderBy` |
+| `ChatDrawer` | `couples/{coupleId}/typing/{partnerId}` | `useFirestoreDocument` |
+| `ActiveSession` | `couples/{coupleId}/sessions/{sessionId}` | `useFirestoreDocument` |
+| `QuizList` | `quizzes` (filtered by isPublic) | `onSnapshot` |
+| `QuizList` | `couples/{coupleId}/sessions` | `onSnapshot` |
+
+### Batch Write Operations
+
+All atomic multi-document writes go through `batchWrite()` in `lib/firestore-helpers.ts`:
+- **Pairing creation**: Creates couple doc + updates both user profiles + deletes pairing codes
+- **Unpair cleanup**: Updates both user profiles + deletes couple doc + deletes pairing codes
+- **Session finish**: Updates session status + awards achievements (separate Firestore writes)
+
+---
+
+## 5. Environment & Configuration
 
 ### 4.1 Required Environment Variables
 
@@ -339,7 +377,7 @@ Firestore rules are defined in `firestore.rules`. Key principles:
 
 ---
 
-## 5. API & Integration Spec
+## 6. API & Integration Spec
 
 ### 5.1 Firebase Authentication
 
@@ -429,7 +467,7 @@ export async function POST(req: Request) {
 
 ---
 
-## 6. Authentication & Authorization
+## 7. Authentication & Authorization
 
 ### 6.1 Authentication Method
 
@@ -483,7 +521,7 @@ Brief overview (full rules in `firestore.rules`):
 
 ---
 
-## 7. State Management
+## 8. State Management
 
 ### 7.1 Client-Side State
 
@@ -504,7 +542,7 @@ Brief overview (full rules in `firestore.rules`):
 
 ---
 
-## 8. Testing Strategy
+## 9. Testing Strategy
 
 ### 8.1 Unit Tests (Vitest)
 
@@ -527,7 +565,7 @@ Brief overview (full rules in `firestore.rules`):
 
 ---
 
-## 9. Deployment
+## 10. Deployment
 
 ### 9.1 Production Environment
 
@@ -550,7 +588,7 @@ Configure in Vercel Dashboard:
 
 ---
 
-## 10. Monitoring & Observability
+## 11. Monitoring & Observability
 
 - **Error Tracking:** Sentry (optional, post-MVP)
 - **Analytics:** Firebase Analytics + custom events
@@ -560,7 +598,7 @@ Configure in Vercel Dashboard:
 
 ---
 
-## 11. Scalability Considerations
+## 12. Scalability Considerations
 
 1. **Firestore Reads:** Optimize queries; avoid `get()` in loops; use indexed queries
 2. **AI Costs:** Cache quiz results; rate limit; use Flash model for speed
@@ -570,7 +608,7 @@ Configure in Vercel Dashboard:
 
 ---
 
-## 12. Development Workflow
+## 13. Development Workflow
 
 1. **Local Development:** `npm run dev` (Next.js dev server)
 2. **Testing:** `npm run test:unit` and `npm run test:e2e`
@@ -587,7 +625,7 @@ Configure in Vercel Dashboard:
 
 ---
 
-## 13. Glossary
+## 14. Glossary
 
 - **Server Component:** Next.js component that renders on the server (no client-side JS)
 - **Client Component:** React component with `"use client"` directive; interactive on client

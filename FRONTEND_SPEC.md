@@ -1,8 +1,8 @@
 # Frontend Specification Document — UsTogether
 
-**Version:** 1.0  
-**Date:** 2026-07-03  
-**Status:** Active
+**Version:** 1.1  
+**Date:** 2026-07-04  
+**Status:** Active — Post-Audit
 
 ---
 
@@ -683,38 +683,41 @@ UsTogether uses a custom component layer on top of Tailwind. All components are 
 
 ### 6.1 Core Components
 
-| Component | Path | Purpose |
-|-----------|------|---------|
-| **AuthProvider** | `components/AuthProvider.tsx` | Firebase auth context |
-| **AuthWrapper** | `components/AuthWrapper.tsx` | Auth guard for protected routes |
-| **ErrorBoundary** | `components/ErrorBoundary.tsx` | Catches React errors |
-| **Button** | (inline, no separate file) | Use Tailwind classes directly |
-| **Input** | (inline) | Use Tailwind classes directly |
-| **Card** | (inline) | Use Tailwind classes directly |
+| Component | Path | Purpose | Status |
+|-----------|------|---------|--------|
+| **AuthProvider** | `components/AuthProvider.tsx` | Firebase auth context with real-time user profile sync | ✅ Live |
+| **AuthWrapper** | `components/AuthWrapper.tsx` | Auth guard with dynamic Dashboard import, sign-in/sign-out UI | ✅ Live |
+| **ErrorBoundary** | `components/ErrorBoundary.tsx` | Catches React errors with "Try Again" button | ✅ Live |
+| **LandingSections** | `components/LandingSections.tsx` | Landing page content sections | ✅ Live |
+| **Button** | (inline, no separate file) | Use Tailwind classes directly | ✅ Live |
+| **Input** | (inline) | Use Tailwind classes directly | ✅ Live |
+| **Card** | (inline) | Use Tailwind classes directly | ✅ Live |
 
 ### 6.2 Feature Components
 
-| Component | Path | Purpose |
-|-----------|------|---------|
-| **CoupleDashboard** | `components/CoupleDashboard.tsx` | Main dashboard shell |
-| **ChatDrawer** | `components/ChatDrawer.tsx` | Slide-in chat panel |
-| **ChatPanel** | `components/ChatPanel.tsx` | Message list and input |
-| **QuizList** | `components/QuizList.tsx` | Quiz selection screen |
-| **ActiveSession** | `components/ActiveSession.tsx` | Real-time quiz session |
-| **QuizCard** | `components/QuizCard.tsx` | Single question display |
-| **StreakCounter** | `components/StreakCounter.tsx` | Streak display |
-| **AchievementsPanel** | `components/AchievementsPanel.tsx` | Achievement grid |
-| **MemoryBoard** | `components/MemoryBoard.tsx` | Photo/milestone board (post-MVP) |
-| **LandingSections** | `components/LandingSections.tsx` | Landing page content |
+| Component | Path | Purpose | Status |
+|-----------|------|---------|--------|
+| **Dashboard** | `components/Dashboard.tsx` | Pre-pairing dashboard with pairing code display and partner code input | ✅ Live |
+| **CoupleDashboard** | `components/CoupleDashboard.tsx` | Main dashboard shell with navigation, widgets, mobile menu | ✅ Live |
+| **ChatDrawer** | `components/ChatDrawer.tsx` | Slide-in chat panel with typing indicators, message bubbles | ✅ Live |
+| **ChatPanel** | `components/ChatPanel.tsx` | Message list with Virtuoso virtualized list, print/PDF support | ✅ Live |
+| **QuizList** | `components/QuizList.tsx` | Quiz selection screen with AI generation trigger, live session display | ✅ Live |
+| **ActiveSession** | `components/ActiveSession.tsx` | Real-time multiplayer quiz session with answer sync | ✅ Live |
+| **QuizCard** | `components/QuizCard.tsx` | Single quiz card with hover effects, delete, start actions | ✅ Live |
+| **StreakCounter** | `components/StreakCounter.tsx` | Streak display with animated flame icon and progress bar | ✅ Live |
+| **AchievementsPanel** | `components/AchievementsPanel.tsx` | Achievement grid with expand/collapse | ✅ Live |
+| **MemoryBoard** | `components/MemoryBoard.tsx` | Quiz history display with AI-generated couple challenges | ✅ Live |
+| **StatsPage** | `app/stats/page.tsx` | Dedicated stats page with activity heatmap and metrics | ✅ Live |
 
-### 6.3 Skeleton Components (Post-MVP)
+### 6.3 Skeleton Components
 
-| Component | Path | Purpose |
-|-----------|------|---------|
-| **QuizCardSkeleton** | `components/QuizCardSkeleton.tsx` | Loading state for quiz card |
-| **ChatPanelSkeleton** | `components/ChatPanelSkeleton.tsx` | Loading state for chat |
-| **DashboardSkeleton** | `components/DashboardSkeleton.tsx` | Loading state for dashboard |
-| **AchievementsPanelSkeleton** | `components/AchievementsPanelSkeleton.tsx` | Loading state for achievements |
+| Component | Path | Purpose | Status |
+|-----------|------|---------|--------|
+| **QuizCardSkeleton** | `components/QuizCardSkeleton.tsx` | Loading state for quiz card | ✅ Live |
+| **Skeletons** | `components/Skeletons.tsx` | Shared skeleton components | ✅ Live |
+| **ChatPanelSkeleton** | (not implemented) | Loading state for chat | ❌ Missing |
+| **DashboardSkeleton** | (not implemented) | Loading state for dashboard | ❌ Missing |
+| **AchievementsPanelSkeleton** | (not implemented) | Loading state for achievements | ❌ Missing |
 
 ---
 
@@ -931,7 +934,7 @@ extend: {
 
 ## 11. Dark Theme Enforcement
 
-UsTogether is dark-only in MVP. Do not include light mode toggles.
+UsTogether is dark-only in the current version. Do not include light mode toggles until the feature is explicitly added.
 
 **Background Hierarchy:**
 
