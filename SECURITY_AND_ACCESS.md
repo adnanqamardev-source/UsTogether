@@ -1,7 +1,7 @@
 # Security & Access Document — UsTogether
 
-**Version:** 1.0  
-**Date:** 2026-07-03  
+**Version:** 1.1  
+**Date:** 2026-07-04  
 **Status:** Active
 
 ---
@@ -451,7 +451,27 @@ if (!checkRateLimit(`quiz:${userId}`, 3, 300000)) {
 
 ---
 
-## 10. Compliance Notes (MVP)
+## 10. Security Measures Summary
+
+| Category | Measures |
+|----------|----------|
+| **Authentication** | Google OAuth via Firebase Auth, JWT tokens (1hr expiry, auto-refresh) |
+| **Authorization** | Firestore security rules enforce row-level access control |
+| **Input Validation** | Zod schemas in `lib/input-validation.ts` for all API payloads |
+| **XSS Prevention** | Client-side `escapeHtml()`, server stores plain text |
+| **CSRF Protection** | Firebase ID token in header; no cookies = no CSRF |
+| **Rate Limiting** | In-memory `lib/ratelimit.ts` (chat: 10/min, quiz: 3/5min) |
+| **Secrets Management** | GEMINI_API_KEY server-only, NEXT_PUBLIC_ for client keys |
+| **PII Isolation** | User profiles never list-queried; couple-scoped data access |
+| **Immutable Data** | Messages/sessions cannot be arbitrarily updated |
+| **Network Security** | HTTPS enforced; Firebase requires HTTPS in production |
+| **Dependency Security** | npm audit, Dependabot alerts, Google-managed SDKs |
+| **Error Handling** | No stack traces leaked; consistent error response format |
+| **Audit Logging** | Console logging for auth events, pairing, security incidents |
+
+---
+
+## 11. Compliance Notes (MVP)
 
 - **Data Minimization:** Only collect necessary user data (email, displayName, points)
 - **Retention:** Messages stored indefinitely in MVP; add TTL cleanup post-MVP
