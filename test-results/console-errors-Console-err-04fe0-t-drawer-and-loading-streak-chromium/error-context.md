@@ -7,7 +7,7 @@
 # Test info
 
 - Name: console-errors.spec.ts >> Console errors on ChatDrawer open and Streak load >> no console errors while opening chat drawer and loading streak
-- Location: tests\e2e\console-errors.spec.ts:18:7
+- Location: tests\e2e\console-errors.spec.ts:18:3
 
 # Error details
 

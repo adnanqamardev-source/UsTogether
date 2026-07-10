@@ -7,4 +7,4 @@ const nextConfig = {
   transpilePackages: ['motion'],
 };
 
-module.exports = nextConfig;
+export default nextConfig;
