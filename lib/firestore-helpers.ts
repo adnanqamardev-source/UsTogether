@@ -66,7 +66,7 @@ export async function getUserProfile(userId: string): Promise<UserProfile | null
   }
 }
 
-export async function getCouple(coupleId: string): Promise<Couple | null> {
+async function getCouple(coupleId: string): Promise<Couple | null> {
   try {
     const ref = doc(db, 'couples', coupleId);
     const snap = await getDoc(ref);
@@ -83,7 +83,7 @@ export async function getCouple(coupleId: string): Promise<Couple | null> {
   }
 }
 
-export async function getQuiz(quizId: string): Promise<Quiz | null> {
+async function getQuiz(quizId: string): Promise<Quiz | null> {
   try {
     const ref = doc(db, 'quizzes', quizId);
     const snap = await getDoc(ref);
@@ -115,7 +115,7 @@ export async function getPairingCode(code: string): Promise<PairingCode | null> 
   }
 }
 
-export async function getAchievements(userId: string): Promise<Achievement[]> {
+async function getAchievements(userId: string): Promise<Achievement[]> {
   try {
     const col = collection(db, 'achievements', userId, 'items');
     const snap = await getDocs(col);
@@ -133,7 +133,7 @@ export async function getAchievements(userId: string): Promise<Achievement[]> {
   }
 }
 
-export async function getSession(sessionId: string): Promise<Session | null> {
+async function getSession(sessionId: string): Promise<Session | null> {
   try {
     const ref = doc(db, 'sessions', sessionId);
     const snap = await getDoc(ref);
@@ -150,7 +150,7 @@ export async function getSession(sessionId: string): Promise<Session | null> {
   }
 }
 
-export async function getChatMessages(coupleId: string, options?: { limit?: number }): Promise<
+async function getChatMessages(coupleId: string, options?: { limit?: number }): Promise<
   (ChatMessage & { id: string })[]
 > {
   try {

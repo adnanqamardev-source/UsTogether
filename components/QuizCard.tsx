@@ -1,7 +1,7 @@
 import { type CSSProperties, useState } from "react";
 import { Play, Trash2 } from "lucide-react";
 
-export type Quiz = {
+type Quiz = {
   id: string;
   title: string;
   description: string;

@@ -2,7 +2,7 @@ import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from './firebase';
 import { AchievementDefinition } from '../global.d';
 
-export const ACHIEVEMENT_DEFS: AchievementDefinition[] = [
+const ACHIEVEMENT_DEFS: AchievementDefinition[] = [
   { id: 'first_quiz',      title: 'First Quiz',       description: 'Complete your first quiz together', icon: '🎯', category: 'participation' },
   { id: 'five_quizzes',    title: 'Quiz Marathon',    description: 'Complete 5 quizzes',               icon: '🏃', category: 'participation' },
   { id: 'ten_quizzes',    title: 'Quiz Masters',     description: 'Complete 10 quizzes',              icon: '👑', category: 'participation' },
@@ -57,7 +57,7 @@ export async function getEligibleAchievements(userId: string, ctx: AchievementCo
   return ACHIEVEMENT_DEFS.filter((def) => meetsCondition(def, ctx) && !existingIds.has(def.id));
 }
 
-export async function awardAchievement(userId: string, def: AchievementDefinition): Promise<void> {
+async function awardAchievement(userId: string, def: AchievementDefinition): Promise<void> {
   const itemRef = doc(db, 'achievements', userId, 'items', def.id);
   await setDoc(itemRef, {
     title: def.title,

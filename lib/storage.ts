@@ -44,7 +44,7 @@ export async function deletePhoto(path: string): Promise<void> {
   await deleteObject(fileRef);
 }
 
-export async function getPhotoURL(path: string): Promise<string> {
+async function getPhotoURL(path: string): Promise<string> {
   const fileRef = ref(storage, path);
   return getDownloadURL(fileRef);
 }
