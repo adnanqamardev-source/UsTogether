@@ -74,3 +74,14 @@
 
 - Playwright E2E tests in tests/e2e
 - Unit tests with Vitest
+
+## 10. Motion Library
+
+- Use `motion/react` for all animation imports (successor to framer-motion)
+- Standardized across ChatDrawer, Skeletons, and all animated components
+
+## 11. Rate Limiting
+
+- Serverless-compatible rate limiting via `lib/ratelimit.ts`
+- Supports Redis/REDIS_URL for persistent backend in production
+- Falls back to in-memory store for development

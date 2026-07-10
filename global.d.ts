@@ -1,3 +1,4 @@
+declare module 'redis';
 declare module '*.css';
 declare module '*.scss';
 declare module '*.sass';

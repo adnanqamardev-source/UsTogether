@@ -3,9 +3,6 @@
 import { useAuth } from './AuthProvider';
 import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
-import { signOut, onAuthStateChanged } from 'firebase/auth';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
-import { auth, db } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
 
 // Dynamically import Dashboard with loading state
@@ -27,47 +24,18 @@ export default function AuthWrapper({ children }: { children: React.ReactNode })
   const [authenticated, setAuthenticated] = useState(false);
   const router = useRouter();
 
+  // Use AuthProvider's loading state to manage wrapper loading
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        // User is signed in, check if we have their data in Firestore
-        try {
-          const userRef = doc(db, 'users', user.uid);
-          const userSnap = await getDoc(userRef);
-
-          if (userSnap.exists()) {
-            // User data exists in Firestore
-            setAuthenticated(true);
-          } else {
-            // Create user document in Firestore
-            const newUser = {
-              email: user.email || '',
-              points: 0,
-              createdAt: Date.now(),
-              updatedAt: Date.now(),
-              displayName: user.displayName || '',
-            };
-            await setDoc(userRef, newUser);
-            setAuthenticated(true);
-          }
-        } catch (error) {
-          console.error('Error checking/creating user data:', error);
-          setAuthenticated(true); // Still allow access even if Firestore check fails
-        }
-      } else {
-        // User is signed out
-        setAuthenticated(false);
-      }
+    if (!authLoading) {
       setWrapperLoading(false);
-    });
-
-    return () => unsubscribe();
-  }, []);
+      setAuthenticated(!!user && !!dbUser);
+    }
+  }, [authLoading, user, dbUser]);
 
   const handleSignIn = async () => {
     try {
       await authSignIn();
-      // The onAuthStateChanged listener will handle setting authenticated state
+      // AuthProvider will handle setting user and dbUser via onAuthStateChanged
     } catch (error) {
       console.error('Sign in error:', error);
       // Error will be handled by AuthProvider

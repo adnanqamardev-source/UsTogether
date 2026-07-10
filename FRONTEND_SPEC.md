@@ -700,7 +700,6 @@ UsTogether uses a custom component layer on top of Tailwind. All components are 
 | **Dashboard** | `components/Dashboard.tsx` | Pre-pairing dashboard with pairing code display and partner code input | ✅ Live |
 | **CoupleDashboard** | `components/CoupleDashboard.tsx` | Main dashboard shell with navigation, widgets, mobile menu | ✅ Live |
 | **ChatDrawer** | `components/ChatDrawer.tsx` | Slide-in chat panel with typing indicators, read receipts, emoji picker, date grouping, sender avatars | ✅ Live |
-| **ChatPanel** | `components/ChatPanel.tsx` | Message list with Virtuoso virtualized list, print/PDF support | ✅ Live |
 | **QuizList** | `components/QuizList.tsx` | Quiz selection screen with AI generation trigger, live session display | ✅ Live |
 | **ActiveSession** | `components/ActiveSession.tsx` | Real-time multiplayer quiz session with transaction-based answer sync and debounce | ✅ Live |
 | **QuizCard** | `components/QuizCard.tsx` | Single quiz card with hover effects, delete, start actions | ✅ Live |

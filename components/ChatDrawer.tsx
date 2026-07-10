@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'motion/react';
 import { X, Send, Smile, Check, CheckCheck } from 'lucide-react';
 import { useAuth } from './AuthProvider';
 import { useFirestoreCollection, useFirestoreDocument, addMessage } from '@/lib/firebase';

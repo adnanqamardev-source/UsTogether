@@ -570,7 +570,6 @@ All three are already implemented.
 
 - All tickets assume the codebase pattern established in the first tickets
 - API routes follow the auth + validation + rate limit pattern
-- Components use TypeScript, Tailwind, and Framer Motion
-- Firestore operations use the modular SDK (v11+)
+- Components use TypeScript, Tailwind, and Motion (motion/react)
 - All dates/times use Unix timestamps (ms) unless otherwise specified
 - The `escapeHtml` utility from SECURITY_AND_ACCESS.md should be used wherever user text is rendered

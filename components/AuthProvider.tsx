@@ -51,7 +51,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               } else {
                 await createUserProfile(u.uid, {
                   email: u.email || '',
-                  displayName: u.displayName || undefined,
+                  displayName: u.displayName || u.email?.split('@')[0] || '',
                 });
               }
               setLoading(false);

@@ -1,149 +1,60 @@
-# Implementation Plan — UsTogether Dashboard UX Enhancements
+# Implementation Plan
 
-**Version:** 3.0  
-**Date:** 2026-07-04  
-**Status:** Active
+[Overview]
+Audit and remediate the UsTogether couples-connect codebase to improve code quality, eliminate duplication, fix architectural inconsistencies, and ensure all documentation stays synchronized with the code.
 
-## Overview
+The plan consolidates redundant auth listeners, removes duplicate chat components, fixes rate limiting, and updates technical documentation to reflect the current implementation state. These changes reduce runtime bugs, improve maintainability, and prepare the codebase for future feature development.
 
-Execute 6 sequential phases: Performance Optimization & Skeletons wiring, Quiz Sync Debug, Photo Upload, Chat UI Polish, Milestones Timeline, and API Auth Refactor. Each phase targets specific files, functions, and validation criteria. Follow dependency order to minimize conflicts.
+[Types]
+No type system changes needed. The existing `global.d.ts` correctly defines all domain entities. Minor import path standardization is required to ensure consistent type resolution across files.
 
-## Types
+[Files]
 
-Add to `global.d.ts`:
+New files to create:
+- None
 
-```ts
-// In Firestore timestamps section or new section
-export interface PhotoUploadProgress {
-  id: string;
-  fileName: string;
-  progress: number;
-  status: 'pending' | 'uploading' | 'complete' | 'error';
-  url?: string;
-}
+Existing files to modify:
+- `components/AuthWrapper.tsx` — Remove duplicate `onAuthStateChanged` listener, rely solely on `AuthProvider` context, remove inline `getDoc/setDoc` user creation
+- `components/AuthProvider.tsx` — Enhance `createUserProfile` call to include `displayName` from `u.displayName || u.email?.split('@')[0] || ''`, remove unused `handleFirestoreError` operationType parameter (optional)
+- `components/ChatPanel.tsx` — DELETE this file (duplicate of ChatDrawer)
+- `components/ChatDrawer.tsx` — Ensure this is the canonical chat component used everywhere
+- `components/CoupleDashboard.tsx` — Verify spinner import `Loader` from `lucide-react` exists (currently imported in inline dynamic imports)
+- `components/ChatFAB.tsx` — Verify connected to ChatDrawer, not ChatPanel
+- `components/BottomNav.tsx` — Verify connected to ChatDrawer
+- `lib/ratelimit.ts` — Upgrade from in-memory Map to a persistent store (Cloudflare KV or Redis recommended, fallback to file-based per IP/route counters for serverless environments)
+- `firestore.rules` — Keep as-is (well-structured)
+- `app/stats/page.tsx` — Implement actual stats page using existing userProfile streak and sessions data (or flag as deferred if out of scope)
+- `.vscode/settings.json` — Add auto-import configuration if missing
 
-export interface MemoryPhoto {
-  id: string;
-  url: string;
-  thumbnailUrl?: string;
-  sessionId: string;
-  coupleId: string;
-  uploadedBy: string;
-  uploadedAt: number;
-  createdAt: number;
-}
+Files to delete:
+- `components/ChatPanel.tsx` — Duplicate chat implementation
 
-export interface Milestone {
-  id: string;
-  coupleId: string;
-  type: 'session_completed' | 'streak_7' | 'streak_30' | 'quiz_milestone' | 'anniversary';
-  title: string;
-  description?: string;
-  date: number;
-  relatedSessionId?: string;
-  icon?: string;
-}
-```
+[Functions]
+Consolidate authentication initialization into `AuthProvider.createUserProfile` only. Remove the redundant user creation logic in `AuthWrapper.tsx` `useEffect`.
 
-Modify `ChatMessage` type to add `readBy` field:
+Add debounce utility function in `lib/utils.ts` if not already present for chat typing optimization.
 
-```ts
-export interface ChatMessage {
-  id: string;
-  senderId: string;
-  text: string;
-  timestamp: number | Date;
-  readBy?: string[];
-}
-```
+[Classes]
+No class-level changes. All code uses functional components with hooks.
 
-## Files
+[Dependencies]
+No new packages to add or remove. Existing dependency on `motion` (successor to framer-motion) should be used consistently — replace any remaining `framer-motion` imports with `motion/react` in `ChatPanel.tsx` (before deleting it).
 
-### New files
-- `lib/storage.ts` — Firebase Storage helpers: `uploadPhoto`, `getDownloadURL`, `deletePhoto`, `uploadWithProgress`
-- `lib/admin.ts` — Firebase Admin SDK initialization and `verifyIdToken` for server-side auth
+[Testing]
+- Run existing Vitest tests: `npm run test:unit` — verify all pass
+- Run Playwright E2E: `npm run test:e2e` — verify all pass (3 tests currently)
+- Add at least 1 test for auth flow to cover the consolidated `AuthProvider` behavior
+- Add test for rate limiter persistence behavior (mock serverless environment)
 
-### Files to modify
-- `components/Skeletons.tsx` — Already has `QuizCardSkeleton`, `ChatPanelSkeleton`, `DashboardSkeleton`, `AchievementsPanelSkeleton`. No new components needed.
-- `components/ChatDrawer.tsx` — Add read receipts, sender avatars, date grouping, emoji picker
-- `components/ActiveSession.tsx` — Consolidate listeners, fix state drift with transaction, add debounce
-- `components/MemoryBoard.tsx` — Add photo upload grid with drag-drop, milestone timeline tabs
-- `lib/firebase.ts` — Export `getStorage()`
-- `lib/api-auth.ts` — Replace REST API with Firebase Admin SDK
-- `package.json` — Add `firebase-admin` dependency
-- `firestore.rules` — Add `memory_photos` and `milestones` subcollection rules
-- `global.d.ts` — Add `PhotoUploadProgress`, `MemoryPhoto`, `Milestone` types; update `ChatMessage`
+[Implementation Order]
 
-## Functions
-
-### New functions
-- `lib/storage.ts:uploadWithProgress(file, path, onProgress)` — Upload to Firebase Storage with progress callback
-- `lib/storage.ts:uploadPhoto(coupleId, file, userId)` — Generate path, call uploadWithProgress, return URL
-- `lib/storage.ts:getDownloadURL(path)` — Wrapper for `getDownloadURL` from Firebase Storage
-- `lib/storage.ts:deletePhoto(path)` — Delete from Firebase Storage
-- `lib/admin.ts:admin` — Initialized Firebase Admin app
-- `lib/admin.ts:verifyIdToken(idToken)` — Verify ID token using Admin SDK
-
-### Modified functions
-- `components/ActiveSession.tsx:handleAnswer` — Wrap with `runTransaction` to prevent race conditions
-- `components/ChatDrawer.tsx` — Add `markAsRead`, group messages by date, render avatars via `getAvatarUrl`
-- `components/MemoryBoard.tsx` — Add photo upload handler, milestone timeline rendering
-
-## Classes
-
-No new classes. Continue using existing functional component patterns.
-
-## Dependencies
-
-- Add `firebase-admin` to `package.json` (server-only)
-- No new client-side dependencies required
-
-## Testing
-
-Write E2E test for quiz sync in `tests/e2e/quiz-sync.spec.ts`:
-1. Two partners join session
-2. One submits answer
-3. Verify second partner sees updated state within 2s
-4. Verify no state drift after 10 rapid submissions
-
-Unit tests for `lib/storage.ts` and `lib/admin.ts` with mocked Firebase instances.
-
-## Implementation Order
-
-1. **Phase 1: Performance Optimization & Skeletons**
-   - Verify `app/page.tsx` is Server Component
-   - Wire `ChatPanelSkeleton` into `ChatDrawer` loading states
-   - Wire `DashboardSkeleton` into `CoupleDashboard` loading states
-   - Wire `AchievementsPanelSkeleton` into `AchievementsPanel` loading states
-
-2. **Phase 2: Quiz Sync Debugging**
-   - Wrap `handleAnswer` in `runTransaction` in `ActiveSession.tsx`
-   - Add debounce to frequency of state writes
-   - Ensure listeners consolidate on `session.state` only
-   - Write E2E test `tests/e2e/quiz-sync.spec.ts`
-
-3. **Phase 3: Photo Upload**
-   - Add `getStorage` export to `lib/firebase.ts`
-   - Create `lib/storage.ts` with upload helpers
-   - Update `firestore.rules` for `memory_photos` subcollection
-   - Enhance `MemoryBoard.tsx` with photo upload grid + drag-drop
-
-4. **Phase 4: Chat UI Polish**
-   - Add `readBy` field tracking to `ChatMessage` type
-   - Implement read receipts in `ChatDrawer.tsx`
-   - Add emoji picker button with native picker fallback
-   - Group messages by date with headers
-   - Add sender avatars via `useAuth` + `getAvatarUrl`
-
-5. **Phase 5: Milestones Timeline**
-   - Add `Milestone` type to `global.d.ts`
-   - Update `firestore.rules` for `milestones` subcollection
-   - Add milestone timeline UI tabs to `MemoryBoard.tsx`
-
-6. **Phase 6: API Auth Refactor**
-   - Install `firebase-admin`
-   - Create `lib/admin.ts` with service account init
-   - Refactor `lib/api-auth.ts` to use Admin SDK
-   - Update `TECHNICAL_ARCHITECTURE.md` Section 7
-
-After each phase, update documentation per `.clinerules` mandate.
+1. Delete `components/ChatPanel.tsx` (confirm no other imports reference it)
+2. Update `AuthWrapper.tsx` to remove duplicate auth logic and user creation
+3. Update `AuthProvider.tsx` to handle user creation robustly with displayName fallback
+4. Audit all files importing from `ChatPanel` — update to `ChatDrawer`
+5. Standardize motion imports (search for `framer-motion`)
+6. Upgrade `lib/ratelimit.ts` with persistent back-end
+7. Implement or improve stats page at `app/stats/page.tsx`
+8. Update `TECHNICAL_ARCHITECTURE.md` and `implementation_plan.md` with any entity changes
+9. Update `Playbook.md` (Documentation Lifecycle) to reflect completed work
+10. Run full test suite and fix any breakage
