@@ -3,7 +3,7 @@ import { getAuth } from 'firebase-admin/auth';
 
 let adminApp: App | null = null;
 
-function getAdminApp(): App {
+export function getAdminApp(): App {
   if (adminApp) return adminApp;
 
   const cred: Credential = process.env.FIREBASE_ADMIN_CREDENTIALS

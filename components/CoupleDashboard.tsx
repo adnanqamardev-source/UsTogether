@@ -10,7 +10,6 @@ import {
   useFirestoreDocument,
   useFirestoreCollection,
   batchWrite,
-  deletePairingCode,
 } from '@/lib/firebase';
 import { updateStreak } from '@/lib/streak';
 import { checkAndAwardAchievements } from '@/lib/achievements';
@@ -141,8 +140,19 @@ export default function CoupleDashboard({ coupleId }: { coupleId: string }) {
 
   const handleUnpair = async () => {
     if (!window.confirm('Are you sure you want to disconnect from your partner?')) return;
-    if (!user || !couple) return;
+    if (!user || !couple) {
+      alert('Please sign in again to disconnect.');
+      return;
+    }
+    
     try {
+      // Ensure auth token is valid before attempting write
+      const token = await user.getIdToken(true);
+      if (!token) {
+        alert('Authentication expired. Please sign in again.');
+        return;
+      }
+      
       const userRef = doc(db, 'users', user.uid);
       const partnerRef = doc(db, 'users', partnerId);
       const coupleRef = doc(db, 'couples', coupleId);
@@ -152,11 +162,18 @@ export default function CoupleDashboard({ coupleId }: { coupleId: string }) {
         { type: 'update', ref: userRef, data: { pairedCoupleId: '', updatedAt: now } },
         { type: 'update', ref: partnerRef, data: { pairedCoupleId: '', updatedAt: now } },
         { type: 'delete', ref: coupleRef },
-        { type: 'delete', ref: doc(db, 'pairingCodes', user.uid.substring(0, 8).toUpperCase()) },
-        { type: 'delete', ref: doc(db, 'pairingCodes', partnerId.substring(0, 8).toUpperCase()) },
       ]);
+      
+      // Force page refresh to reset auth state
+      window.location.reload();
     } catch (e: any) {
       console.error('Unpair failed', e);
+      // Handle permission denied specifically
+      if (e?.message?.includes('Missing or insufficient permissions') || e?.code === 'permission-denied') {
+        alert('Cannot disconnect: Authentication issue. Please disable ad blockers and try again.');
+      } else {
+        alert('Failed to disconnect. Please try again.');
+      }
     }
   };
 
