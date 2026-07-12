@@ -15,18 +15,34 @@ function defaultTransform<T>(id: string, data: DocumentData): T {
   return data as T;
 }
 
+// SHORT-CIRCUIT: normalize the path. If it's missing, empty, or contains an
+// "undefined"/"null" segment (e.g. 'couples/undefined/sessions'), treat it as
+// an empty path so we never fire a Firestore query on behalf of a not-ready user.
+function normalizePath(pathSegments?: string[]): string[] {
+  if (
+    !pathSegments ||
+    pathSegments.length === 0 ||
+    pathSegments.includes('undefined') ||
+    pathSegments.includes('null')
+  ) {
+    return [];
+  }
+  return pathSegments;
+}
+
 export function useFirestoreCollection<T>(
-  pathSegments: string[],
+  pathSegments: string[] | undefined,
   constraints: QueryConstraint[] = [],
   transform = defaultTransform<T>
 ): { data: T[]; loading: boolean; error: Error | null } {
-  const pathKey = pathSegments.join('/');
+  const safeSegments = normalizePath(pathSegments);
+  const pathKey = safeSegments.join('/');
   const [data, setData] = useState<T[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
-    if (!pathSegments.length) {
+    if (!safeSegments.length) {
       setLoading(false);
       return;
     }

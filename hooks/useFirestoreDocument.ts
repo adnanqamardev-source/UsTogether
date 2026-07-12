@@ -5,16 +5,32 @@ import { doc, onSnapshot, DocumentData } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { handleFirestoreError, OperationType } from '@/lib/firestore-errors';
 
+// SHORT-CIRCUIT: normalize the path. If it's missing, empty, or contains an
+// "undefined"/"null" segment, treat it as an empty path so we never fire a
+// Firestore read on behalf of a not-ready user.
+function normalizePath(pathSegments?: string[]): string[] {
+  if (
+    !pathSegments ||
+    pathSegments.length === 0 ||
+    pathSegments.includes('undefined') ||
+    pathSegments.includes('null')
+  ) {
+    return [];
+  }
+  return pathSegments;
+}
+
 export function useFirestoreDocument<T>(
-  pathSegments: string[]
+  pathSegments: string[] | undefined
 ): { data: T | null; loading: boolean; error: Error | null } {
-  const pathKey = pathSegments.join('/');
+  const safeSegments = normalizePath(pathSegments);
+  const pathKey = safeSegments.join('/');
   const [data, setData] = useState<T | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
-    if (!pathSegments.length) {
+    if (!safeSegments.length) {
       setLoading(false);
       return;
     }
