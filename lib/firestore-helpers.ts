@@ -251,6 +251,7 @@ export async function createUserProfile(
   try {
     const ref = doc(db, 'users', userId);
     const now = Date.now();
+    const today = new Date().toISOString().split('T')[0]; // "YYYY-MM-DD"
     await setDoc(
       ref,
       {
@@ -259,10 +260,10 @@ export async function createUserProfile(
         points: 0,
         pairedCoupleId: '',
         streak: 0,
+        lastActiveDate: today,
         createdAt: now,
         updatedAt: now,
-      },
-      { merge: true }
+      }
     );
   } catch (error) {
     handleFirestoreError(error, OperationType.CREATE, `users/${userId}`);
