@@ -91,20 +91,20 @@ service cloud.firestore {
     }
 
     match /couples/{coupleId} {
-      function isMember() {
-        return isAuthenticated() && (resource == null || existing().user1Id == request.auth.uid || existing().user2Id == request.auth.uid);
-      }
-      function isIncomingMember() {
-        return isAuthenticated() && (incoming().user1Id == request.auth.uid || incoming().user2Id == request.auth.uid);
+      // Membership is derived from the coupleId string itself, which is built by
+      // joining the two partner UIDs with an underscore, e.g. "uid1_uid2".
+      // A user is a member iff their request.auth.uid appears as a segment of coupleId.
+      function isCoupleMember() {
+        return isAuthenticated() && coupleId.matches('^(.*_)?' + request.auth.uid + '(_.*)?$');
       }
 
-      allow get: if isAuthenticated(); // Allowed to get to check if it exists, members are protected if it does
-      allow list: if isAuthenticated() && (resource.data.user1Id == request.auth.uid || resource.data.user2Id == request.auth.uid);
-      
-      allow create: if isIncomingMember() && isValidId(coupleId) && isValidCouple(incoming()) &&
+      allow get: if isCoupleMember();
+      allow list: if isCoupleMember();
+
+      allow create: if isCoupleMember() && isValidId(coupleId) && isValidCouple(incoming()) &&
                     (incoming().createdAt is timestamp || incoming().createdAt is number);
-                    
-       allow update: if isAuthenticated() && (existing().user1Id == request.auth.uid || existing().user2Id == request.auth.uid) && isValidCouple(incoming()) &&
+
+       allow update: if isCoupleMember() && isValidCouple(incoming()) &&
                      incoming().diff(existing()).affectedKeys().hasOnly(['status', 'coupleName', 'totalScore', 'updatedAt']) &&
                      incoming().user1Id == existing().user1Id &&
                      incoming().user2Id == existing().user2Id &&
@@ -112,7 +112,7 @@ service cloud.firestore {
                      (incoming().updatedAt is timestamp || incoming().updatedAt is number);
 
       // Allow either member to delete (unpair) the couple document.
-      allow delete: if isAuthenticated() && (existing().user1Id == request.auth.uid || existing().user2Id == request.auth.uid);
+      allow delete: if isCoupleMember();
 
      // 2.2 Couple Typing Status
      match /typing/{uid} {
@@ -130,28 +130,22 @@ service cloud.firestore {
                 data.timestamp is timestamp;
       }
       match /messages/{messageId} {
-         allow get: if isAuthenticated();
-         allow list: if isAuthenticated();
+         allow get: if isCoupleMember();
+         allow list: if isCoupleMember();
          
-          // Allow creation of a message if the user is authenticated, the message ID is valid,
-          // the payload matches the expected schema, and the sender matches the authenticated user.
-          // The timestamp check is simplified to ensure the field exists and is a valid timestamp.
-          allow create: if isAuthenticated() && isValidId(messageId) && isValidMessage(incoming()) &&
-                        incoming().senderId == request.auth.uid &&
-                        incoming().timestamp is timestamp;
+         // Allow creation of a message if the user is a couple member, the message ID is valid,
+         // the payload matches the expected schema, and the sender matches the authenticated user.
+         allow create: if isCoupleMember() && isValidId(messageId) && isValidMessage(incoming()) &&
+                       incoming().senderId == request.auth.uid &&
+                       incoming().timestamp is timestamp;
          
-         allow update: if false; // Messages are immutable
-         allow delete: if false;
+        allow update: if false; // Messages are immutable
+        allow delete: if false;
       }
       
     // 2.2 Couple Sessions (nested under couples/{coupleId})
     // Membership must be resolved via the PARENT couple document: a session doc
     // itself only stores {coupleId, type, status, state, ...} and has no user1Id/user2Id.
-    function isSessionMember() {
-      return isAuthenticated() &&
-        (get(/databases/$(database)/documents/couples/$(coupleId)).data.user1Id == request.auth.uid ||
-         get(/databases/$(database)/documents/couples/$(coupleId)).data.user2Id == request.auth.uid);
-    }
     function isValidSession(data) {
     return data.keys().hasAll(['coupleId', 'type', 'status', 'state', 'createdAt', 'updatedAt']) &&
            true &&
@@ -163,26 +157,25 @@ service cloud.firestore {
            isOptionalString(data, 'quizTitle', 250);
     }
       match /sessions/{sessionId} {
-          // Reads restricted to authenticated couple members (resolved via parent couple doc)
-          allow get: if isSessionMember();
-          allow list: if isSessionMember();
+          // Reads restricted to authenticated couple members (uid present in coupleId string)
+          allow get: if isCoupleMember();
+          allow list: if isCoupleMember();
 
-         allow create: if isAuthenticated() && isValidId(sessionId) && isValidSession(incoming()) &&
+         allow create: if isCoupleMember() && isValidId(sessionId) && isValidSession(incoming()) &&
                        incoming().coupleId == coupleId &&
-                       isIncomingMember() &&
                        (incoming().createdAt is timestamp || incoming().createdAt is number);
 
          // Updates allowed for couple members. Note: client uses dotted-path updates
          // (e.g. 'state.currentQuestion') which report as affectedKeys like 'state.currentQuestion',
          // so we do NOT use hasOnly() on 'state'. We instead verify membership, non-finished status,
          // and that core identity fields (coupleId, type, createdAt) are unchanged.
-         allow update: if isAuthenticated() && isSessionMember() &&
+         allow update: if isCoupleMember() &&
                        existing().status != 'finished' &&
                        incoming().coupleId == existing().coupleId &&
                        incoming().type == existing().type &&
                        incoming().createdAt == existing().createdAt;
 
-         allow delete: if isAuthenticated() && isSessionMember();
+         allow delete: if isCoupleMember();
       }
     }
     
