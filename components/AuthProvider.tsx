@@ -1,12 +1,10 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import { User, GoogleAuthProvider, signInWithRedirect, getRedirectResult, signOut } from 'firebase/auth';
-import { doc, onSnapshot } from 'firebase/firestore';
+import { User, GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/auth';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { auth, db } from '@/lib/firebase';
-import { handleFirestoreError, OperationType } from '@/lib/firestore-errors';
 import type { UserProfile } from '../global.d';
-import { createUserProfile } from '@/lib/firebase';
 
 interface AuthContextType {
   user: User | null;
@@ -30,80 +28,46 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    let unsubscribeUser: (() => void) | null = null;
-    const unsubscribeAuth = auth.onAuthStateChanged(async (u) => {
+    const unsubscribe = auth.onAuthStateChanged(async (u) => {
       setUser(u);
-      if (unsubscribeUser) {
-        unsubscribeUser();
-        unsubscribeUser = null;
-      }
-
+      
       if (u) {
         try {
-          // Ensure auth token is fully propagated before any Firestore writes
           await u.getIdToken();
-          
           const userRef = doc(db, 'users', u.uid);
-
-          unsubscribeUser = onSnapshot(
-            userRef,
-            async (docSnap: any) => {
-              if (docSnap.exists()) {
-                const data = docSnap.data() as UserProfile;
-                setDbUser(data);
-              } else {
-                await createUserProfile(u.uid, {
-                  email: u.email || '',
-                  displayName: u.displayName || u.email?.split('@')[0] || '',
-                });
-              }
-              setLoading(false);
-            },
-            (error: any) => {
-              setLoading(false);
-              console.error('Auth snapshot error:', error);
-              handleFirestoreError(error, OperationType.GET, `users/${u.uid}`);
-            }
-          );
+          const docSnap = await getDoc(userRef);
+          
+          if (docSnap.exists()) {
+            setDbUser(docSnap.data() as UserProfile);
+          } else {
+            const now = Date.now();
+            const profileData: UserProfile = {
+              email: u.email || '',
+              displayName: u.displayName || u.email?.split('@')[0] || '',
+              points: 0,
+              createdAt: now,
+              updatedAt: now,
+            };
+            await setDoc(userRef, profileData);
+            setDbUser(profileData);
+          }
         } catch (error) {
-          setLoading(false);
+          console.error('Auth error:', error);
         }
       } else {
         setDbUser(null);
-        setLoading(false);
       }
+      
+      setLoading(false);
     });
 
-    return () => {
-       unsubscribeAuth();
-       if (unsubscribeUser) unsubscribeUser();
-    };
+    return () => unsubscribe();
   }, []);
 
   const signIn = async () => {
-    try {
-      const provider = new GoogleAuthProvider();
-      await signInWithRedirect(auth, provider);
-    } catch (error) {
-       console.error("Sign in failed", error);
-       throw error;
-    }
+    const provider = new GoogleAuthProvider();
+    await signInWithPopup(auth, provider);
   };
-
-  // Catch the redirect result when the user returns from the provider.
-  useEffect(() => {
-    (async () => {
-      try {
-        const result = await getRedirectResult(auth);
-        if (result) {
-          // Credential can be extracted here if needed.
-          // For now, onAuthStateChanged will fire and set user/dbUser as usual.
-        }
-      } catch (error) {
-        console.error('Redirect result error:', error);
-      }
-    })();
-  }, []);
 
   const logOut = async () => {
     await signOut(auth);
