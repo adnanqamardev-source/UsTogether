@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import { User, signInWithPopup, GoogleAuthProvider, signOut } from 'firebase/auth';
+import { User, GoogleAuthProvider, signInWithRedirect, getRedirectResult, signOut } from 'firebase/auth';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { auth, db } from '@/lib/firebase';
 import { handleFirestoreError, OperationType } from '@/lib/firestore-errors';
@@ -80,12 +80,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signIn = async () => {
     try {
       const provider = new GoogleAuthProvider();
-      await signInWithPopup(auth, provider);
+      await signInWithRedirect(auth, provider);
     } catch (error) {
        console.error("Sign in failed", error);
        throw error;
     }
   };
+
+  // Catch the redirect result when the user returns from the provider.
+  useEffect(() => {
+    (async () => {
+      try {
+        const result = await getRedirectResult(auth);
+        if (result) {
+          // Credential can be extracted here if needed.
+          // For now, onAuthStateChanged will fire and set user/dbUser as usual.
+        }
+      } catch (error) {
+        console.error('Redirect result error:', error);
+      }
+    })();
+  }, []);
 
   const logOut = async () => {
     await signOut(auth);
