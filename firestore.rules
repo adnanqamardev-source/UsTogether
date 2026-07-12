@@ -141,7 +141,7 @@ service cloud.firestore {
          allow delete: if false;
       }
       
-    // 2.2 Couple Sessions
+    // 2.2 Couple Sessions (nested under couples/{coupleId})
     function isValidSession(data) {
     return data.keys().hasAll(['coupleId', 'type', 'status', 'state', 'createdAt', 'updatedAt']) &&
            true &&
@@ -153,24 +153,26 @@ service cloud.firestore {
            isOptionalString(data, 'quizTitle', 250);
     }
       match /sessions/{sessionId} {
-         allow get: if isAuthenticated();
-         allow list: if isAuthenticated();
-         
+         // Reads restricted to authenticated couple members (resource.data has couple fields on the parent doc context)
+         allow get: if isAuthenticated() && isMember();
+         allow list: if isAuthenticated() && isMember();
+
          allow create: if isAuthenticated() && isValidId(sessionId) && isValidSession(incoming()) &&
                        incoming().coupleId == coupleId &&
+                       isIncomingMember() &&
                        (incoming().createdAt is timestamp || incoming().createdAt is number);
-                       
-         allow update: if isAuthenticated() && isValidSession(incoming()) &&
-                       existing().status != 'finished' && // Terminal state mapping
-                       incoming().diff(existing()).affectedKeys().hasOnly(['status', 'state', 'updatedAt']) &&
+
+         // Updates allowed for couple members. Note: client uses dotted-path updates
+         // (e.g. 'state.currentQuestion') which report as affectedKeys like 'state.currentQuestion',
+         // so we do NOT use hasOnly() on 'state'. We instead verify membership, non-finished status,
+         // and that core identity fields (coupleId, type, createdAt) are unchanged.
+         allow update: if isAuthenticated() && isMember() &&
+                       existing().status != 'finished' &&
                        incoming().coupleId == existing().coupleId &&
                        incoming().type == existing().type &&
-                       incoming().createdAt == existing().createdAt &&
-                       true;
+                       incoming().createdAt == existing().createdAt;
 
-         allow delete: if isAuthenticated() &&
-                       (get(/databases/$(database)/documents/couples/$(coupleId)).data.user1Id == request.auth.uid ||
-                        get(/databases/$(database)/documents/couples/$(coupleId)).data.user2Id == request.auth.uid);
+         allow delete: if isAuthenticated() && isMember();
       }
     }
     

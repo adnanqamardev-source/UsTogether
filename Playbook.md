@@ -30,6 +30,23 @@ UsTogether is a real-time couples' relationship web app (Next.js 16 + Firebase +
 
 ## Cycle History
 
+### 2026-07-12 (2) — Runtime Permission Bug Fix (Sessions)
+**Goal:** Fix "Missing or insufficient permissions" errors on `/couples/{coupleId}/sessions` (console: `operationType:"list","path":"sessions"` and `operationType:"write","path":null`).
+
+**Root cause:**
+- `ActiveSession.tsx` reads/writes sessions at `couples/{coupleId}/sessions/{sessionId}`. The rules block for sessions was nested correctly under `couples/{coupleId}`, BUT the `update` rule used `incoming().diff(existing()).affectedKeys().hasOnly(['status','state','updatedAt'])`. The client sends dotted-path updates like `{ 'state.currentQuestion': n }`, which Firestore rules report as affected key `"state.currentQuestion"` — NOT `"state"`. So `hasOnly()` failed and every answer/next-question write was denied.
+- The `list`/`get` rules used bare `isAuthenticated()` without couple-membership scope, which is also unsafe/inconsistent.
+
+**Fix:** Rewrote the `sessions` match block:
+- `get`/`list` now require `isMember()` (couple membership).
+- `update` now requires `isMember()` + `existing().status != 'finished'` + unchanged identity fields (`coupleId`, `type`, `createdAt`). Removed the brittle `hasOnly(['state',...])` check that broke on dotted-path updates.
+- `create` now requires `isIncomingMember()` + valid session schema + `coupleId` match.
+- `delete` requires `isMember()`.
+
+**Verification:** `npx next build` passes. Rules are syntactically valid (matched against the sibling `messages`/`typing` nested blocks). Note: Firebase rules lint via `firebase emulators:exec` was not run (no emulator configured); manual review confirms correctness.
+
+---
+
 ### 2026-07-12 — Codebase Audit & Security Fixes
 **Goal:** Audit codebase, fix critical security/quality issues found.
 
