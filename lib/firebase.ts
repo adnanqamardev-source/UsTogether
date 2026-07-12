@@ -10,16 +10,18 @@ import {
 import { getStorage } from 'firebase/storage';
 import appletConfig from '../firebase-applet-config.json';
 
+// Note: measurementId removed to prevent ad blocker interference with Privacy Sandbox features
 const useEnv = Boolean(
   process.env.NEXT_PUBLIC_FIREBASE_API_KEY &&
   process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN &&
   process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID &&
   process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET &&
   process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID &&
-  process.env.NEXT_PUBLIC_FIREBASE_APP_ID &&
-  process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
+  process.env.NEXT_PUBLIC_FIREBASE_APP_ID
 );
 
+// Build config from environment variables or fallback to applet config
+// measurementId is intentionally omitted to prevent ad blocker blocking of Google Analytics
 const firebaseConfig = useEnv
   ? {
       apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -28,7 +30,6 @@ const firebaseConfig = useEnv
       storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
       messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
       appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
-      measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
     }
   : appletConfig;
 
