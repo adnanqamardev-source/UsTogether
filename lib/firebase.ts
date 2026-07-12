@@ -6,7 +6,6 @@ import {
   getFirestore,
   initializeFirestore,
   persistentLocalCache,
-  persistentMultipleTabManager,
 } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 import appletConfig from '../firebase-applet-config.json';
@@ -42,9 +41,7 @@ const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0
 let db: ReturnType<typeof getFirestore>;
 try {
   db = initializeFirestore(app, {
-    localCache: persistentLocalCache({
-      tabManager: persistentMultipleTabManager(),
-    }),
+    localCache: persistentLocalCache({}),
   });
 } catch {
   db = getFirestore(app);
