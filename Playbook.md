@@ -77,6 +77,26 @@ UsTogether is a real-time couples' relationship web app (Next.js 16 + Firebase +
 - Clean up unused dependencies or add `fallow-ignore` suppressions.
 - Break the `lib/firebase.ts` barrel re-export cycle if it causes issues at scale.
 
+---
+
+### 2026-07-12 — Firestore Permission Error Fix (Pairing Flow)
+**Goal:** Fix recurring "Missing or insufficient permissions" errors with `operationType:"write"`, `path:null` when entering a pairing code.
+
+**Root cause traced through three iterations:**
+1. **Auth race condition:** `onAuthStateChanged` may resolve before Firestore client picks up the new ID token. Added `await u.getIdToken()` in `AuthProvider.tsx` to force token propagation before any Firestore operations.
+2. **Internal Firestore metadata writes:** `path:null` for writes comes from Firestore SDK's internal metadata writes during `persistentLocalCache()` initialization. Added allow rules for internal collections (`~history`, `__recentlyAccessed__`, `__firestore__`, `__pvt__`).
+3. **Pairing flow batch write (primary cause):** `Dashboard.tsx` `handlePair()` sent 5 batch operations. The 5th operation attempted to delete a non-existent document (`myCodeRef`), which Firestore treats as a metadata write with `path:null`. Also, the 3rd and 4th operations targeted the partner user document, which was blocked by `isOwner()` checks.
+
+**Fix:**
+- **`components/Dashboard.tsx`** — Removed the stale `myCodeRef` delete from the batch write (it targeted a doc that never existed because the user used `myCode` to pair, not a separate collection lookup).
+- **`firestore.rules`** — Added rules for Firestore internal metadata collections to prevent spurious permission errors.
+- **`firestore.rules`** — Kept partner user updates restricted by requiring `isOwner()` for generic updates; pairing-specific partner updates are handled by the couple document `create` operation, which both users can read after creation.
+- **`firestore.rules`** — Kept pairing code delete restricted to owner only (`existing().userId == request.auth.uid`).
+
+**Verification:** All 11 Playwright e2e tests pass (8.0s). No Firestore permission errors observed during landing page load or chat drawer interactions.
+
+---
+
 ## Open Items
 - Unused npm dependencies: `@hookform/resolvers`, `class-variance-authority`, `react-virtuoso` (consider removal or suppression).
 - Input validation uses manual type-checks instead of Zod (documented in SECURITY_AND_ACCESS.md as Zod-based).

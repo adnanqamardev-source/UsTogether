@@ -22,7 +22,7 @@ Timeout:  5000ms
 Call log:
   - Expect "not toBeVisible" with timeout 5000ms
   - waiting for getByText('Together')
-    13 × locator resolved to <p class="text-lg md:text-xl text-indigo-200/80 max-w-2xl mx-auto font-light">Create personalized quizzes relevant to your jour…</p>
+    12 × locator resolved to <p class="text-lg md:text-xl text-indigo-200/80 max-w-2xl mx-auto font-light">Create personalized quizzes relevant to your jour…</p>
        - unexpected value "visible"
 
 ```
