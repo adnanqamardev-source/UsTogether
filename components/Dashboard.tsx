@@ -63,7 +63,6 @@ export default function Dashboard() {
         const partnerRef = doc(db, 'users', partnerId);
         const coupleRef = doc(db, 'couples', coupleId);
         const codeRef = doc(db, 'pairingCodes', codeStr);
-        const myCodeRef = doc(db, 'pairingCodes', myCode);
         const now = Date.now();
 
         await batchWrite([
@@ -78,7 +77,6 @@ export default function Dashboard() {
           { type: 'update', ref: userRef, data: { pairedCoupleId: coupleId, updatedAt: now } },
           { type: 'update', ref: partnerRef, data: { pairedCoupleId: coupleId, updatedAt: now } },
           { type: 'delete', ref: codeRef },
-          { type: 'delete', ref: myCodeRef },
         ]);
 
         router.refresh();

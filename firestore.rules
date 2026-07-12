@@ -57,8 +57,12 @@ service cloud.firestore {
                     
       // Allow updates that only modify allowed fields. Skip full user validation to permit partial updates.
       // Note: 'points' is intentionally excluded — only server-side logic should award points.
+      // Also allow a user's partner to update pairedCoupleId during the pairing flow.
       allow update: if isAuthenticated() &&
-            incoming().diff(existing()).affectedKeys().hasOnly(['displayName', 'pairedCoupleId', 'streak', 'lastActiveDate', 'updatedAt']);
+            (isOwner() || 
+             (incoming().diff(existing()).affectedKeys().hasOnly(['pairedCoupleId', 'updatedAt']) &&
+              incoming().pairedCoupleId is string &&
+              incoming().pairedCoupleId.matches('^(.*_)?' + request.auth.uid + '(_.*)?$')));
     }
 
     // ------------------------------------------------------------
@@ -88,7 +92,10 @@ service cloud.firestore {
        allow get: if isAuthenticated();
        allow create: if isAuthenticated() && isValidPairingCode(incoming()) && incoming().userId == request.auth.uid;
        allow update: if isAuthenticated() && isValidPairingCode(incoming()) && existing().userId == request.auth.uid && incoming().userId == request.auth.uid;
-       allow delete: if isAuthenticated() && existing().userId == request.auth.uid;
+       // Allow deletion by the code owner OR by the user who is pairing with the code owner
+       allow delete: if isAuthenticated() && (existing().userId == request.auth.uid || 
+                     get(/databases/$(database)/documents/users/$(request.auth.uid)).data.pairedCoupleId == 
+                     get(/databases/$(database)/documents/users/$(existing().userId)).data.pairedCoupleId);
     }
 
     // ------------------------------------------------------------
