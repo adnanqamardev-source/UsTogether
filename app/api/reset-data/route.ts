@@ -9,10 +9,18 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Not allowed in production' }, { status: 403 });
     }
 
+    // Require secret key for security
+    const secret = request.headers.get('x-reset-secret');
+    const expectedSecret = process.env.RESET_SECRET_KEY;
+    
+    if (!expectedSecret || secret !== expectedSecret) {
+      return NextResponse.json({ error: 'Invalid or missing secret key' }, { status: 401 });
+    }
+
     const app = getAdminApp();
     const db = getFirestore(app);
 
-    // Get all users and delete them
+    // Get all collections
     const usersSnapshot = await db.collection('users').get();
     const coupleSnapshot = await db.collection('couples').get();
     const pairingCodesSnapshot = await db.collection('pairingCodes').get();
@@ -56,6 +64,6 @@ export async function POST(request: NextRequest) {
 
 export async function GET() {
   return NextResponse.json({ 
-    message: 'POST to this endpoint to reset all user data. Only works in development.' 
+    message: 'POST to this endpoint with x-reset-secret header to reset all user data. Only works in development.' 
   });
 }
