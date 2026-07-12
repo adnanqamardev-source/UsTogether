@@ -2,7 +2,12 @@
 
 import { initializeApp, getApps } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
-import { getFirestore, enableMultiTabIndexedDbPersistence } from 'firebase/firestore';
+import {
+  getFirestore,
+  initializeFirestore,
+  persistentLocalCache,
+  persistentMultipleTabManager,
+} from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 import appletConfig from '../firebase-applet-config.json';
 
@@ -29,12 +34,23 @@ const firebaseConfig = useEnv
   : appletConfig;
 
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
-const db = getFirestore(app);
-const auth = getAuth(app);
 
-enableMultiTabIndexedDbPersistence(db).catch(() => {
-  // Persistence failed to enable (e.g., unsupported browser or already enabled).
-});
+// Use the modern `FirestoreSettings.localCache` API (replaces the deprecated
+// enableMultiTabIndexedDbPersistence()). initializeFirestore throws if the
+// Firestore instance was already created (e.g. during HMR), so fall back to
+// getFirestore in that case.
+let db: ReturnType<typeof getFirestore>;
+try {
+  db = initializeFirestore(app, {
+    localCache: persistentLocalCache({
+      tabManager: persistentMultipleTabManager(),
+    }),
+  });
+} catch {
+  db = getFirestore(app);
+}
+
+const auth = getAuth(app);
 
 export { db, auth };
 export const storage = getStorage(app);

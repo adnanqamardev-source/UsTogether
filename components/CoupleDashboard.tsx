@@ -107,7 +107,7 @@ export default function CoupleDashboard({ coupleId }: { coupleId: string }) {
     : undefined as any;
 
   const { data: finishedSessions } = useFirestoreCollection<Session>(
-    user && coupleId ? ['sessions'] : [],
+    user && coupleId ? ['couples', coupleId, 'sessions'] : [],
     finishedConstraints,
     (id, data) => ({ id, ...(data as Omit<Session, 'id'>) } as Session)
   );

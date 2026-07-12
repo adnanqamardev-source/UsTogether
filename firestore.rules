@@ -104,13 +104,16 @@ service cloud.firestore {
       allow create: if isIncomingMember() && isValidId(coupleId) && isValidCouple(incoming()) &&
                     (incoming().createdAt is timestamp || incoming().createdAt is number);
                     
-      allow update: if isAuthenticated() && (existing().user1Id == request.auth.uid || existing().user2Id == request.auth.uid) && isValidCouple(incoming()) &&
-                    incoming().diff(existing()).affectedKeys().hasOnly(['status', 'coupleName', 'totalScore', 'updatedAt']) &&
-                    incoming().user1Id == existing().user1Id &&
-                    incoming().user2Id == existing().user2Id &&
-                    incoming().createdAt == existing().createdAt &&
-                    (incoming().updatedAt is timestamp || incoming().updatedAt is number);
-                    
+       allow update: if isAuthenticated() && (existing().user1Id == request.auth.uid || existing().user2Id == request.auth.uid) && isValidCouple(incoming()) &&
+                     incoming().diff(existing()).affectedKeys().hasOnly(['status', 'coupleName', 'totalScore', 'updatedAt']) &&
+                     incoming().user1Id == existing().user1Id &&
+                     incoming().user2Id == existing().user2Id &&
+                     incoming().createdAt == existing().createdAt &&
+                     (incoming().updatedAt is timestamp || incoming().updatedAt is number);
+
+      // Allow either member to delete (unpair) the couple document.
+      allow delete: if isAuthenticated() && (existing().user1Id == request.auth.uid || existing().user2Id == request.auth.uid);
+
      // 2.2 Couple Typing Status
      match /typing/{uid} {
        allow read: if isAuthenticated();
