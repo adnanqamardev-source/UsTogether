@@ -40,6 +40,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       if (u) {
         try {
+          // Ensure auth token is fully propagated before any Firestore writes
+          await u.getIdToken();
+          
           const userRef = doc(db, 'users', u.uid);
 
           unsubscribeUser = onSnapshot(
