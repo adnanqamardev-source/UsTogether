@@ -201,9 +201,20 @@ export async function batchWrite(writes: BatchWriteOperation[]): Promise<void> {
   }
 }
 
+function generateRandomCode(length: number = 6): string {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // Excludes I, O, 0, 1 to avoid confusion
+  let code = '';
+  const array = new Uint8Array(length);
+  crypto.getRandomValues(array);
+  for (let i = 0; i < length; i++) {
+    code += chars[array[i] % chars.length];
+  }
+  return code;
+}
+
 export async function createPairingCode(userId: string): Promise<string> {
+  const code = generateRandomCode();
   try {
-    const code = userId.slice(0, 8).toUpperCase();
     const ref = doc(db, 'pairingCodes', code);
     await setDoc(ref, {
       userId,
@@ -211,7 +222,7 @@ export async function createPairingCode(userId: string): Promise<string> {
     });
     return code;
   } catch (error) {
-    handleFirestoreError(error, OperationType.CREATE, `pairingCodes/${userId.slice(0, 8).toUpperCase()}`);
+    handleFirestoreError(error, OperationType.CREATE, `pairingCodes/${code}`);
     throw error;
   }
 }

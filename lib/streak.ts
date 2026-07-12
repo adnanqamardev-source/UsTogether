@@ -1,4 +1,4 @@
-import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from './firebase';
 import { UserProfile } from '../global.d';
 
@@ -14,7 +14,6 @@ function yesterday(date: Date): string {
 
 export async function updateStreak(userId: string): Promise<{ streak: number; unlocked: string[] }> {
   const userRef = doc(db, 'users', userId);
-  const { getDoc, setDoc, serverTimestamp } = await import('firebase/firestore');
 
   const snap = await getDoc(userRef);
   if (!snap.exists()) {

@@ -2,7 +2,7 @@
 
 **UsTogether** is a real-time, interactive web application designed to help couples connect, communicate, and grow together. Built with a high-velocity, AI-leveraged architecture, the app features live chat, shared memory boards, and dynamic, AI-generated relationship quizzes.
 
-![Next.js](https://img.shields.io/badge/Next.js-14-black?style=flat&logo=next.js)
+![Next.js](https://img.shields.io/badge/Next.js-16-black?style=flat&logo=next.js)
 ![React](https://img.shields.io/badge/React-18-blue?style=flat&logo=react)
 ![Firebase](https://img.shields.io/badge/Firebase-Realtime-FFCA28?style=flat&logo=firebase)
 ![TypeScript](https://img.shields.io/badge/TypeScript-Strict-3178C6?style=flat&logo=typescript)

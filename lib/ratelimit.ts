@@ -74,10 +74,11 @@ export async function checkRateLimit(key: string, max = 10, windowMs = 60000): P
     return true;
   }
 
+  const remainingTtl = windowMs - (now - entry.last);
   entry.count += 1;
   entry.last = now;
   if (backend) {
-    await backend.set(key, entry, windowMs - (now - entry.last));
+    await backend.set(key, entry, Math.max(remainingTtl, 1000));
   } else {
     await setMemory(key, entry, windowMs);
   }

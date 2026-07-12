@@ -446,15 +446,15 @@ Tickets marked with ✅ are fully implemented. Tickets marked with ⏳ have part
 
 ### Ticket 8.1: Add Loading Skeleton States
 
-**Status:** ⏳ Partial — QuizCardSkeleton exists, others missing
+**Status:** ✅ Complete
 
 **Description:** Add placeholder skeleton components for all major data-fetching screens to improve perceived performance.
 
 **Acceptance Criteria:**
 - ✅ Skeleton for QuizCard (question text + answer buttons) — ✅ Done
-- ❌ Skeleton for ChatPanel (3-5 message lines) — Missing
-- ❌ Skeleton for Dashboard stats — Missing
-- ❌ Skeleton for AchievementsPanel — Missing
+- ✅ Skeleton for ChatPanel (3-5 message lines) — ✅ Done
+- ✅ Skeleton for Dashboard stats — ✅ Done
+- ✅ Skeleton for AchievementsPanel — ✅ Done
 
 **Dependencies:** 3.1, 3.2, 4.3, 5.1
 
