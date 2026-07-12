@@ -11,9 +11,20 @@ const nextConfig = {
         source: '/(.*)',
         headers: [
           {
+            key: 'Cross-Origin-Opener-Policy',
+            value: 'same-origin-allow-popups',
+          },
+          {
+            key: 'Cross-Origin-Window-Policy', 
+            value: 'allow-popups',
+          },
+          {
+            key: 'Cross-Origin-Resource-Policy',
+            value: 'cross-origin',
+          },
+          {
             key: 'Permissions-Policy',
             // Disable Privacy Sandbox features to prevent warnings from ad blockers
-            // These features are not used by this application
             value:
               'attribution-reporting=(),' +
               'private-aggregation=(),' +

@@ -2,8 +2,9 @@
 
 import { createContext, useContext, useEffect, useState } from 'react';
 import { User, GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/auth';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { doc, getDoc } from 'firebase/firestore';
 import { auth, db } from '@/lib/firebase';
+import { createUserProfile } from '@/lib/firestore-helpers';
 import type { UserProfile } from '../global.d';
 
 interface AuthContextType {
@@ -33,23 +34,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       
       if (u) {
         try {
+          // Ensure auth token is fully propagated
           await u.getIdToken();
+          
           const userRef = doc(db, 'users', u.uid);
           const docSnap = await getDoc(userRef);
           
           if (docSnap.exists()) {
             setDbUser(docSnap.data() as UserProfile);
           } else {
-            const now = Date.now();
-            const profileData: UserProfile = {
+            // Create user profile using the helper function
+            await createUserProfile(u.uid, {
               email: u.email || '',
               displayName: u.displayName || u.email?.split('@')[0] || '',
-              points: 0,
-              createdAt: now,
-              updatedAt: now,
-            };
-            await setDoc(userRef, profileData);
-            setDbUser(profileData);
+            });
+            // Fetch the newly created profile
+            const newDocSnap = await getDoc(userRef);
+            if (newDocSnap.exists()) {
+              setDbUser(newDocSnap.data() as UserProfile);
+            }
           }
         } catch (error) {
           console.error('Auth error:', error);
@@ -66,6 +69,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signIn = async () => {
     const provider = new GoogleAuthProvider();
+    // Use signInWithPopup which is more reliable with ad blockers
     await signInWithPopup(auth, provider);
   };
 
