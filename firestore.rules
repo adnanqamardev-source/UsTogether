@@ -2,6 +2,21 @@
 
 service cloud.firestore {
   match /databases/{database}/documents {
+    // Allow Firestore internal metadata writes (__history__, __recentlyAccessed__, etc.)
+    // These are init-time operations not tied to user auth.
+    match /~/history/{entry} {
+      allow read, write: if true;
+    }
+    match /__recentlyAccessed__/{entry} {
+      allow read, write: if true;
+    }
+    match /__firestore__/{entry} {
+      allow read, write: if true;
+    }
+    match /__pvt__/{entry} {
+      allow read, write: if true;
+    }
+
     function isValidId(id) { return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$'); }
     function incoming() { return request.resource.data; }
     function existing() { return resource.data; }
