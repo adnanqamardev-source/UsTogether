@@ -68,9 +68,10 @@ export default function QuizList({ coupleId }: { coupleId: string }) {
      if (!user) return;
      setGeneratingQuiz(true);
      try {
+       const token = await user.getIdToken();
        const res = await fetch('/api/generate-quiz', {
          method: 'POST',
-         headers: { 'Content-Type': 'application/json' },
+         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
          body: JSON.stringify({
            recentTopics: recentQuestionIds.slice(-20),
            preferredCategory: undefined,

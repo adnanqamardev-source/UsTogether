@@ -92,9 +92,13 @@ export default function MemoryBoard({ coupleId }: { coupleId: string }) {
     setGenerating(true);
     setChallenge(null);
     try {
+      const token = user ? await user.getIdToken() : null;
+      const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+      if (token) headers['Authorization'] = `Bearer ${token}`;
+
       const res = await fetch('/api/generate-challenge', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         body: JSON.stringify({
           history: finishedSessions.map(s => ({ title: getQuizTitle(s), answers: s.state?.answers })),
         }),
