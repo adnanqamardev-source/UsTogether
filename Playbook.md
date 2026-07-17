@@ -4,8 +4,13 @@
 
 UsTogether is a real-time couples' relationship web app (Next.js 16 + Firebase + Gemini AI).
 
+- **Package:** `ustogether`
 - **Entry points:** `app/page.tsx` (landing), `app/dashboard/page.tsx`, `app/stats/page.tsx`, `app/api/*`
 - **Key directories:** `lib/` (Firebase/DB helpers, auth, rate limiting), `components/` (UI), `hooks/` (Firestore listeners), `app/api/` (server routes)
+- **Canonical types:** `global.d.ts`
+- **Security rules:** `firestore.rules`
+- **5 foundation docs present:** PRD.md, TECHNICAL_ARCHITECTURE.md, SECURITY_AND_ACCESS.md, FRONTEND_SPEC.md, FEATURE_TICKETS.md ✅
+- **Known Bad Commands (current):** `npx fallow check` prints a deprecation warning → use `npx fallow dead-code`
 
 ## Architecture Notes
 
