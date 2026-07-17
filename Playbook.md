@@ -21,7 +21,7 @@ UsTogether is a real-time couples' relationship web app (Next.js 16 + Firebase +
 
 ## Known Bad Commands
 | Command | Error | Cause | Use instead | Status |
-|---|---|---|---|---|
+|---------|-------|-------|-------------|--------|
 | `npx fallow check` | warns "deprecated; use `dead-code` instead" | renamed in fallow 3.x | `npx fallow dead-code` | active |
 
 ## Tooling
@@ -113,6 +113,25 @@ UsTogether is a real-time couples' relationship web app (Next.js 16 + Firebase +
 **Verification:**
 - `npm run build` passes successfully.
 - TypeScript compilation succeeds with no errors.
+
+
+### 2026-07-18 — Firestore Permission Error Fix (Memory Board & Unpair)
+
+**Goal:** Fix "Missing or insufficient permissions" errors on `memory_photos`, `milestones` subcollections, user doc reads during auth propagation, and unpair (disconnect) batch writes.
+
+**Root cause (4 bugs):**
+1. `memory_photos` and `milestones` security rules were defined at root level (`match /memory_photos/{photoId}`) but the client accesses them as subcollections `couples/{coupleId}/memory_photos`. Firestore never matched these rules, denying all reads/writes.
+2. Both collections' `list` rules used `resource.data` which is unavailable in list operations — only `get` rules have access to `resource`.
+3. The unpair batch write's partner user update was denied because the `pairedCoupleId` update rule regex rejected an empty string `''` (the value sent when clearing the pairing).
+4. Transient auth token propagation delays caused `users/{userId}` `get` calls to fail with permission-denied before the token was fully registered by Firestore rules.
+
+**Fix:**
+- **`firestore.rules`** — Moved `memory_photos` and `milestones` rule blocks from root level into `match /couples/{coupleId}` so they match the subcollection path. Removed `isPhotoCoupleMember`/`isMilestoneCoupleMember` functions (used `resource.data.coupleId` lookups) — now use parent-scope `isCoupleMember()` which derives membership from the `coupleId` path parameter.
+- **`firestore.rules`** — Updated `list` rules for both collections to use `isCoupleMember()` instead of `resource.data`.
+- **`firestore.rules`** — Added `|| incoming().pairedCoupleId == ''` to the user update rule to allow clearing `pairedCoupleId` during unpair.
+- **`components/AuthProvider.tsx`** — Replaced bare `getDoc` calls with `retryGetDoc()` helper that retries up to 3 times (500ms, 1000ms, 2000ms exponential backoff) on permission-denied errors.
+
+**Verification:** `firebase deploy --only firestore:rules` succeeded (rules compiled). TypeScript compilation passes with no errors.
 
 ---
 

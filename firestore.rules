@@ -1,4 +1,4 @@
- rules_version = '2';
+rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
@@ -58,11 +58,12 @@ service cloud.firestore {
       // Allow updates that only modify allowed fields. Skip full user validation to permit partial updates.
       // Note: 'points' is intentionally excluded — only server-side logic should award points.
       // Also allow a user's partner to update pairedCoupleId during the pairing flow.
+      // Empty string '' is allowed for unpairing (disconnect) flow.
       allow update: if isAuthenticated() &&
             (isOwner() || 
              (incoming().diff(existing()).affectedKeys().hasOnly(['pairedCoupleId', 'updatedAt']) &&
               incoming().pairedCoupleId is string &&
-              incoming().pairedCoupleId.matches('^(.*_)?' + request.auth.uid + '(_.*)?$')));
+              (incoming().pairedCoupleId.matches('^(.*_)?' + request.auth.uid + '(_.*)?$') || incoming().pairedCoupleId == '')));
     }
 
     // ------------------------------------------------------------
@@ -187,17 +188,81 @@ service cloud.firestore {
                        incoming().coupleId == coupleId &&
                        (incoming().createdAt is timestamp || incoming().createdAt is number);
 
-         // Updates allowed for couple members. Note: client uses dotted-path updates
-         // (e.g. 'state.currentQuestion') which report as affectedKeys like 'state.currentQuestion',
-         // so we do NOT use hasOnly() on 'state'. We instead verify membership, non-finished status,
-         // and that core identity fields (coupleId, type, createdAt) are unchanged.
-         allow update: if isCoupleMember() &&
-                       existing().status != 'finished' &&
-                       incoming().coupleId == existing().coupleId &&
-                       incoming().type == existing().type &&
-                       incoming().createdAt == existing().createdAt;
+          // Updates allowed for couple members. Note: client uses dotted-path updates
+          // (e.g. 'state.currentQuestion') which report as affectedKeys like 'state.currentQuestion',
+          // so we do NOT use hasOnly() on 'state'. We instead verify membership, non-finished status,
+          // and that core identity fields (coupleId, type, createdAt) are unchanged.
+          allow update: if isCoupleMember() &&
+                        existing().status != 'finished' &&
+                        incoming().coupleId == existing().coupleId &&
+                        incoming().type == existing().type &&
+                        incoming().createdAt == existing().createdAt;
 
          allow delete: if isCoupleMember();
+      }
+
+      // ------------------------------------------------------------
+      // 4. Memory Photos (subcollection under couples/{coupleId})
+      // ------------------------------------------------------------
+      function isValidMemoryPhoto(data) {
+        return data.keys().hasAll(['url', 'sessionId', 'coupleId', 'uploadedBy', 'uploadedAt', 'createdAt']) &&
+               true &&
+               data.url is string && data.url.size() > 0 && data.url.size() <= 2048 &&
+               data.sessionId is string && data.sessionId.size() <= 128 &&
+               data.coupleId is string && data.coupleId.size() <= 128 &&
+               data.uploadedBy is string && data.uploadedBy.size() <= 128 &&
+               (data.uploadedAt is number || data.uploadedAt is timestamp) &&
+               (data.createdAt is number || data.createdAt is timestamp) &&
+               isOptionalString(data, 'thumbnailUrl', 2048);
+      }
+
+      match /memory_photos/{photoId} {
+        // Use isCoupleMember() from parent scope — coupleId is the path param
+        allow get: if isCoupleMember();
+        allow list: if isCoupleMember();
+
+        allow create: if isCoupleMember() && isValidId(photoId) && isValidMemoryPhoto(incoming()) &&
+                      incoming().uploadedBy == request.auth.uid &&
+                      (incoming().uploadedAt is timestamp || incoming().uploadedAt is number) &&
+                      (incoming().createdAt is timestamp || incoming().createdAt is number);
+
+        allow update: if isCoupleMember() && isValidMemoryPhoto(incoming()) &&
+                      incoming().diff(existing()).affectedKeys().hasOnly(['thumbnailUrl', 'url']) &&
+                      incoming().coupleId == existing().coupleId &&
+                      incoming().sessionId == existing().sessionId &&
+                      incoming().uploadedBy == existing().uploadedBy;
+
+        allow delete: if isCoupleMember() && existing().uploadedBy == request.auth.uid;
+      }
+
+      // ------------------------------------------------------------
+      // 5. Milestones (subcollection under couples/{coupleId})
+      // ------------------------------------------------------------
+      function isValidMilestone(data) {
+        return data.keys().hasAll(['type', 'title', 'date']) &&
+               true &&
+               data.type in ['session_completed', 'streak_7', 'streak_30', 'quiz_milestone', 'anniversary'] &&
+               data.title is string && data.title.size() > 0 && data.title.size() <= 120 &&
+               (data.date is number || data.date is timestamp) &&
+               isOptionalString(data, 'description', 500) &&
+               isOptionalString(data, 'relatedSessionId', 128) &&
+               isOptionalString(data, 'icon', 128);
+      }
+
+      match /milestones/{milestoneId} {
+        // Use isCoupleMember() from parent scope — coupleId is the path param
+        allow get: if isCoupleMember();
+        allow list: if isCoupleMember();
+
+        allow create: if isCoupleMember() && isValidId(milestoneId) && isValidMilestone(incoming()) &&
+                      (incoming().date is timestamp || incoming().date is number);
+
+        allow update: if isCoupleMember() && isValidMilestone(incoming()) &&
+                      incoming().diff(existing()).affectedKeys().hasOnly(['title', 'description', 'date', 'relatedSessionId', 'icon']) &&
+                      incoming().coupleId == existing().coupleId &&
+                      incoming().type == existing().type;
+
+        allow delete: if isCoupleMember();
       }
     }
     
@@ -231,84 +296,5 @@ service cloud.firestore {
 
         allow delete: if isAuthenticated() && existing().creatorId == request.auth.uid;
      }
-
-    // ------------------------------------------------------------
-    // 4. Memory Photos
-    // ------------------------------------------------------------
-    function isValidMemoryPhoto(data) {
-      return data.keys().hasAll(['url', 'sessionId', 'coupleId', 'uploadedBy', 'uploadedAt', 'createdAt']) &&
-             true &&
-             data.url is string && data.url.size() > 0 && data.url.size() <= 2048 &&
-             data.sessionId is string && data.sessionId.size() <= 128 &&
-             data.coupleId is string && data.coupleId.size() <= 128 &&
-             data.uploadedBy is string && data.uploadedBy.size() <= 128 &&
-             (data.uploadedAt is number || data.uploadedAt is timestamp) &&
-             (data.createdAt is number || data.createdAt is timestamp) &&
-             isOptionalString(data, 'thumbnailUrl', 2048);
-    }
-
-    match /memory_photos/{photoId} {
-      function isPhotoCoupleMember(coupleId) {
-        return isAuthenticated() &&
-               (get(/databases/$(database)/documents/couples/$(coupleId)).data.user1Id == request.auth.uid ||
-                get(/databases/$(database)/documents/couples/$(coupleId)).data.user2Id == request.auth.uid);
-      }
-
-      // For reads, use resource.data (existing document). For writes, use incoming() (request.resource.data).
-      allow get: if isAuthenticated() && resource.data.coupleId is string && isPhotoCoupleMember(resource.data.coupleId);
-      allow list: if isAuthenticated() && resource.data.coupleId is string && isPhotoCoupleMember(resource.data.coupleId);
-
-      allow create: if isAuthenticated() && isValidId(photoId) && isValidMemoryPhoto(incoming()) &&
-                    isPhotoCoupleMember(incoming().coupleId) && incoming().uploadedBy == request.auth.uid &&
-                    (incoming().uploadedAt is timestamp || incoming().uploadedAt is number) &&
-                    (incoming().createdAt is timestamp || incoming().createdAt is number);
-
-      allow update: if isAuthenticated() && isValidMemoryPhoto(incoming()) &&
-                    isPhotoCoupleMember(existing().coupleId) &&
-                    incoming().diff(existing()).affectedKeys().hasOnly(['thumbnailUrl', 'url']) &&
-                    incoming().coupleId == existing().coupleId &&
-                    incoming().sessionId == existing().sessionId &&
-                    incoming().uploadedBy == existing().uploadedBy;
-
-      allow delete: if isAuthenticated() && isPhotoCoupleMember(existing().coupleId) && existing().uploadedBy == request.auth.uid;
-    }
-
-    // ------------------------------------------------------------
-    // 5. Milestones
-    // ------------------------------------------------------------
-    function isValidMilestone(data) {
-      return data.keys().hasAll(['type', 'title', 'date']) &&
-             true &&
-             data.type in ['session_completed', 'streak_7', 'streak_30', 'quiz_milestone', 'anniversary'] &&
-             data.title is string && data.title.size() > 0 && data.title.size() <= 120 &&
-             (data.date is number || data.date is timestamp) &&
-             isOptionalString(data, 'description', 500) &&
-             isOptionalString(data, 'relatedSessionId', 128) &&
-             isOptionalString(data, 'icon', 128);
-    }
-
-    match /milestones/{milestoneId} {
-      function isMilestoneCoupleMember(coupleId) {
-        return isAuthenticated() &&
-               (get(/databases/$(database)/documents/couples/$(coupleId)).data.user1Id == request.auth.uid ||
-                get(/databases/$(database)/documents/couples/$(coupleId)).data.user2Id == request.auth.uid);
-      }
-
-      // For reads, use resource.data (existing document). For writes, use incoming() (request.resource.data).
-      allow get: if isAuthenticated() && resource.data.coupleId is string && isMilestoneCoupleMember(resource.data.coupleId);
-      allow list: if isAuthenticated() && resource.data.coupleId is string && isMilestoneCoupleMember(resource.data.coupleId);
-
-      allow create: if isAuthenticated() && isValidId(milestoneId) && isValidMilestone(incoming()) &&
-                    isMilestoneCoupleMember(incoming().coupleId) &&
-                    (incoming().date is timestamp || incoming().date is number);
-
-      allow update: if isAuthenticated() && isValidMilestone(incoming()) &&
-                    isMilestoneCoupleMember(existing().coupleId) &&
-                    incoming().diff(existing()).affectedKeys().hasOnly(['title', 'description', 'date', 'relatedSessionId', 'icon']) &&
-                    incoming().coupleId == existing().coupleId &&
-                    incoming().type == existing().type;
-
-      allow delete: if isAuthenticated() && isMilestoneCoupleMember(existing().coupleId);
-    }
    }
  }

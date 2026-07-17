@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useEffect, useState } from 'react';
 import { User, GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/auth';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, FirestoreError } from 'firebase/firestore';
 import { auth, db } from '@/lib/firebase';
 import { createUserProfile } from '@/lib/firestore-helpers';
 import type { UserProfile } from '../global.d';
@@ -23,6 +23,41 @@ const AuthContext = createContext<AuthContextType>({
   dbUser: null,
 });
 
+/**
+ * Retry a Firestore getDoc call with exponential backoff.
+ * Handles transient "permission-denied" errors that occur when the auth token
+ * hasn't fully propagated to Firestore security rules yet.
+ */
+async function retryGetDoc<T>(
+  ref: ReturnType<typeof doc>,
+  maxAttempts: number = 3,
+  baseDelayMs: number = 500
+): Promise<{ exists: boolean; data: T | null }> {
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      const snap = await getDoc(ref);
+      if (snap.exists()) {
+        return { exists: true, data: snap.data() as T };
+      }
+      return { exists: false, data: null };
+    } catch (error) {
+      const isPermissionDenied =
+        error instanceof FirestoreError &&
+        (error.code === 'permission-denied' || error.message?.includes('Missing or insufficient permissions'));
+
+      if (!isPermissionDenied || attempt === maxAttempts) {
+        throw error;
+      }
+
+      // Exponential backoff: 500ms, 1000ms, 2000ms
+      const delay = baseDelayMs * Math.pow(2, attempt - 1);
+      console.warn(`[AuthProvider] getDoc attempt ${attempt} failed with permission-denied, retrying in ${delay}ms`);
+      await new Promise((resolve) => setTimeout(resolve, delay));
+    }
+  }
+  throw new Error('Unreachable');
+}
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [dbUser, setDbUser] = useState<UserProfile | null>(null);
@@ -38,10 +73,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           await u.getIdToken();
           
           const userRef = doc(db, 'users', u.uid);
-          const docSnap = await getDoc(userRef);
+          const result = await retryGetDoc<UserProfile>(userRef);
           
-          if (docSnap.exists()) {
-            setDbUser(docSnap.data() as UserProfile);
+          if (result.exists && result.data) {
+            setDbUser(result.data);
           } else {
             // Create user profile using the helper function
             await createUserProfile(u.uid, {
@@ -49,9 +84,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               displayName: u.displayName || u.email?.split('@')[0] || '',
             });
             // Fetch the newly created profile
-            const newDocSnap = await getDoc(userRef);
-            if (newDocSnap.exists()) {
-              setDbUser(newDocSnap.data() as UserProfile);
+            const newResult = await retryGetDoc<UserProfile>(userRef);
+            if (newResult.exists && newResult.data) {
+              setDbUser(newResult.data);
             }
           }
         } catch (error) {
