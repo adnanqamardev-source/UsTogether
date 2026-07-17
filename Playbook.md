@@ -23,6 +23,7 @@ UsTogether is a real-time couples' relationship web app (Next.js 16 + Firebase +
 | Command | Error | Cause | Use instead | Status |
 |---------|-------|-------|-------------|--------|
 | `npx fallow check` | warns "deprecated; use `dead-code` instead" | renamed in fallow 3.x | `npx fallow dead-code` | active |
+| `find . -type f ... \! -path "*/node_modules/*"` | `-name` is not recognized | `find` is Unix-only, not available in Windows PowerShell | `Get-ChildItem -Recurse -Include "*.ts","*.tsx" -Exclude "node_modules","*.next","test-results"` | active |
 
 ## Tooling
 - **fallow** (`npx fallow check` / `npx fallow dead-code`) — detects unused files/exports/dependencies and circular imports. Run at end of every cycle.
