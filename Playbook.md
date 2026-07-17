@@ -34,6 +34,11 @@ UsTogether is a real-time couples' relationship web app (Next.js 16 + Firebase +
 | ------------------------------------------------ | ------------------------------------------- | -------------------------------------------------------- | ------------------------------------------------------------------------------------------------ | ------ |
 | `npx fallow check`                               | warns "deprecated; use `dead-code` instead" | renamed in fallow 3.x                                    | `npx fallow dead-code`                                                                           | active |
 | `find . -type f ... \! -path "*/node_modules/*"` | `-name` is not recognized                   | `find` is Unix-only, not available in Windows PowerShell | `Get-ChildItem -Recurse -Include "*.ts","*.tsx" -Exclude "node_modules","*.next","test-results"` | active |
+| `npx next lint`                                   | `Invalid project directory provided, no such directory: ...\lint` | Next.js 16 interprets the last positional arg as a directory | `npx eslint <file>` or `npm run lint` (if it works)                                              | active |
+| `npx next lint --dir components`                  | `error: unknown option '--dir'`             | `--dir` flag removed in Next.js 16                        | `npx eslint components/`                                                                         | active |
+| `npm run lint -- --no-cache`                      | `error: unknown option '--no-cache'`        | `--no-cache` is not a valid next lint option              | `npm run lint` (without extra flags)                                                             | active |
+| `cmd && <command>` or `cmd \|\| <command>`        | `The token '&&' is not a valid statement separator` | PowerShell (default shell) uses `;` not `&&`/`\|\|`       | Use `;` to chain commands, or `cmd ; if ($LASTEXITCODE -eq 0) { <command> }`                     | active |
+| `npx eslint <file> --no-ignore --max-warnings=100 2>&1 \|\| echo ...` | `The token '\|\|' is not a valid statement separator` | PowerShell does not support `\|\|`                        | Use `;` or check `$LASTEXITCODE` in PowerShell                                                   | active |
 
 ## Tooling
 

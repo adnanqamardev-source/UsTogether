@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useAuth } from './AuthProvider';
 import { collection, query, where, getDocs, addDoc, serverTimestamp, deleteDoc } from 'firebase/firestore';
@@ -41,7 +41,7 @@ export default function MemoryBoard({ coupleId }: { coupleId: string }) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
 
-  const fetchMemories = async () => {
+  const fetchMemories = useCallback(async () => {
     try {
       const qs = query(collection(db, `couples/${coupleId}/sessions`), where('status', '==', 'finished'));
       const sn = await getDocs(qs);
@@ -55,12 +55,10 @@ export default function MemoryBoard({ coupleId }: { coupleId: string }) {
       setFinishedSessions(validSessions);
     } catch (e: any) {
       handleFirestoreError(e, OperationType.LIST, `couples/${coupleId}/sessions (Memories)`);
-    } finally {
-      setLoading(false);
     }
-  };
+  }, [coupleId]);
 
-  const fetchPhotos = async () => {
+  const fetchPhotos = useCallback(async () => {
     try {
       const qs = query(collection(db, `couples/${coupleId}/memory_photos`), where('coupleId', '==', coupleId));
       const sn = await getDocs(qs);
@@ -69,9 +67,9 @@ export default function MemoryBoard({ coupleId }: { coupleId: string }) {
     } catch (e: any) {
       handleFirestoreError(e, OperationType.LIST, `couples/${coupleId}/memory_photos`);
     }
-  };
+  }, [coupleId]);
 
-  const fetchMilestones = async () => {
+  const fetchMilestones = useCallback(async () => {
     try {
       const qs = query(collection(db, `couples/${coupleId}/milestones`), where('coupleId', '==', coupleId));
       const sn = await getDocs(qs);
@@ -80,13 +78,16 @@ export default function MemoryBoard({ coupleId }: { coupleId: string }) {
     } catch (e: any) {
       handleFirestoreError(e, OperationType.LIST, `couples/${coupleId}/milestones`);
     }
-  };
+  }, [coupleId]);
 
   useEffect(() => {
-    fetchMemories();
-    fetchPhotos();
-    fetchMilestones();
-  }, [coupleId]);
+    const loadAll = async () => {
+      setLoading(true);
+      await Promise.all([fetchMemories(), fetchPhotos(), fetchMilestones()]);
+      setLoading(false);
+    };
+    loadAll();
+  }, [fetchMemories, fetchPhotos, fetchMilestones]);
 
   const generateChallenge = async () => {
     setGenerating(true);
@@ -277,6 +278,7 @@ export default function MemoryBoard({ coupleId }: { coupleId: string }) {
                     whileHover={{ scale: 1.03, y: -4 }}
                     className="group relative bg-white/5 border border-white/10 rounded-[2rem] overflow-hidden shadow-lg"
                   >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={p.url} alt="memory" className="w-full object-cover rounded-[2rem]" loading="lazy" />
                     <div className="p-4 flex items-center justify-between">
                       <div className="text-xs text-slate-400">{new Date(p.uploadedAt).toLocaleDateString()}</div>
