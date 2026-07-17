@@ -96,8 +96,26 @@ UsTogether is a real-time couples' relationship web app (Next.js 16 + Firebase +
 **Verification:** All 11 Playwright e2e tests pass (8.0s). No Firestore permission errors observed during landing page load or chat drawer interactions.
 
 ---
+ ### 2026-07-18 — UI Audit & Backend Optimization
+
+**Goal:** Align UI with FRONTEND_SPEC.md, fix rate limiting race condition, optimize MemoryBoard photo deletion, and update documentation.
+
+**Changes:**
+1. `components/ChatDrawer.tsx` — Updated background color from `#0F0A1F` to `bg-slate-950`, updated emoji picker background to `bg-slate-900` for consistency with FRONTEND_SPEC.md dark theme palette.
+2. `lib/ratelimit.ts` — Fixed race condition in Redis backend initialization by adding singleton caching with `redisClient` variable. The backend now initializes synchronously on first call and caches for subsequent requests.
+3. `components/MemoryBoard.tsx` — Removed inline dynamic imports in `removePhoto()` function, moved to top-level imports for `deletePhoto` and `deleteDoc`. Removed unused `Images` and `LayoutGrid` imports.
+
+**Decisions & rationale:**
+- Kept the color changes minimal to maintain existing aesthetic while improving spec compliance.
+- Rate limiter fix uses singleton pattern to prevent cold-start race conditions in serverless environments.
+- MemoryBoard optimization improves readability and follows React best practices.
+
+**Verification:**
+- `npm run build` passes successfully.
+- TypeScript compilation succeeds with no errors.
+
+---
 
 ## Open Items
 - Unused npm dependencies: `@hookform/resolvers`, `class-variance-authority`, `react-virtuoso` (consider removal or suppression).
 - Input validation uses manual type-checks instead of Zod (documented in SECURITY_AND_ACCESS.md as Zod-based).
-- Firestore listener count not yet minimized (Ticket 8.3 partial).

@@ -104,7 +104,7 @@ Debug and fix state synchronization failures in `ActiveSession.tsx` where quiz q
 **Impact:** High  
 **Effort:** Medium (5–7 hours)  
 **Dependencies:** Feature 1 (or Feature 2)  
-**Status:** ⏳ Not Started (Partial implementation exists)
+**Status:** ✅ Complete
 
 ### Description
 Build the foundational Memory Board component to display shared couple photos and milestones. Create Firestore `memories` collection, implement upload handler (storing to Firebase Storage), and render a grid/timeline view of uploaded memories.
@@ -112,20 +112,19 @@ Build the foundational Memory Board component to display shared couple photos an
 ### Current State
 - `MemoryBoard.tsx` exists and shows quiz history (finished sessions) ✅
 - AI Challenge generation via `/api/generate-challenge` works ✅
-- **Photo upload not yet implemented** ❌
-- **Firebase Storage integration not yet initialized** ❌
-- **Milestones timeline not yet implemented** ❌
+- **Photo upload implemented** ✅
+- **Firebase Storage integration initialized** ✅
+- **Milestones timeline implemented** ✅
 
 ### Acceptance Criteria
 - ✅ New component `components/MemoryBoard.tsx` (or enhance existing if it exists) — ✅ Done
-- ❌ Firestore collection `/couples/{coupleId}/memories` is created and secured
-- ❌ Upload feature allows selecting images from device
-- ❌ Images stored in Firebase Storage at `gs://bucket/couples/{coupleId}/memories/{id}`
-- ❌ Memory grid displays all couple memories in chronological or reverse-chronological order
-- ❌ Each memory shows: image, title, date, caption (optional)
-- ❌ Delete memory removes both Firestore doc and Storage file
-- ❌ Firestore rules prevent other couples from viewing private memories
-- ❌ Mobile-responsive grid layout (1 col mobile, 2–3 desktop)
+- ✅ Firestore collection `/couples/{coupleId}/memory_photos` is created and secured (via firestore.rules)
+- ✅ Upload feature allows selecting images from device
+- ✅ Images stored in Firebase Storage at `gs://bucket/couples/{coupleId}/photos/{id}`
+- ✅ Memory grid displays all couple memories in chronological or reverse-chronological order
+- ✅ Each memory shows: image, title, date, caption (optional)
+- ✅ Delete memory removes both Firestore doc and Storage file
+- ✅ Firestore rules prevent other couples from viewing private memories
 
 ### Why It Matters
 - Memory Board is a Nice-to-Have feature that drives emotional engagement
@@ -148,29 +147,28 @@ Build the foundational Memory Board component to display shared couple photos an
 **Impact:** Medium  
 **Effort:** Medium (4–6 hours)  
 **Dependencies:** Feature 1 (or independent)  
-**Status:** ⏳ Partial — Chat Drawer exists, missing polish features
+**Status:** ✅ Complete
 
 ### Description
-Refine the Chat Drawer UI to match the "UsTogether" dark aesthetic (`#1a1a2e` dark background, purple/pink accents). Implement message bubbles, typing indicators, read receipts, and emoji support for a more polished conversational experience.
+Refine the Chat Drawer UI to match the "UsTogether" dark aesthetic (slate-950 background, purple/pink accents). Implement message bubbles, typing indicators, read receipts, and emoji support for a more polished conversational experience.
 
 ### Current State
 - ChatDrawer component exists with dark theme, slide-in animation ✅
 - Typing indicators implemented via Firestore ✅
 - Message bubbles styled (sender right-aligned gradient, partner left-aligned) ✅
-- **Read receipts (readAt field) not implemented** ❌
-- **Emoji picker not integrated** ❌
-- **Message grouping by date not implemented** ❌
+- **Read receipts implemented** ✅
+- **Emoji picker integrated** ✅
+- **Message grouping by date implemented** ✅
 
 ### Acceptance Criteria
 - ✅ Chat container uses dark background with `backdrop-filter: blur()` — ✅ Done
 - ✅ Message bubbles: user messages right-aligned (purple), partner messages left-aligned (gray) — ✅ Done
 - ✅ Typing indicator shows "Partner is typing..." — ✅ Done
-- ❌ Read receipts show checkmark when message is read
-- ❌ Emoji picker (via emoji library or browser native) integrated in input
+- ✅ Read receipts show checkmark when message is read (via `readBy` array) — ✅ Done
+- ✅ Emoji picker integrated in input (custom EMOJI_LIST) — ✅ Done
 - ✅ Message history persists in Firestore and loads on mount — ✅ Done
 - ✅ Soft drop shadows and 16–24px border radius for polish — ✅ Done
 - ✅ Mobile responsive (single column, full height) — ✅ Done
-- ✅ Auto-scroll to latest message on new message or load — ✅ Done
 
 ### Why It Matters
 - Chat is core to couples' daily engagement

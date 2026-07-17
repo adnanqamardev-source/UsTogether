@@ -139,7 +139,7 @@ export default function ChatDrawer({ coupleId, onClose }: { coupleId: string; on
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: 40 }}
       transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-      className="h-full w-full bg-[#0F0A1F] border-l border-white/10 shadow-2xl flex flex-col overflow-hidden"
+    className="h-full w-full bg-slate-950 border-l border-white/10 shadow-2xl flex flex-col overflow-hidden"
     >
       <div className="p-4 border-b border-white/10 flex items-center justify-between pb-3">
         <div>
@@ -245,7 +245,7 @@ export default function ChatDrawer({ coupleId, onClose }: { coupleId: string; on
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 8 }}
-              className="absolute bottom-20 right-4 bg-[#12102A] border border-white/10 rounded-2xl shadow-2xl p-3 grid grid-cols-8 gap-2 z-50"
+    className="absolute bottom-20 right-4 bg-slate-900 border border-white/10 rounded-2xl shadow-2xl p-3 grid grid-cols-8 gap-2 z-50"
             >
               {EMOJI_LIST.map((emoji) => (
                 <button key={emoji} type="button" onClick={() => { setText((t) => t + emoji); setShowEmoji(false); }} className="text-lg hover:scale-110 transition-transform">

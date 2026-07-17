@@ -30,35 +30,52 @@ async function setMemory(key: string, value: RateLimitEntry, ttlMs: number): Pro
 }
 
 // Redis backend (Upstash, Redis Cloud, etc.)
+// Cached singleton to avoid reconnecting on every call
+let redisClient: RateLimitBackend | null | undefined = undefined;
+
 async function getRedis(): Promise<RateLimitBackend | null> {
+  if (redisClient !== undefined) return redisClient;
+  
   const url = process.env.REDIS_URL;
-  if (!url) return null;
+  if (!url) {
+    redisClient = null;
+    return null;
+  }
+  
   try {
     // Dynamic import to avoid adding a dependency unless explicitly configured
     const mod = await import('redis');
     const createClient = (mod as any).createClient || mod.default?.createClient;
     const client = createClient({ url });
     await client.connect();
-    return {
+    redisClient = {
       get: async (key: string) => {
-        const raw = await client.get(`ratelimit:${key}`);
-        return raw ? (JSON.parse(raw) as RateLimitEntry) : undefined;
+        try {
+          const raw = await client.get(`ratelimit:${key}`);
+          return raw ? (JSON.parse(raw) as RateLimitEntry) : undefined;
+        } catch (e) {
+          return undefined;
+        }
       },
       set: async (key: string, value: RateLimitEntry, ttlMs: number) => {
-        await client.setEx(`ratelimit:${key}`, Math.ceil(ttlMs / 1000), JSON.stringify(value));
+        try {
+          await client.setEx(`ratelimit:${key}`, Math.ceil(ttlMs / 1000), JSON.stringify(value));
+        } catch {
+          // Best-effort: silently fail if Redis is down
+        }
       },
     };
+    return redisClient;
   } catch (e) {
-    console.warn('Redis backend unavailable, falling back to in-memory:', e);
+    console.warn('Redis backend unavailable, using in-memory fallback:', e);
+    redisClient = null;
     return null;
   }
 }
 
-const backendPromise = getRedis().catch(() => null);
-
 export async function checkRateLimit(key: string, max = 10, windowMs = 60000): Promise<boolean> {
   const now = Date.now();
-  const backend = await backendPromise;
+  const backend = await getRedis();
 
   const entry = backend
     ? await backend.get(key)

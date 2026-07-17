@@ -1,12 +1,12 @@
 import { useEffect, useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useAuth } from './AuthProvider';
-import { collection, query, where, getDocs, addDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, query, where, getDocs, addDoc, serverTimestamp, deleteDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
-import { Images, Calendar, Sparkles, Loader, Upload, Trash2, Image as ImageIcon, LayoutGrid, Milestone as MilestoneIcon } from 'lucide-react';
+import { Calendar, Sparkles, Loader, Upload, Trash2, Image as ImageIcon, Milestone as MilestoneIcon } from 'lucide-react';
 import { handleFirestoreError, OperationType } from '@/lib/firestore-errors';
 import Markdown from 'react-markdown';
-import { uploadWithProgress } from '@/lib/storage';
+import { uploadWithProgress, deletePhoto } from '@/lib/storage';
 import type { MemoryPhoto, Milestone } from '../global.d';
 import { doc } from 'firebase/firestore';
 
@@ -148,10 +148,8 @@ export default function MemoryBoard({ coupleId }: { coupleId: string }) {
     try {
       const refPath = new URL(photo.url).pathname.replace(/^\/o\//, '').split('?')[0];
       const decoded = decodeURIComponent(refPath);
-      const { deletePhoto } = await import('@/lib/storage');
       await deletePhoto(decoded);
       const docRef = doc(db, 'couples', coupleId, 'memory_photos', id);
-      const { deleteDoc } = await import('firebase/firestore');
       await deleteDoc(docRef);
       setPhotos(list => list.filter(p => p.id !== id));
     } catch (e) {

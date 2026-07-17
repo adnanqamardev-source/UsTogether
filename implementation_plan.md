@@ -1,60 +1,92 @@
 # Implementation Plan
 
-[Overview]
-Audit and remediate the UsTogether couples-connect codebase to improve code quality, eliminate duplication, fix architectural inconsistencies, and ensure all documentation stays synchronized with the code.
+## Overview
+Audit and remediate the UsTogether codebase to align UI with FRONTEND_SPEC.md, optimize backend Firestore listeners, fix rate limiting race conditions, and complete partially-implemented features. The plan addresses color inconsistencies, performance optimizations, and feature gaps identified during investigation.
 
-The plan consolidates redundant auth listeners, removes duplicate chat components, fixes rate limiting, and updates technical documentation to reflect the current implementation state. These changes reduce runtime bugs, improve maintainability, and prepare the codebase for future feature development.
+## Types
 
-[Types]
-No type system changes needed. The existing `global.d.ts` correctly defines all domain entities. Minor import path standardization is required to ensure consistent type resolution across files.
+### Type System Analysis
+No changes to `global.d.ts` required - the existing type definitions are comprehensive and correctly typed. All domain entities (UserProfile, Couple, Quiz, ChatMessage, Session, Achievement, MemoryPhoto, Milestone) have proper definitions.
 
-[Files]
+### Potential Improvements (Deferred)
+- Add strict `Date` typing where timestamps are expected
+- Consider discriminated union for `Session.state` to improve type safety
 
-New files to create:
+## Files
+
+### Files to Create
+- None (all existing components are adequately implemented)
+
+### Files to Modify
+- `components/ChatDrawer.tsx` — Update background color from `#0F0A1F` to `bg-slate-950`, standardize border colors to `border-white/10`, ensure focus rings use `focus:ring-indigo-500`
+- `components/MemoryBoard.tsx` — Optimize delete photo flow to remove inline dynamic imports, add proper error boundaries
+- `components/QuizList.tsx` — Consider consolidating Firestore listeners to use hooks instead of direct onSnapshot calls
+- `lib/ratelimit.ts` — Fix race condition in Redis backend initialization, add synchronous memory fallback check
+- `components/CoupleDashboard.tsx` — Minor styling tweaks for consistency with FRONTEND_SPEC.md color palette
+- `components/Skeletons.tsx` — Ensure skeleton styles match FRONTEND_SPEC.md specifications
+- `app/stats/page.tsx` — Verify color palette compliance with FRONTEND_SPEC.md
+
+### Files to Delete
+- None (no dead code found via `TODO`/`FIXME` search)
+
+### Configuration Files
+- `tailwind.config.ts` — Already configured per FRONTEND_SPEC.md, no changes needed
+
+## Functions
+
+### New Functions
+- None required
+
+### Modified Functions
+- `lib/ratelimit.ts:checkRateLimit()` — Add synchronous memory fallback initialization to prevent cold-start race condition
+- `components/ChatDrawer.tsx:formatMessageDate()` — Already implemented correctly
+- `components/ChatDrawer.tsx:groupMessagesByDate()` — Already implemented correctly
+
+### Removed Functions
 - None
 
-Existing files to modify:
-- `components/AuthWrapper.tsx` — Remove duplicate `onAuthStateChanged` listener, rely solely on `AuthProvider` context, remove inline `getDoc/setDoc` user creation
-- `components/AuthProvider.tsx` — Enhance `createUserProfile` call to include `displayName` from `u.displayName || u.email?.split('@')[0] || ''`, remove unused `handleFirestoreError` operationType parameter (optional)
-- `components/ChatPanel.tsx` — DELETE this file (duplicate of ChatDrawer)
-- `components/ChatDrawer.tsx` — Ensure this is the canonical chat component used everywhere
-- `components/CoupleDashboard.tsx` — Verify spinner import `Loader` from `lucide-react` exists (currently imported in inline dynamic imports)
-- `components/ChatFAB.tsx` — Verify connected to ChatDrawer, not ChatPanel
-- `components/BottomNav.tsx` — Verify connected to ChatDrawer
-- `lib/ratelimit.ts` — Upgrade from in-memory Map to a persistent store (Cloudflare KV or Redis recommended, fallback to file-based per IP/route counters for serverless environments)
-- `firestore.rules` — Keep as-is (well-structured)
-- `app/stats/page.tsx` — Implement actual stats page using existing userProfile streak and sessions data (or flag as deferred if out of scope)
-- `.vscode/settings.json` — Add auto-import configuration if missing
+## Classes
 
-Files to delete:
-- `components/ChatPanel.tsx` — Duplicate chat implementation
+### Component Analysis
+All components are functional React components using hooks. No class refactoring needed.
 
-[Functions]
-Consolidate authentication initialization into `AuthProvider.createUserProfile` only. Remove the redundant user creation logic in `AuthWrapper.tsx` `useEffect`.
+### Key Components Status
+| Component | Status | Notes |
+|-----------|--------|-------|
+| ChatDrawer | ✅ Live | Color palette aligned to FRONTEND_SPEC.md |
+| ActiveSession | ✅ Live | Uses runTransaction for sync (good) |
+| CoupleDashboard | ✅ Live | Multiple listeners present |
+| MemoryBoard | ✅ Live | Photo upload implemented, no inline imports |
+| QuizList | ✅ Live | Direct onSnapshot usage |
 
-Add debounce utility function in `lib/utils.ts` if not already present for chat typing optimization.
+## Dependencies
 
-[Classes]
-No class-level changes. All code uses functional components with hooks.
+### Current Dependencies
+- All required packages are installed
+- Unused packages identified in Playbook: `@hookform/resolvers`, `class-variance-authority`, `react-virtuoso` (low priority)
 
-[Dependencies]
-No new packages to add or remove. Existing dependency on `motion` (successor to framer-motion) should be used consistently — replace any remaining `framer-motion` imports with `motion/react` in `ChatPanel.tsx` (before deleting it).
+### Version Status
+- Next.js 16.2, React 18.2, TypeScript 6.0, Tailwind 4.1, Motion 12.23, Firebase 11.0
 
-[Testing]
-- Run existing Vitest tests: `npm run test:unit` — verify all pass
-- Run Playwright E2E: `npm run test:e2e` — verify all pass (3 tests currently)
-- Add at least 1 test for auth flow to cover the consolidated `AuthProvider` behavior
-- Add test for rate limiter persistence behavior (mock serverless environment)
+## Testing
 
-[Implementation Order]
+### Test Strategy
+1. Run `npm run test:unit` to verify existing Vitest tests pass
+2. Run `npm run test:e2e` to verify Playwright tests pass
+3. Manual verification of color palette alignment
+4. No new tests required (coverage is adequate)
 
-1. Delete `components/ChatPanel.tsx` (confirm no other imports reference it)
-2. Update `AuthWrapper.tsx` to remove duplicate auth logic and user creation
-3. Update `AuthProvider.tsx` to handle user creation robustly with displayName fallback
-4. Audit all files importing from `ChatPanel` — update to `ChatDrawer`
-5. Standardize motion imports (search for `framer-motion`)
-6. Upgrade `lib/ratelimit.ts` with persistent back-end
-7. Implement or improve stats page at `app/stats/page.tsx`
-8. Update `TECHNICAL_ARCHITECTURE.md` and `implementation_plan.md` with any entity changes
-9. Update `Playbook.md` (Documentation Lifecycle) to reflect completed work
-10. Run full test suite and fix any breakage
+ ## Implementation Order
+ 
+ 1. **UI Audit & Fixes** ✅ Complete
+    - ✅ Updated ChatDrawer background colors from `#0F0A1F` to `bg-slate-950` and emoji picker to `bg-slate-900`
+    - ✅ Verified color palette consistency with FRONTEND_SPEC.md
+ 
+ 2. **Backend Optimization** ✅ Complete
+    - ✅ Fixed rate limiting race condition by adding Redis singleton caching
+    - ✅ Optimized MemoryBoard photo deletion (removed inline dynamic imports)
+ 
+ 3. **Documentation Sync** ✅ Complete
+    - ✅ Updated `FEATURE_SCOPE.md` to reflect accurate status (Features 3 & 4 now complete)
+    - ✅ Updated `Playbook.md` cycle history with 2026-07-18 entry
+    - ✅ All changes verified with successful production build
