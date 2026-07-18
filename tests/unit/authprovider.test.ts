@@ -36,8 +36,8 @@ vi.mock('firebase/auth', () => ({
 }));
 
 import { doc, onSnapshot } from 'firebase/firestore';
-import { AuthProvider, useAuth } from '@/components/AuthProvider';
-import { auth, createUserProfile } from '@/lib/firebase';
+import { AuthProvider, useAuth } from '@/components/providers';
+import { auth, createUserProfile } from '@/lib/firebase/client';
 
 describe('AuthProvider', () => {
   beforeEach(() => {

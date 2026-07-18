@@ -8,7 +8,7 @@ import {
   QueryConstraint,
   DocumentData,
 } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { db } from '@/lib/firebase/client';
 import { handleFirestoreError, OperationType } from '@/lib/firestore-errors';
 
 function defaultTransform<T>(id: string, data: DocumentData): T {

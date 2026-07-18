@@ -1,9 +1,8 @@
 {
-  "projectId": "ustogether-5bd5e",
-  "appId": "1:97929147009:web:5dfc51fd8d8d3696ced380",
-  "apiKey": "AIzaSyAEwugGhthZl7QmBWobn5hLRKikhFpKMMM",
-  "authDomain": "ustogether-5bd5e.firebaseapp.com",
-  "firestoreDatabaseId": "(default)",
-  "storageBucket": "ustogether-5bd5e.firebasestorage.app",
-  "messagingSenderId": "97929147009"
+  "apiKey": "",
+  "authDomain": "",
+  "projectId": "",
+  "storageBucket": "",
+  "messagingSenderId": "",
+  "appId": ""
 }

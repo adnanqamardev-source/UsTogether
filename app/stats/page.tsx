@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { useAuth } from '@/components/AuthProvider';
-import { useFirestoreDocument, useFirestoreCollection } from '@/lib/firebase';
+import { useAuth } from '@/components/providers';
+import { useFirestoreDocument, useFirestoreCollection } from '@/lib/firebase/client';
 import { where } from 'firebase/firestore';
 import { Trophy, Flame, Calendar, BarChart3, Share2 } from 'lucide-react';
 import type { Couple, Session, Achievement } from '@/global.d';
