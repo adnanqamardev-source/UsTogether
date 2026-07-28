@@ -172,3 +172,4 @@ UsTogether is a real-time couples' relationship web app (Next.js 16 + Firebase +
 
 - Unused npm dependencies: `@hookform/resolvers`, `class-variance-authority`, `react-virtuoso` (consider removal or suppression).
 - Input validation uses manual type-checks instead of Zod (documented in SECURITY_AND_ACCESS.md as Zod-based).
+- **MCP sequential-thinking server installed.** Configuration added to `cline_mcp_settings.json` using Windows-compatible `cmd /c npx -y @modelcontextprotocol/server-sequential-thinking`. Package version: `2025.12.18`. **Action required:** Restart/reload VS Code so the MCP host reconnects and exposes the `sequential_thinking` tool.
