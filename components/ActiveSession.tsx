@@ -1,274 +1,287 @@
-import { useState, useEffect } from 'react';
-import { doc, onSnapshot, updateDoc } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
-import { useAuth } from './AuthProvider';
-import { motion, AnimatePresence } from 'motion/react';
-import { Heart, CheckCircle2 } from 'lucide-react';
-import { handleFirestoreError, OperationType } from '@/lib/firestore-errors';
+"use client";
 
-export default function ActiveSession({ coupleId, sessionId }: { coupleId: string, sessionId: string }) {
+import { useState, useEffect, useCallback } from "react";
+import { doc, onSnapshot, updateDoc } from "firebase/firestore";
+import { db } from "@/lib/firebase";
+import { useAuth } from "./AuthProvider";
+import { Button } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
+import { handleFirestoreError, OperationType } from "@/lib/firestore-errors";
+
+interface Session {
+  id: string;
+  coupleId: string;
+  type: string;
+  status: string;
+  state: {
+    quizId: string;
+    currentQuestion: number;
+    answers: Record<number, Record<string, unknown>>;
+  };
+}
+
+interface Quiz {
+  id: string;
+  title: string;
+  questions: Array<{
+    type?: "choice" | "text";
+    q: string;
+    options?: string[];
+    a?: number;
+  }>;
+}
+
+export default function ActiveSession({
+  coupleId,
+  sessionId,
+}: {
+  coupleId: string;
+  sessionId: string;
+}) {
   const { user } = useAuth();
-  const [session, setSession] = useState<any>(null);
-  const [quiz, setQuiz] = useState<any>(null);
-  const [textAnswer, setTextAnswer] = useState('');
+  const [session, setSession] = useState<Session | null>(null);
+  const [quiz, setQuiz] = useState<Quiz | null>(null);
+  const [textAnswer, setTextAnswer] = useState("");
 
   useEffect(() => {
-    const unsub = onSnapshot(doc(db, `couples/${coupleId}/sessions/${sessionId}`), (snapshot) => {
-       if (snapshot.exists()) {
-          setSession({ id: snapshot.id, ...snapshot.data() });
-       }
-    });
+    if (!sessionId) return;
+    const unsub = onSnapshot(
+      doc(db, `couples/${coupleId}/sessions/${sessionId}`),
+      (snap) => {
+        if (snap.exists()) setSession({ id: snap.id, ...(snap.data() as any) });
+      },
+      (err) => handleFirestoreError(err, OperationType.GET, `couples/${coupleId}/sessions/${sessionId}`, user)
+    );
     return () => unsub();
-  }, [sessionId]);
+  }, [coupleId, sessionId, user]);
 
   useEffect(() => {
-    if (session?.state?.quizId && !quiz) {
-       onSnapshot(doc(db, `quizzes/${session.state.quizId}`), (snapshot) => {
-          if (snapshot.exists()) {
-             setQuiz({ id: snapshot.id, ...snapshot.data() });
-          }
-       });
-    }
-  }, [session?.state?.quizId, quiz]);
+    if (!session?.state?.quizId || quiz) return;
+    const unsub = onSnapshot(
+      doc(db, "quizzes", session.state.quizId),
+      (snap) => {
+        if (snap.exists()) setQuiz({ id: snap.id, ...(snap.data() as any) });
+      },
+      (err) => handleFirestoreError(err, OperationType.GET, `quizzes/${session.state.quizId}`, user)
+    );
+    return () => unsub();
+  }, [session?.state?.quizId, quiz, user]);
 
-  const currentQIndexRef = session?.state?.currentQuestion || 0;
+  // Reset the draft text answer when moving to a new question.
+  const currentQIndex = session?.state?.currentQuestion ?? 0;
   useEffect(() => {
-    setTextAnswer('');
-  }, [currentQIndexRef]);
+    setTextAnswer("");
+  }, [currentQIndex]);
 
-  if (!session || !quiz || !user) return <div className="text-gray-500 animate-pulse">Loading session...</div>;
-
-  const currentQIndex = session.state.currentQuestion || 0;
-  const question = quiz.questions[currentQIndex];
-  const isFinished = currentQIndex >= quiz.questions.length;
-
-  const myAnswer = session.state.answers?.[currentQIndex]?.[user.uid];
-  const partnerId = [session.coupleId.split('_')].flat().find(id => id !== user.uid) || 'partner';
-  const partnerAnswer = session.state.answers?.[currentQIndex]?.[partnerId];
-  
+  // Derive pair state from the couple doc path / answers (all safe with defaults).
+  const partnerId = session?.coupleId?.split("_").find((id) => id !== user?.uid) || "";
+  const answers = session?.state?.answers ?? {};
+  const myAnswer = currentQIndex !== undefined ? answers[currentQIndex]?.[user?.uid ?? ""] : undefined;
+  const partnerAnswer =
+    partnerId && currentQIndex !== undefined
+      ? answers[currentQIndex]?.[partnerId]
+      : undefined;
   const bothAnswered = myAnswer !== undefined && partnerAnswer !== undefined;
 
-  const handleAnswer = async (answerVal: any) => {
-    if (myAnswer !== undefined) return; // Already answered
-    try {
-      const newState = { ...session.state };
-      if (!newState.answers) newState.answers = {};
-      if (!newState.answers[currentQIndex]) newState.answers[currentQIndex] = {};
-      newState.answers[currentQIndex][user.uid] = answerVal;
-
-      // if question is matched (just testing if they gave the SAME answer for now or correct answer? 
-      // depends on "How well do you know me" logic.) Let's just track answers.
-      await updateDoc(doc(db, `couples/${coupleId}/sessions/${sessionId}`), {
-        state: newState,
-        updatedAt: Date.now(),
-        ...( /* if both answered and it's the last question, we could mark finished here, but doing it in next question step is safer */ {})
-      });
-    } catch (e) {
-      handleFirestoreError(e, OperationType.UPDATE, `couples/${coupleId}/sessions/${sessionId}`);
-    }
-  };
-
-  const nextQuestion = async () => {
-    try {
-      if (currentQIndex + 1 >= quiz.questions.length) {
-         await updateDoc(doc(db, `couples/${coupleId}/sessions/${sessionId}`), {
-           status: 'finished',
-           updatedAt: Date.now()
-         });
-      } else {
-         await updateDoc(doc(db, `couples/${coupleId}/sessions/${sessionId}`), {
-           'state.currentQuestion': currentQIndex + 1,
-           updatedAt: Date.now()
-         });
+  const handleAnswer = useCallback(
+    async (value: unknown) => {
+      if (!user || !sessionId) return;
+      if (myAnswer !== undefined) return;
+      try {
+        const newAnswers = { ...answers };
+        if (!newAnswers[currentQIndex]) newAnswers[currentQIndex] = {};
+        newAnswers[currentQIndex][user.uid] = value;
+        await updateDoc(doc(db, `couples/${coupleId}/sessions/${sessionId}`), {
+          "state.answers": newAnswers,
+          updatedAt: Date.now(),
+        });
+      } catch (err) {
+        handleFirestoreError(err, OperationType.UPDATE, `couples/${coupleId}/sessions/${sessionId}`, user);
       }
-    } catch (e) {
-       handleFirestoreError(e, OperationType.UPDATE, `couples/${coupleId}/sessions/${sessionId}`);
-    }
+    },
+    [answers, currentQIndex, coupleId, myAnswer, sessionId, user]
+  );
+
+  const isFinished = session?.status === "finished";
+  if (!session || !quiz || !user) {
+    return <div className="text-center py-16 caption text-ink/50 animate-pulse">LOADING SESSION…</div>;
   }
 
-  const endSessionEarly = async () => {
-    if (!window.confirm('Are you sure you want to end this quiz early?')) return;
-    try {
-        await updateDoc(doc(db, `couples/${coupleId}/sessions/${sessionId}`), {
-           status: 'finished',
-           updatedAt: Date.now()
-        });
-    } catch (e) {
-       handleFirestoreError(e, OperationType.UPDATE, `couples/${coupleId}/sessions/${sessionId}`);
+  const question = quiz.questions[currentQIndex];
+  const isDone = isFinished || currentQIndex >= quiz.questions.length;
+
+  const nextQuestion = async () => {
+    if (currentQIndex + 1 >= quiz.questions.length) {
+      await updateDoc(doc(db, `couples/${coupleId}/sessions/${sessionId}`), {
+        status: "finished",
+        updatedAt: Date.now(),
+      });
+    } else {
+      await updateDoc(doc(db, `couples/${coupleId}/sessions/${sessionId}`), {
+        "state.currentQuestion": currentQIndex + 1,
+        updatedAt: Date.now(),
+      });
     }
   };
 
-  // Finished State
-  if (session.status === 'finished') {
-     const allAnswers = session.state.answers || {};
-     
-     return (
-       <div className="flex flex-col items-center justify-center text-center mt-10 p-4 md:p-8 w-full max-w-4xl mx-auto">
-         <div className="w-20 h-20 bg-rose-500/20 rounded-full flex items-center justify-center mb-6 shadow-[0_0_50px_rgba(244,63,94,0.3)]">
-           <Heart className="w-10 h-10 text-rose-500 mx-auto" />
-         </div>
-         <h2 className="text-3xl md:text-5xl font-serif italic mb-2 text-[#F8FAFC]">Quiz Finished!</h2>
-         <p className="text-indigo-200/80 mb-8 max-w-md">You've completed "{quiz.title}". Let's see your shared answers.</p>
-         
-         <div className="w-full space-y-6 mb-10 text-left">
-           {quiz.questions.map((q: any, i: number) => {
-             const mAns = allAnswers[i]?.[user.uid];
-             const pAns = allAnswers[i]?.[partnerId];
-             
-             // resolve text if option based
-             const resolveAns = (a: any) => {
-               if (a === undefined) return <span className="text-white/30 italic">Not answered</span>;
-               if (typeof a === 'number') return q.options?.[a] || String(a);
-               return String(a);
-             };
-             
-             return (
-               <div key={i} className="bg-white/5 border border-white/10 p-6 rounded-2xl w-full">
-                 <p className="font-serif italic text-xl text-white mb-4">{i+1}. {q.q}</p>
-                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                   <div className="bg-indigo-500/10 p-4 rounded-xl border border-indigo-500/20">
-                     <p className="text-[10px] uppercase tracking-widest text-indigo-300 font-bold mb-1">You</p>
-                     <p className="text-[#F8FAFC] flex content-start">{resolveAns(mAns)}</p>
-                   </div>
-                   <div className="bg-rose-500/10 p-4 rounded-xl border border-rose-500/20">
-                     <p className="text-[10px] uppercase tracking-widest text-rose-300 font-bold mb-1">Partner</p>
-                     <p className="text-[#F8FAFC] flex content-start">{resolveAns(pAns)}</p>
-                   </div>
-                 </div>
-               </div>
-             )
-           })}
-         </div>
+  // ---- Finished / results view ----
+  if (isDone) {
+    return (
+      <div className="max-w-3xl mx-auto space-y-8">
+        <div className="text-center space-y-3">
+          <h1 className="text-4xl font-light tracking-tight">Quiz finished!</h1>
+          <p className="text-lg text-ink/70">
+            You completed “{quiz.title}”. Here's how your answers lined up.
+          </p>
+        </div>
 
-         <button onClick={() => window.location.hash = ''} className="py-4 px-8 rounded-3xl bg-rose-500 text-white font-bold text-lg hover:bg-rose-600 transition-all shadow-xl shadow-rose-500/20 ring-2 ring-rose-500/50 ring-offset-4 ring-offset-[#0F0A1F]">
-            Back to Dashboard
-         </button>
-       </div>
-     );
+        {/* Score summary */}
+        <div className="flex justify-center gap-6">
+          <Card size="lg" className="text-center">
+            <p className="eyebrow text-sm mb-2">MATCHES</p>
+            <p className="text-4xl font-medium">
+              {quiz.questions.filter((_, i) => {
+                const a = answers[i]?.[user.uid];
+                const b = partnerId ? answers[i]?.[partnerId] : undefined;
+                return a !== undefined && b !== undefined && a === b;
+              }).length}
+            </p>
+          </Card>
+          <Card size="lg" className="text-center">
+            <p className="eyebrow text-sm mb-2">OF</p>
+            <p className="text-4xl font-medium">{quiz.questions.length}</p>
+          </Card>
+        </div>
+
+        <div className="space-y-4">
+          {quiz.questions.map((q, i) => {
+            const m = answers[i]?.[user.uid];
+            const p = partnerId ? answers[i]?.[partnerId] : undefined;
+            const resolve = (v: unknown) => {
+              if (v === undefined) return "—";
+              if (typeof v === "number") return q.options?.[v] ?? String(v);
+              return String(v);
+            };
+            return (
+              <Card key={i} size="lg">
+                <p className="font-medium mb-3">
+                  {i + 1}. {q.q}
+                </p>
+                <div className="grid sm:grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <p className="caption text-ink/50 mb-1">YOU</p>
+                    <p>{resolve(m)}</p>
+                  </div>
+                  <div>
+                    <p className="caption text-ink/50 mb-1">PARTNER</p>
+                    <p>{resolve(p)}</p>
+                  </div>
+                </div>
+              </Card>
+            );
+          })}
+        </div>
+
+        <div className="text-center">
+          <Button variant="secondary" onClick={() => (window.location.hash = "")}>
+            Back to dashboard
+          </Button>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="max-w-3xl mx-auto py-8 md:py-12 flex flex-col h-full justify-center">
-      <div className="flex flex-col md:flex-row md:items-center justify-between mb-12 gap-4">
-        <h2 className="font-bold text-indigo-300 uppercase tracking-[0.2em] text-xs flex items-center space-x-4">
-           <span>{quiz.title}</span>
-           <button onClick={endSessionEarly} className="text-white/30 hover:text-rose-400 font-normal underline underline-offset-4">End Session</button>
-        </h2>
-        <span className="text-xs font-bold px-3 py-1 bg-white/10 text-white rounded-full border border-white/5 uppercase tracking-widest whitespace-nowrap">
-          Question {currentQIndex + 1} of {quiz.questions.length}
+    <div className="max-w-3xl mx-auto space-y-8">
+      <div className="flex items-center justify-between">
+        <h2 className="font-medium">{quiz.title}</h2>
+        <span className="caption text-ink/50">
+          Q{currentQIndex + 1} / {quiz.questions.length}
         </span>
       </div>
 
-      <AnimatePresence mode="wait">
-        <motion.div 
-          key={currentQIndex}
-          initial={{ opacity: 0, scale: 0.95 }} 
-          animate={{ opacity: 1, scale: 1 }} 
-          exit={{ opacity: 0, scale: 1.05 }}
-          className="flex flex-col w-full"
-        >
-          <h3 className="text-3xl md:text-5xl font-serif italic mb-10 text-white leading-tight">
-            {question.q}
-          </h3>
+      <Card size="lg">
+        <h3 className="text-2xl font-light tracking-tight mb-6">{question.q}</h3>
 
-          {question.type === 'text' || !question.options ? (
-            <div className="w-full flex justify-center">
-              <div className="w-full max-w-2xl space-y-6">
-                {myAnswer === undefined ? (
-                  <div className="flex flex-col gap-4">
-                    <textarea 
-                      value={textAnswer}
-                      onChange={(e) => setTextAnswer(e.target.value)}
-                      placeholder="Type your thoughts..."
-                      className="w-full bg-white/5 border border-white/10 rounded-3xl p-6 text-lg text-white placeholder-indigo-200/50 focus:outline-none focus:border-rose-500/50 transition-colors resize-none min-h-[150px]"
-                    />
-                    <div className="flex justify-end">
-                      <button 
-                        onClick={() => { if(textAnswer.trim()) handleAnswer(textAnswer.trim()) }}
-                        disabled={!textAnswer.trim()}
-                        className="bg-indigo-500 hover:bg-indigo-400 text-white font-bold uppercase tracking-widest text-sm py-4 px-8 rounded-full transition-all disabled:opacity-50 disabled:hover:bg-indigo-500 shadow-[0_0_20px_rgba(99,102,241,0.3)]"
-                      >
-                        Submit
-                      </button>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    <div className="p-6 bg-indigo-500/20 border border-indigo-500/30 rounded-3xl shadow-inner shadow-indigo-500/10">
-                       <p className="text-xs text-indigo-300 uppercase tracking-widest font-bold mb-3">Your Answer</p>
-                       <p className="text-[#F8FAFC] text-xl font-serif italic">{myAnswer}</p>
-                    </div>
-                    {partnerAnswer !== undefined && bothAnswered && (
-                      <div className="p-6 bg-rose-500/20 border border-rose-500/30 rounded-3xl shadow-inner shadow-rose-500/10 relative overflow-hidden">
-                         <div className="absolute top-0 right-0 p-4">✨</div>
-                         <p className="text-xs text-rose-300 uppercase tracking-widest font-bold mb-3">Partner's Answer</p>
-                         <p className="text-[#F8FAFC] text-xl font-serif italic">{partnerAnswer}</p>
-                      </div>
-                    )}
+        {question.type === "text" || !question.options ? (
+          <div className="space-y-4">
+            {myAnswer === undefined ? (
+              <>
+                <textarea
+                  value={textAnswer}
+                  onChange={(e) => setTextAnswer(e.target.value)}
+                  placeholder="Type your thoughts…"
+                  className="w-full bg-canvas text-ink rounded-md px-3.5 py-3 border border-hairline placeholder:text-ink/40 focus:outline-none focus:ring-2 focus:ring-ink resize-none min-h-[120px]"
+                />
+                <div className="flex justify-end">
+                  <Button
+                    onClick={() => textAnswer.trim() && handleAnswer(textAnswer.trim())}
+                    disabled={!textAnswer.trim()}
+                  >
+                    Submit
+                  </Button>
+                </div>
+              </>
+            ) : (
+              <div className="space-y-4">
+                <div>
+                  <p className="caption text-ink/50 mb-1">YOUR ANSWER</p>
+                  <p className="text-lg">{myAnswer as string}</p>
+                </div>
+                {bothAnswered && (
+                  <div>
+                    <p className="caption text-ink/50 mb-1">PARTNER'S ANSWER</p>
+                    <p className="text-lg">{partnerAnswer as string}</p>
                   </div>
                 )}
               </div>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
-              {question.options?.map((opt: string, i: number) => {
-                const iSelected = myAnswer === i;
-                const pSelected = partnerAnswer === i;
-                const letter = String.fromCharCode(65 + i);
-                return (
-                  <button
-                    key={i}
-                    disabled={myAnswer !== undefined}
-                    onClick={() => handleAnswer(i)}
-                    className={`py-4 px-6 rounded-3xl text-base md:text-lg text-left flex justify-between items-center group transition-all
-                      ${iSelected ? 'bg-rose-500 text-white font-bold ring-2 ring-rose-500/50 ring-offset-2 ring-offset-[#0F0A1F] shadow-[0_0_20px_rgba(244,63,94,0.3)]' 
-                      : 'bg-white/5 border border-white/10 hover:bg-rose-500/20 hover:border-rose-500/50 text-[#F8FAFC]'}
-                      ${myAnswer !== undefined && !iSelected ? 'opacity-30' : ''}
-                    `}
-                  >
-                    <span className={`${iSelected ? 'tracking-normal' : ''}`}><span className="font-bold opacity-50 mr-2">{letter}.</span> {opt}</span>
-                    <div className="flex items-center gap-2">
-                       {pSelected && bothAnswered && <span className="text-[10px] font-bold text-indigo-900 bg-indigo-300 px-2 py-1 rounded-full uppercase tracking-widest shadow-lg">Partner</span>}
-                       {iSelected ? <span>✓</span> : <span className="opacity-0 group-hover:opacity-100 transition-opacity">✨</span>}
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
-          )}
-
-          <div className="mt-16 text-center h-16 flex items-center justify-center">
-             {myAnswer === undefined ? (
-                <div className="flex items-center space-x-2">
-                  <div className="w-1.5 h-1.5 bg-rose-500 rounded-full animate-bounce"></div>
-                  <div className="w-1.5 h-1.5 bg-rose-500 rounded-full animate-bounce" style={{animationDelay: '100ms'}}></div>
-                  <div className="w-1.5 h-1.5 bg-rose-500 rounded-full animate-bounce" style={{animationDelay: '200ms'}}></div>
-                  <p className="text-rose-400/80 text-sm italic ml-2">Waiting for your answer</p>
-                </div>
-             ) : partnerAnswer === undefined ? (
-                <div className="flex flex-col items-center space-y-4">
-                   <div className="flex items-center space-x-2">
-                     <div className="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-bounce"></div>
-                     <div className="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-bounce" style={{animationDelay: '100ms'}}></div>
-                     <div className="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-bounce" style={{animationDelay: '200ms'}}></div>
-                     <p className="text-indigo-400 text-sm font-medium uppercase tracking-widest ml-2">Waiting for partner</p>
-                   </div>
-                   <button onClick={nextQuestion} className="text-[10px] text-white/30 hover:text-white/80 uppercase tracking-widest underline underline-offset-4">Force Next (Test Skip)</button>
-                </div>
-             ) : (
-                <button onClick={nextQuestion} className="bg-white text-[#0F0A1F] font-bold uppercase tracking-[0.2em] text-sm rounded-full px-10 py-4 w-full max-w-xs hover:scale-105 hover:bg-indigo-50 transition-all shadow-[0_0_30px_rgba(255,255,255,0.2)]">
-                   {currentQIndex + 1 >= quiz.questions.length ? 'Finish Quiz' : 'Next Question →'}
+            )}
+          </div>
+        ) : (
+          <div className="grid gap-3">
+            {question.options?.map((opt, i) => {
+              const selected = myAnswer === i;
+              const partnerSelected = bothAnswered && partnerAnswer === i;
+              return (
+                <button
+                  key={i}
+                  disabled={myAnswer !== undefined}
+                  onClick={() => handleAnswer(i)}
+                  className={`text-left px-4 py-3 rounded-md border transition-colors ${
+                    selected
+                      ? "bg-ink text-canvas border-ink"
+                      : "bg-canvas border-hairline hover:border-ink/40"
+                  } ${myAnswer !== undefined && !selected ? "opacity-40" : ""}`}
+                >
+                  <span className="flex items-center justify-between gap-3">
+                    <span>
+                      <span className="font-medium mr-2">{String.fromCharCode(65 + i)}.</span>
+                      {opt}
+                    </span>
+                    {partnerSelected && (
+                      <span className="caption text-[10px] bg-canvas text-ink px-2 py-0.5 rounded-full">
+                        PARTNER
+                      </span>
+                    )}
+                  </span>
                 </button>
-             )}
+              );
+            })}
           </div>
-          
-          <div className="mt-8 pt-8 border-t border-white/10 flex items-center justify-center space-x-2">
-            {quiz.questions.map((_: any, idx: number) => (
-               <div key={idx} className={`h-1.5 rounded-full transition-all ${idx < currentQIndex ? 'bg-indigo-500 w-8 shadow-[0_0_8px_rgba(99,102,241,0.5)]' : idx === currentQIndex ? 'bg-rose-500 w-12 shadow-[0_0_8px_rgba(244,63,94,0.5)]' : 'bg-white/20 w-8'}`}></div>
-            ))}
-          </div>
-        </motion.div>
-      </AnimatePresence>
+        )}
+
+        <div className="mt-8 flex items-center justify-center min-h-[48px]">
+          {myAnswer === undefined ? (
+            <p className="caption text-ink/50 animate-pulse">WAITING FOR YOUR ANSWER…</p>
+          ) : partnerAnswer === undefined ? (
+            <p className="caption text-ink/50 animate-pulse">WAITING FOR PARTNER…</p>
+          ) : (
+            <Button onClick={nextQuestion}>
+              {currentQIndex + 1 >= quiz.questions.length ? "Finish" : "Next →"}
+            </Button>
+          )}
+        </div>
+      </Card>
     </div>
   );
 }

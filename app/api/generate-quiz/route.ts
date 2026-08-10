@@ -1,107 +1,72 @@
-import { GoogleGenAI } from '@google/genai';
+import { GoogleGenAI } from "@google/genai";
 import { NextRequest, NextResponse } from "next/server";
 
 export const maxDuration = 60;
-export const dynamic = 'force-dynamic'; // Ensure the route runs dynamically for truly unique quizzes
+export const dynamic = "force-dynamic";
 
-// Configuration constants
-const AI_MODEL = "gemini-3-flash-preview";
-const QUIZ_TYPE = "relationship-building";
+// Configurable via env; default to a stable, widely-available Gemini model.
+const AI_MODEL = process.env.GEMINI_MODEL || "gemini-2.5-flash";
 
 export async function POST(req: NextRequest) {
   try {
-    // Validate environment
     if (!process.env.GEMINI_API_KEY) {
-      throw new Error("Missing Gemini API Key. Please set GEMINI_API_KEY in your environment.");
+      return NextResponse.json(
+        { error: "Missing Gemini API Key. Set GEMINI_API_KEY in your environment." },
+        { status: 500 }
+      );
     }
 
-    // Initialize AI client
     const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-
-    // Generate the prompt for relationship-building questions
-    const prompt = generateRelationshipQuizPrompt();
-
-    // Call the AI model
     const response = await ai.models.generateContent({
       model: AI_MODEL,
-      contents: prompt,
+      contents: generateRelationshipQuizPrompt(),
     });
 
-    const text = response.text || '';
-
-    // Parse the AI response
+    const text = response.text || "";
     let parsed;
     try {
-      // Clean up markdown wrapping if present
-      const cleaned = text
-        .replace(/```json\n?/, '')
-        .replace(/```\n?/, '')
-        .trim();
-      
+      const cleaned = text.replace(/```json\n?/, "").replace(/```\n?/, "").trim();
       parsed = JSON.parse(cleaned);
-      
-      // Validate the response structure
       if (!parsed.title || !parsed.description || !Array.isArray(parsed.questions)) {
         throw new Error("Invalid response format from AI");
       }
-    } catch (e) {
+    } catch (e: any) {
       throw new Error(`Failed to parse AI response as JSON: ${e.message}`);
     }
 
     return NextResponse.json(parsed);
   } catch (err: any) {
-    console.error(`Error in ${QUIZ_TYPE} quiz generation:`, err);
-    
-    // Return appropriate error response
-    const statusCode = err.message.includes("API Key") ? 500 : 500;
+    console.error("generate-quiz error:", err);
     return NextResponse.json(
       { error: err.message || "Failed to generate quiz" },
-      { status: statusCode }
+      { status: 500 }
     );
   }
 }
 
-/**
- * Generates a prompt for creating relationship-building questions
- * with subtle Indian context and simple English
- */
 function generateRelationshipQuizPrompt(): string {
   return `
-Generate a fun, engaging relationship-building quiz with 5 questions based on the principles of deep connection and understanding.
+Generate a fun, engaging relationship-building quiz with 5 questions that help couples connect deeper.
 
-The quiz should:
-1. Have a warm, inviting title
-2. Include a brief description explaining the purpose
-3. Contain exactly 5 questions that help couples/partners connect deeper
-4. Mix question types: choice (multiple choice) and text (open-ended)
-5. Keep English simple and accessible
-6. Include subtle Indian context where natural (references to chai, Indian cuisine, Rupees, local experiences, etc.)
-7. Avoid being overly dramatic or stereotypical
-8. Focus on genuine connection, dreams, daily life, and mutual understanding
+Requirements:
+1. Warm, inviting title
+2. Brief description
+3. Exactly 5 questions mixing "choice" (multiple choice) and "text" (open-ended)
+4. Simple, accessible English
+5. Subtle Indian context where natural (chai, Indian cuisine, local experiences, etc.)
+6. Focus on genuine connection, dreams, daily life, and mutual understanding
+7. Do NOT include a "correct answer" for choice questions — questions are about the partner's preference, so answers are matched between partners, not scored against a key
 
-Question types to include:
-- Choice questions: Provide 4 options (A, B, C, D) with correct answer index (0-3)
-- Text questions: Open-ended questions for personal reflection
+Choice questions: provide 4 options. Text questions: open-ended.
 
 Return ONLY a valid JSON object with this exact structure:
 {
-  "title": "Quiz Title Here",
-  "description": "Brief description of the quiz purpose",
+  "title": "Quiz Title",
+  "description": "Brief description",
   "questions": [
-    {
-      "type": "choice",
-      "q": "Question text",
-      "options": ["Option A", "Option B", "Option C", "Option D"],
-      "a": 0
-    },
-    {
-      "type": "text",
-      "q": "Open-ended question text"
-    }
-    // ... exactly 5 questions total
+    { "type": "choice", "q": "Question text", "options": ["Option A", "Option B", "Option C", "Option D"] },
+    { "type": "text", "q": "Open-ended question text" }
   ]
 }
-
-Make sure the JSON is valid and can be parsed directly.
-`;
+Make sure the JSON is valid and parseable.`;
 }

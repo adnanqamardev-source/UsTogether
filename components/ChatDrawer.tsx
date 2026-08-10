@@ -1,11 +1,13 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { X, Send } from 'lucide-react';
-import { useAuth } from './AuthProvider';
-import { useIsMobile } from '@/hooks/use-mobile';
-import { collection, query, orderBy, onSnapshot, addDoc, serverTimestamp } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
-import { handleFirestoreError, OperationType } from '@/lib/firestore-errors';
+"use client";
+
+import { useState, useRef, useEffect } from "react";
+import { motion } from "motion/react";
+import { X, Send } from "lucide-react";
+import { useAuth } from "./AuthProvider";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { collection, query, orderBy, onSnapshot, addDoc, serverTimestamp } from "firebase/firestore";
+import { db } from "@/lib/firebase";
+import { handleFirestoreError, OperationType } from "@/lib/firestore-errors";
 
 interface Message {
   id: string;
@@ -22,76 +24,92 @@ interface ChatDrawerProps {
 export default function ChatDrawer({ coupleId, onClose }: ChatDrawerProps) {
   const { user } = useAuth();
   const [messages, setMessages] = useState<Message[]>([]);
-  const [text, setText] = useState('');
+  const [text, setText] = useState("");
   const bottomRef = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
 
-  // Auto-scroll to bottom when messages change
+  // Autoscroll when messages change.
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // Fetch messages from Firestore
   useEffect(() => {
     if (!coupleId) return;
-    const q = query(collection(db, 'couples', coupleId, 'messages'), orderBy('timestamp'));
-    const unsub = onSnapshot(q, (snapshot) => {
-      const msgs: Message[] = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        text: doc.data().text,
-        senderId: doc.data().senderId,
-        timestamp: doc.data().timestamp?.toDate() || new Date(),
-      }));
-      setMessages(msgs);
-    });
+    const q = query(collection(db, "couples", coupleId, "messages"), orderBy("timestamp"));
+    const unsub = onSnapshot(
+      q,
+      (snap) => {
+        setMessages(
+          snap.docs.map((d) => ({
+            id: d.id,
+            text: d.data().text,
+            senderId: d.data().senderId,
+            timestamp: d.data().timestamp?.toDate?.() || new Date(),
+          }))
+        );
+      },
+      (err) => handleFirestoreError(err, OperationType.LIST, `couples/${coupleId}/messages`, user)
+    );
     return () => unsub();
-  }, [coupleId]);
+  }, [coupleId, user]);
 
   const handleSend = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!text.trim() || !user || !coupleId) return;
+    if (!text.trim() || !user) return;
     try {
-      await addDoc(collection(db, 'couples', coupleId, 'messages'), {
+      await addDoc(collection(db, "couples", coupleId, "messages"), {
         text: text.trim(),
         senderId: user.uid,
         timestamp: serverTimestamp(),
       });
-      setText('');
+      setText("");
     } catch (err) {
-      handleFirestoreError(err, OperationType.CREATE, `couples/${coupleId}/messages`);
+      handleFirestoreError(err, OperationType.CREATE, `couples/${coupleId}/messages`, user);
     }
   };
 
   return (
     <>
-      {/* Backdrop overlay */}
-      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40" />
-      
+      {/* Backdrop scrim */}
+      <div className="fixed inset-0 bg-black/60 z-40" onClick={onClose} />
+
       <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        exit={{ opacity: 0, scale: 0.95 }}
-        transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-        className={`fixed bottom-6 right-6 left-6 ${isMobile ? 'w-full' : 'w-96'} h-[calc(100%-12rem)] max-h-[75vh] bg-[#0F0A1F] border border-white/10 rounded-2xl shadow-2xl flex flex-col overflow-hidden z-50`}
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: 16 }}
+        transition={{ type: "spring", damping: 25, stiffness: 200 }}
+        className={`fixed bottom-0 right-0 top-0 sm:bottom-6 sm:right-6 sm:top-auto ${
+          isMobile
+            ? "w-full h-[calc(100%-5rem)] sm:w-96 sm:h-[28rem] rounded-t-xl sm:rounded-xl"
+            : "w-96 h-[28rem] rounded-xl"
+        } bg-canvas border border-hairline shadow-[0_12px_40px_rgba(0,0,0,0.12)] flex flex-col overflow-hidden z-50`}
       >
         {/* Header */}
-        <div className="p-4 border-b border-white/10 flex items-center justify-between pb-3">
-          <h3 className="font-semibold text-lg text-white">Partner Chat</h3>
-          <button onClick={onClose} className="p-2 text-white/50 hover:bg-white/10 hover:text-white rounded-full transition-colors">
+        <div className="px-4 py-3 border-b border-hairline flex items-center justify-between">
+          <h3 className="font-medium">Partner chat</h3>
+          <button
+            onClick={onClose}
+            className="p-1.5 text-ink/50 hover:bg-surface-soft hover:text-ink rounded-full transition-colors"
+            aria-label="Close chat"
+          >
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        {/* Message list */}
-        <div className="flex-1 overflow-y-auto px-4 py-2 space-y-4">
+        {/* Messages */}
+        <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3">
           {messages.map((m) => {
             const isMe = m.senderId === user?.uid;
             return (
-              <div key={m.id} className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}>
+              <div key={m.id} className={`flex ${isMe ? "justify-end" : "justify-start"}`}>
                 <div
-                  className={`max-w-[80%] rounded-2xl px-4 py-2 ${isMe ? 'bg-indigo-600 text-white rounded-br-none' : 'bg-white/10 text-white'}`}
+                  className={`max-w-[80%] rounded-lg px-3 py-2 text-sm break-words ${
+                    isMe
+                      ? "bg-ink text-canvas rounded-br-none"
+                      : "bg-surface-soft text-ink rounded-bl-none"
+                  }`}
                 >
-                  <p className="text-sm break-words">{m.text}</p>
+                  {m.text}
                 </div>
               </div>
             );
@@ -99,20 +117,21 @@ export default function ChatDrawer({ coupleId, onClose }: ChatDrawerProps) {
           <div ref={bottomRef} />
         </div>
 
-      {/* Input area */}
-      <form onSubmit={handleSend} className="p-4 border-t border-white/10 pb-6 sm:pb-4">
-          <div className="relative">
+        {/* Input */}
+        <form onSubmit={handleSend} className="p-3 border-t border-hairline">
+          <div className="flex items-center gap-2">
             <input
               type="text"
               value={text}
               onChange={(e) => setText(e.target.value)}
-              placeholder="Type a message..."
-              className="w-full bg-white/5 text-white border border-white/10 rounded-full py-3 pl-4 pr-12 focus:outline-none focus:ring-2 focus:ring-rose-500 placeholder:text-white/40"
+              placeholder="Type a message…"
+              className="flex-1 bg-canvas text-ink rounded-md px-3 py-2 border border-hairline placeholder:text-ink/40 focus:outline-none focus:ring-2 focus:ring-ink transition-shadow"
             />
             <button
               type="submit"
               disabled={!text.trim()}
-              className="absolute right-2 top-2 p-1.5 bg-rose-500 text-white rounded-full disabled:opacity-50 hover:bg-rose-600 transition-colors"
+              className="shrink-0 p-2 bg-ink text-canvas rounded-full disabled:opacity-40 hover:bg-ink/85 transition-colors"
+              aria-label="Send"
             >
               <Send className="w-4 h-4" />
             </button>

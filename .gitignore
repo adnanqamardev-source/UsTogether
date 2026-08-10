@@ -5,6 +5,6 @@ coverage/
 *.log
 .env*
 !.env.example
+!.env.local.example
 Handover.md
 config.yaml
-D:\VsCode Us Together Staging\UsTogether\config.yaml

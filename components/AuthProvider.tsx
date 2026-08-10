@@ -1,100 +1,140 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState } from 'react';
-import { User, signInWithPopup, GoogleAuthProvider, signOut } from 'firebase/auth';
-import { doc, getDoc, setDoc, onSnapshot } from 'firebase/firestore';
-import { auth, db } from '@/lib/firebase';
-import { handleFirestoreError, OperationType } from '@/lib/firestore-errors';
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  useCallback,
+  type ReactNode,
+} from "react";
+import {
+  onAuthStateChanged,
+  signInWithPopup,
+  GoogleAuthProvider,
+  signOut,
+  type User,
+} from "firebase/auth";
+import { doc, getDoc, setDoc, onSnapshot } from "firebase/firestore";
+import { auth, db } from "@/lib/firebase";
+import { handleFirestoreError, OperationType } from "@/lib/firestore-errors";
 
-interface AuthContextType {
-  user: User | null;
-  loading: boolean;
-  signIn: () => Promise<void>;
-  logOut: () => Promise<void>;
-  dbUser: any | null;
+export interface DbUser {
+  email: string;
+  points: number;
+  createdAt: number;
+  updatedAt: number;
+  displayName?: string;
+  pairedCoupleId?: string | null;
 }
 
-const AuthContext = createContext<AuthContextType>({
-  user: null,
-  loading: true,
-  signIn: async () => {},
-  logOut: async () => {},
-  dbUser: null,
-});
+interface AuthContextValue {
+  user: User | null;
+  dbUser: DbUser | null;
+  loading: boolean;
+  myCode: string | null;
+  signIn: () => Promise<void>;
+  logOut: () => Promise<void>;
+}
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
+const AuthContext = createContext<AuthContextValue | undefined>(undefined);
+
+/** Derive the pairing code from the user UID (8-char uppercase). */
+export function codeFromUid(uid: string): string {
+  return uid.substring(0, 8).toUpperCase();
+}
+
+export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
-  const [dbUser, setDbUser] = useState<any | null>(null);
+  const [dbUser, setDbUser] = useState<DbUser | null>(null);
   const [loading, setLoading] = useState(true);
+  const [myCode, setMyCode] = useState<string | null>(null);
 
   useEffect(() => {
-    let unsubscribeUser: (() => void) | null = null;
-    const unsubscribeAuth = auth.onAuthStateChanged(async (u) => {
+    let unsubUser: (() => void) | null = null;
+
+    const unsubAuth = onAuthStateChanged(auth, async (u) => {
       setUser(u);
-      if (unsubscribeUser) {
-        unsubscribeUser();
-        unsubscribeUser = null;
+
+      // Clear the previous user-subscription before switching users.
+      if (unsubUser) {
+        unsubUser();
+        unsubUser = null;
       }
-      
-      if (u) {
-        try {
-          const userRef = doc(db, 'users', u.uid);
-          
-          unsubscribeUser = onSnapshot(userRef, async (docSnap) => {
-            if (docSnap.exists()) {
-              setDbUser(docSnap.data());
-            } else {
-              // Create if doesn't exist
-              const newUser = {
-                email: u.email || '',
-                points: 0,
-                createdAt: Date.now(),
-                updatedAt: Date.now(),
-                displayName: u.displayName || '',
-              };
-              await setDoc(userRef, newUser);
-              // snapshot will catch it on next tick
-            }
-            setLoading(false);
-          }, (error) => {
-            setLoading(false);
-            console.error("Auth snapshot error:", error);
-          });
-          
-        } catch (error) {
+      setDbUser(null);
+      setMyCode(null);
+
+      if (!u) {
+        setLoading(false);
+        return;
+      }
+
+      // Register the pairing code for this user (idempotent).
+      const code = codeFromUid(u.uid);
+      setMyCode(code);
+      try {
+        await setDoc(
+          doc(db, "pairingCodes", code),
+          { userId: u.uid, createdAt: Date.now() },
+          { merge: true }
+        );
+      } catch (err) {
+        handleFirestoreError(err, OperationType.WRITE, "pairingCodes", u);
+      }
+
+      // Subscribe to the user doc; create it if missing.
+      const userRef = doc(db, "users", u.uid);
+      unsubUser = onSnapshot(
+        userRef,
+        (snap) => {
+          if (snap.exists()) {
+            setDbUser(snap.data() as DbUser);
+          } else {
+            const newUser: DbUser = {
+              email: u.email || "",
+              points: 0,
+              createdAt: Date.now(),
+              updatedAt: Date.now(),
+              displayName: u.displayName || "",
+            };
+            void setDoc(userRef, newUser).catch((err) =>
+              handleFirestoreError(err, OperationType.CREATE, "users", u)
+            );
+            setDbUser(newUser);
+          }
+          setLoading(false);
+        },
+        (err) => {
+          handleFirestoreError(err, OperationType.GET, "users", u);
           setLoading(false);
         }
-      } else {
-        setDbUser(null);
-        setLoading(false);
-      }
+      );
     });
 
     return () => {
-       unsubscribeAuth();
-       if (unsubscribeUser) unsubscribeUser();
+      unsubAuth();
+      if (unsubUser) unsubUser();
     };
   }, []);
 
-  const signIn = async () => {
-    try {
-      const provider = new GoogleAuthProvider();
-      await signInWithPopup(auth, provider);
-    } catch (error) {
-       console.error("Sign in failed", error);
-       throw error;
-    }
-  };
+  const signIn = useCallback(async () => {
+    const provider = new GoogleAuthProvider();
+    await signInWithPopup(auth, provider);
+  }, []);
 
-  const logOut = async () => {
+  const logOut = useCallback(async () => {
     await signOut(auth);
-  };
+  }, []);
 
   return (
-    <AuthContext.Provider value={{ user, loading, signIn, logOut, dbUser }}>
+    <AuthContext.Provider value={{ user, dbUser, loading, myCode, signIn, logOut }}>
       {children}
     </AuthContext.Provider>
   );
 }
 
-export const useAuth = () => useContext(AuthContext);
+export function useAuth() {
+  const ctx = useContext(AuthContext);
+  if (!ctx) throw new Error("useAuth must be used within AuthProvider");
+  return ctx;
+}
