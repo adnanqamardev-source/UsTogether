@@ -81,13 +81,17 @@ export default function MemoryBoard({ coupleId }: { coupleId: string }) {
   }, [coupleId]);
 
   useEffect(() => {
+    if (!user) {
+      setLoading(false);
+      return;
+    }
     const loadAll = async () => {
       setLoading(true);
       await Promise.all([fetchMemories(), fetchPhotos(), fetchMilestones()]);
       setLoading(false);
     };
     loadAll();
-  }, [fetchMemories, fetchPhotos, fetchMilestones]);
+  }, [fetchMemories, fetchPhotos, fetchMilestones, user]);
 
   const generateChallenge = async () => {
     setGenerating(true);

@@ -81,9 +81,8 @@ export default function ActiveSession({ coupleId, sessionId, couple }: { coupleI
         await batchWrite([
           { type: 'update', ref: sessionRef, data: { status: 'finished', updatedAt: Date.now() } },
         ]);
-        if (user && partnerId) {
+        if (user) {
           await checkAndAwardAchievements(user.uid, { sessionsFinished: 1 });
-          await checkAndAwardAchievements(partnerId, { sessionsFinished: 1 });
         }
       } else {
         await batchWrite([
@@ -101,9 +100,8 @@ export default function ActiveSession({ coupleId, sessionId, couple }: { coupleI
       await batchWrite([
         { type: 'update', ref: sessionRef, data: { status: 'finished', updatedAt: Date.now() } },
       ]);
-      if (user && partnerId) {
+      if (user) {
         await checkAndAwardAchievements(user.uid, { sessionsFinished: 1 });
-        await checkAndAwardAchievements(partnerId, { sessionsFinished: 1 });
       }
     } catch (e) {
       handleFirestoreError(e, OperationType.UPDATE, `couples/${coupleId}/sessions/${sessionId}`);

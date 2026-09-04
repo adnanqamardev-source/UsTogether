@@ -62,6 +62,11 @@ export default function QuizList({ coupleId }: { coupleId: string }) {
   const [recentQuestionIds, setRecentQuestionIds] = useState<number[]>([]);
 
   useEffect(() => {
+    if (!user || !coupleId) {
+      setLoading(false);
+      return;
+    }
+
     const qb = query(
       collection(db, "quizzes"),
       where("isPublic", "==", true),
@@ -105,7 +110,7 @@ export default function QuizList({ coupleId }: { coupleId: string }) {
       unsubQ();
       unsubS();
     };
-  }, [coupleId, seeded]);
+  }, [coupleId, seeded, user]);
 
   const [generatingQuiz, setGeneratingQuiz] = useState(false);
 
