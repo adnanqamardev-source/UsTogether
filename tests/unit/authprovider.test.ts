@@ -2,24 +2,33 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import React from 'react';
 import { renderHook, act } from '@testing-library/react';
 
-// Mock firebase/firestore
+// Mock firebase/firestore. The current AuthProvider uses getDoc (wrapped in
+// retryGetDoc with exponential backoff), not onSnapshot.
 vi.mock('firebase/firestore', () => ({
   getFirestore: vi.fn(() => ({})),
+  getDoc: vi.fn(),
   doc: vi.fn(),
-  onSnapshot: vi.fn(),
   serverTimestamp: vi.fn(() => ({ _methodName: 'serverTimestamp' })),
 }));
 
-// Mock @/lib/firestore-errors
-vi.mock('@/lib/firestore-errors', () => ({
-  handleFirestoreError: vi.fn(),
-  OperationType: {
-    GET: 'get',
-  },
+// Mock @/lib/firestore-helpers (AuthProvider imports createUserProfile from here).
+vi.mock('@/lib/firestore-helpers', () => ({
+  createUserProfile: vi.fn(),
 }));
 
 // Mock @/lib/firebase
 vi.mock('@/lib/firebase', () => ({
+  auth: {
+    onAuthStateChanged: vi.fn(),
+  },
+  db: {},
+  createUserProfile: vi.fn(),
+}));
+
+// Mock the underlying client module so the real Firebase client.ts is never
+// evaluated in the jsdom test environment (which would trigger getAuth/getStorage
+// and fail because the firebase/auth mock does not export getAuth).
+vi.mock('@/lib/firebase/client', () => ({
   auth: {
     onAuthStateChanged: vi.fn(),
   },
@@ -35,9 +44,36 @@ vi.mock('firebase/auth', () => ({
   GoogleAuthProvider: vi.fn(),
 }));
 
-import { doc, onSnapshot } from 'firebase/firestore';
+import { getDoc, doc } from 'firebase/firestore';
 import { AuthProvider, useAuth } from '@/components/providers';
-import { auth, createUserProfile } from '@/lib/firebase/client';
+import { auth } from '@/lib/firebase/client';
+import { createUserProfile } from '@/lib/firestore-helpers';
+
+const mockGetDoc = vi.mocked(getDoc);
+
+function makeUser(overrides: any = {}) {
+  return {
+    uid: 'user_123',
+    email: 'test@example.com',
+    displayName: 'Test User',
+    // Current AuthProvider awaits u.getIdToken() before reading Firestore.
+    getIdToken: vi.fn().mockResolvedValue('fake-token'),
+    ...overrides,
+  };
+}
+
+function makeSnapshot(data: any | null) {
+  return {
+    exists: () => data != null,
+    data: () => data,
+  } as any;
+}
+
+// retryGetDoc calls getDoc up to 3 times; a happy path returns immediately,
+// so a single resolved value is sufficient.
+function mockGetDocResolved(snapshot: any) {
+  mockGetDoc.mockResolvedValue(snapshot);
+}
 
 describe('AuthProvider', () => {
   beforeEach(() => {
@@ -61,32 +97,21 @@ describe('AuthProvider', () => {
   });
 
   it('should handle user sign-in with existing Firestore document', async () => {
-    const mockUser = {
-      uid: 'user_123',
+    const mockUser = makeUser();
+    const profileData = {
       email: 'test@example.com',
       displayName: 'Test User',
+      points: 100,
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
     };
 
     vi.mocked(auth.onAuthStateChanged).mockImplementation((callback: any) => {
       setTimeout(() => callback(mockUser), 0);
       return () => {};
     });
-
     vi.mocked(doc).mockReturnValue({ id: 'user_123' } as any);
-
-    vi.mocked(onSnapshot).mockImplementation((_ref: any, callback: any) => {
-      setTimeout(() => callback({
-        exists: () => true,
-        data: () => ({
-          email: 'test@example.com',
-          displayName: 'Test User',
-          points: 100,
-          createdAt: Date.now(),
-          updatedAt: Date.now(),
-        }),
-      } as any), 0);
-      return () => {};
-    });
+    mockGetDocResolved(makeSnapshot(profileData));
 
     const { result } = renderHook(() => useAuth(), {
       wrapper: AuthProvider,
@@ -104,25 +129,23 @@ describe('AuthProvider', () => {
   });
 
   it('should create new user document with displayName fallback when user does not exist', async () => {
-    const mockUser = {
-      uid: 'user_new',
-      email: 'newuser@example.com',
-      displayName: null,
-    };
+    const mockUser = makeUser({ uid: 'user_new', displayName: null });
+    // First read (does not exist) -> createUserProfile -> second read (exists).
+    mockGetDoc
+      .mockResolvedValueOnce(makeSnapshot(null))
+      .mockResolvedValueOnce(makeSnapshot({
+        email: 'test@example.com',
+        displayName: 'test',
+        points: 0,
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+      }));
 
     vi.mocked(auth.onAuthStateChanged).mockImplementation((callback: any) => {
       setTimeout(() => callback(mockUser), 0);
       return () => {};
     });
-
     vi.mocked(doc).mockReturnValue({ id: 'user_new' } as any);
-
-    vi.mocked(onSnapshot).mockImplementation((_ref: any, callback: any) => {
-      setTimeout(() => callback({
-        exists: () => false,
-      } as any), 0);
-      return () => {};
-    });
 
     const { result } = renderHook(() => useAuth(), {
       wrapper: AuthProvider,
@@ -133,15 +156,26 @@ describe('AuthProvider', () => {
     });
 
     expect(result.current.user).toEqual(mockUser);
-    expect(vi.mocked(createUserProfile)).toHaveBeenCalled();
+    expect(vi.mocked(createUserProfile)).toHaveBeenCalledWith(
+      'user_new',
+      expect.objectContaining({
+        email: 'test@example.com',
+        // displayName falls back to the email prefix when the user has no name.
+        displayName: 'test',
+      })
+    );
+    expect(result.current.dbUser?.email).toBe('test@example.com');
     expect(result.current.loading).toBe(false);
   });
 
   it('should handle user sign-out', async () => {
-    const mockUser = {
-      uid: 'user_123',
+    const mockUser = makeUser();
+    const profileData = {
       email: 'test@example.com',
       displayName: 'Test User',
+      points: 100,
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
     };
 
     vi.mocked(auth.onAuthStateChanged).mockImplementation((callback: any) => {
@@ -149,22 +183,8 @@ describe('AuthProvider', () => {
       setTimeout(() => callback(null), 50);
       return () => {};
     });
-
     vi.mocked(doc).mockReturnValue({ id: 'user_123' } as any);
-
-    vi.mocked(onSnapshot).mockImplementation((_ref: any, callback: any) => {
-      setTimeout(() => callback({
-        exists: () => true,
-        data: () => ({
-          email: 'test@example.com',
-          displayName: 'Test User',
-          points: 100,
-          createdAt: Date.now(),
-          updatedAt: Date.now(),
-        }),
-      } as any), 0);
-      return () => {};
-    });
+    mockGetDocResolved(makeSnapshot(profileData));
 
     const { result } = renderHook(() => useAuth(), {
       wrapper: AuthProvider,
@@ -186,24 +206,15 @@ describe('AuthProvider', () => {
     expect(result.current.loading).toBe(false);
   });
 
-  it('should handle Firestore snapshot errors gracefully', async () => {
-    const mockUser = {
-      uid: 'user_123',
-      email: 'test@example.com',
-      displayName: 'Test User',
-    };
+  it('should handle Firestore read errors gracefully', async () => {
+    const mockUser = makeUser();
 
     vi.mocked(auth.onAuthStateChanged).mockImplementation((callback: any) => {
       setTimeout(() => callback(mockUser), 0);
       return () => {};
     });
-
     vi.mocked(doc).mockReturnValue({ id: 'user_123' } as any);
-
-    vi.mocked(onSnapshot).mockImplementation((_ref: any, _callback: any, errorCallback: any) => {
-      setTimeout(() => errorCallback(new Error('Firestore error')), 0);
-      return () => {};
-    });
+    mockGetDoc.mockRejectedValue(new Error('Firestore error'));
 
     const { result } = renderHook(() => useAuth(), {
       wrapper: AuthProvider,

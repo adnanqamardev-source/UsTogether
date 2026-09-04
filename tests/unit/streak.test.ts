@@ -21,6 +21,11 @@ vi.mock('@/lib/firebase', async () => {
   };
 });
 
+// Mock the underlying client module so the real Firebase client.ts is never
+// evaluated in the jsdom test environment (which would trigger getAuth/getStorage
+// with an invalid api key and throw auth/invalid-api-key at import time).
+vi.mock('@/lib/firebase/client', () => ({ db: {} }));
+
 import { getDoc, setDoc, doc } from 'firebase/firestore';
 
 const mockGetDoc = vi.mocked(getDoc);

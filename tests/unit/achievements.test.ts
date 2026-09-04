@@ -13,10 +13,7 @@ vi.mock('firebase/firestore', () => ({
   collection: vi.fn(),
   query: vi.fn(() => new MockQuery()),
   where: vi.fn(),
-  writeBatch: vi.fn(() => ({
-    set: vi.fn(),
-    commit: vi.fn(),
-  })),
+  runTransaction: vi.fn(),
   serverTimestamp: vi.fn(() => ({ _methodName: 'serverTimestamp' })),
   getFirestore: vi.fn(),
 }));
@@ -24,12 +21,17 @@ vi.mock('firebase/firestore', () => ({
 // Mock db without triggering real Firebase init
 vi.mock('@/lib/firebase', () => ({ db: {}, auth: {} }));
 
-import { getDoc, getDocs, setDoc, writeBatch, collection, query, doc } from 'firebase/firestore';
+// Mock the underlying client module so the real Firebase client.ts is never
+// evaluated in the jsdom test environment (which would trigger getAuth/getStorage
+// with an invalid api key and throw auth/invalid-api-key at import time).
+vi.mock('@/lib/firebase/client', () => ({ db: {}, auth: {} }));
+
+import { getDoc, getDocs, setDoc, runTransaction, collection, query, doc } from 'firebase/firestore';
 
 const mockGetDoc = vi.mocked(getDoc);
 const mockGetDocs = vi.mocked(getDocs);
 const mockSetDoc = vi.mocked(setDoc);
-const mockWriteBatch = vi.mocked(writeBatch);
+const mockRunTransaction = vi.mocked(runTransaction);
 
 describe('getEligibleAchievements()', () => {
   const userId = 'user_123';
@@ -91,27 +93,25 @@ describe('getEligibleAchievements()', () => {
 describe('checkAndAwardAchievements()', () => {
   const userId = 'user_123';
 
+  // The live implementation wraps everything in runTransaction, which reads
+  // existing achievements via getDocs and writes via transaction.set.
+  function mockTransaction(ownedIds: string[] = []) {
+    const tx = { set: vi.fn() };
+    mockGetDocs.mockResolvedValueOnce({
+      docs: ownedIds.map(id => ({ id, data: () => ({}) })),
+    } as any);
+    mockRunTransaction.mockImplementationOnce(async (db, fn: any) =>
+      fn(tx)
+    );
+    return tx;
+  }
+
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
   it('Awards multiple achievements at once if criteria are met', async () => {
-    mockGetDoc.mockResolvedValueOnce({
-      exists: () => true,
-      data: () => ({
-        streak: 7,
-        quizzesCompleted: 1,
-        sessionsFinished: 1,
-        paired: true,
-      }),
-    } as any);
-
-    mockGetDocs.mockResolvedValueOnce({
-      docs: [],
-    } as any);
-
-    const mockBatch = { set: vi.fn(), commit: vi.fn() };
-    mockWriteBatch.mockReturnValueOnce(mockBatch as any);
+    const tx = mockTransaction([]);
 
     const awarded = await checkAndAwardAchievements(userId, {
       currentStreak: 7,
@@ -121,31 +121,11 @@ describe('checkAndAwardAchievements()', () => {
     });
 
     expect(awarded.sort()).toEqual(['first_quiz', 'first_session', 'partner_paired', 'streak_3', 'streak_7'].sort());
-    expect(mockSetDoc).toHaveBeenCalledTimes(5);
+    expect(tx.set).toHaveBeenCalledTimes(5);
   });
 
   it('Does NOT award achievements the user already owns', async () => {
-    const existingDocs = [
-      { id: 'first_quiz', data: () => ({}) },
-      { id: 'streak_3', data: () => ({}) },
-    ];
-
-    mockGetDoc.mockResolvedValueOnce({
-      exists: () => true,
-      data: () => ({
-        streak: 7,
-        quizzesCompleted: 1,
-        sessionsFinished: 1,
-        paired: true,
-      }),
-    } as any);
-
-    mockGetDocs.mockResolvedValueOnce({
-      docs: existingDocs,
-    } as any);
-
-    const mockBatch = { set: vi.fn(), commit: vi.fn() };
-    mockWriteBatch.mockReturnValueOnce(mockBatch as any);
+    mockTransaction(['first_quiz', 'streak_3']);
 
     const awarded = await checkAndAwardAchievements(userId, {
       currentStreak: 7,
@@ -160,14 +140,8 @@ describe('checkAndAwardAchievements()', () => {
     expect(awarded).toContain('partner_paired');
   });
 
-  it('Returns empty array when user stats doc does not exist', async () => {
-    mockGetDoc.mockResolvedValueOnce({
-      exists: () => false,
-    } as any);
-    
-    mockGetDocs.mockResolvedValueOnce({
-      docs: [],
-    } as any);
+  it('Returns empty array when no achievements are eligible', async () => {
+    const tx = mockTransaction([]);
 
     const awarded = await checkAndAwardAchievements(userId, {
       currentStreak: 0,
@@ -177,25 +151,11 @@ describe('checkAndAwardAchievements()', () => {
     });
 
     expect(awarded).toEqual([]);
+    expect(tx.set).not.toHaveBeenCalled();
   });
 
   it('Awards first_quiz when quizzesCompleted >= 1', async () => {
-    mockGetDoc.mockResolvedValueOnce({
-      exists: () => true,
-      data: () => ({
-        streak: 0,
-        quizzesCompleted: 1,
-        sessionsFinished: 0,
-        paired: false,
-      }),
-    } as any);
-
-    mockGetDocs.mockResolvedValueOnce({
-      docs: [],
-    } as any);
-
-    const mockBatch = { set: vi.fn(), commit: vi.fn() };
-    mockWriteBatch.mockReturnValueOnce(mockBatch as any);
+    const tx = mockTransaction([]);
 
     const awarded = await checkAndAwardAchievements(userId, {
       currentStreak: 0,
@@ -205,25 +165,11 @@ describe('checkAndAwardAchievements()', () => {
     });
 
     expect(awarded).toEqual(['first_quiz']);
+    expect(tx.set).toHaveBeenCalledTimes(1);
   });
 
   it('Awards first_session when sessionsFinished >= 1', async () => {
-    mockGetDoc.mockResolvedValueOnce({
-      exists: () => true,
-      data: () => ({
-        streak: 0,
-        quizzesCompleted: 0,
-        sessionsFinished: 1,
-        paired: false,
-      }),
-    } as any);
-
-    mockGetDocs.mockResolvedValueOnce({
-      docs: [],
-    } as any);
-
-    const mockBatch = { set: vi.fn(), commit: vi.fn() };
-    mockWriteBatch.mockReturnValueOnce(mockBatch as any);
+    const tx = mockTransaction([]);
 
     const awarded = await checkAndAwardAchievements(userId, {
       currentStreak: 0,
@@ -233,22 +179,11 @@ describe('checkAndAwardAchievements()', () => {
     });
 
     expect(awarded).toEqual(['first_session']);
+    expect(tx.set).toHaveBeenCalledTimes(1);
   });
 
   it('Does not award when thresholds are not met', async () => {
-    mockGetDoc.mockResolvedValueOnce({
-      exists: () => true,
-      data: () => ({
-        streak: 2,
-        quizzesCompleted: 0,
-        sessionsFinished: 0,
-        paired: false,
-      }),
-    } as any);
-
-    mockGetDocs.mockResolvedValueOnce({
-      docs: [],
-    } as any);
+    const tx = mockTransaction([]);
 
     const awarded = await checkAndAwardAchievements(userId, {
       currentStreak: 2,
@@ -258,25 +193,11 @@ describe('checkAndAwardAchievements()', () => {
     });
 
     expect(awarded).toHaveLength(0);
+    expect(tx.set).not.toHaveBeenCalled();
   });
 
   it('Awards partner_paired when paired is true', async () => {
-    mockGetDoc.mockResolvedValueOnce({
-      exists: () => true,
-      data: () => ({
-        streak: 0,
-        quizzesCompleted: 0,
-        sessionsFinished: 0,
-        paired: true,
-      }),
-    } as any);
-
-    mockGetDocs.mockResolvedValueOnce({
-      docs: [],
-    } as any);
-
-    const mockBatch = { set: vi.fn(), commit: vi.fn() };
-    mockWriteBatch.mockReturnValueOnce(mockBatch as any);
+    const tx = mockTransaction([]);
 
     const awarded = await checkAndAwardAchievements(userId, {
       currentStreak: 0,
@@ -286,5 +207,6 @@ describe('checkAndAwardAchievements()', () => {
     });
 
     expect(awarded).toEqual(['partner_paired']);
+    expect(tx.set).toHaveBeenCalledTimes(1);
   });
 });
