@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getFirestore } from 'firebase-admin/firestore';
 import { getAdminApp } from '@/lib/admin';
 
+const BATCH_SIZE = 500;
+
 export async function POST(request: NextRequest) {
   try {
     // Only allow in development or with proper auth
@@ -27,43 +29,46 @@ export async function POST(request: NextRequest) {
     const quizzesSnapshot = await db.collection('quizzes').get();
     const memoryPhotosSnapshot = await db.collection('memory_photos').get();
 
-    const batch = db.batch();
-    
-    // Delete all users
-    usersSnapshot.docs.forEach(doc => batch.delete(doc.ref));
-    
-    // Delete all couples
-    coupleSnapshot.docs.forEach(doc => batch.delete(doc.ref));
-    
-    // Delete all pairing codes
-    pairingCodesSnapshot.docs.forEach(doc => batch.delete(doc.ref));
-    
-    // Delete all quizzes
-    quizzesSnapshot.docs.forEach(doc => batch.delete(doc.ref));
-    
-    // Delete all memory photos
-    memoryPhotosSnapshot.docs.forEach(doc => batch.delete(doc.ref));
-
     // Delete achievements subcollections for each user
+    const userPaths: string[] = [];
     for (const userDoc of usersSnapshot.docs) {
       const achievementsSnapshot = await db.collection('achievements').doc(userDoc.id).collection('items').get();
-      achievementsSnapshot.docs.forEach(doc => batch.delete(doc.ref));
+      for (const doc of achievementsSnapshot.docs) {
+        userPaths.push(`achievements/${userDoc.id}/items/${doc.id}`);
+      }
     }
 
-    await batch.commit();
+    // Collect all refs to delete
+    const allRefs = [
+      ...usersSnapshot.docs,
+      ...coupleSnapshot.docs,
+      ...pairingCodesSnapshot.docs,
+      ...quizzesSnapshot.docs,
+      ...memoryPhotosSnapshot.docs,
+    ].map((d) => d.ref);
+
+    for (const path of userPaths) {
+      const parts = path.split('/');
+      allRefs.push(db.doc(parts.join('/')));
+    }
+
+    // Delete in batches of 500 (Firestore limit)
+    for (let i = 0; i < allRefs.length; i += BATCH_SIZE) {
+      const batch = db.batch();
+      allRefs.slice(i, i + BATCH_SIZE).forEach((ref) => batch.delete(ref));
+      await batch.commit();
+    }
 
     return NextResponse.json({ 
       success: true, 
       message: `Deleted ${usersSnapshot.size} users, ${coupleSnapshot.size} couples, ${pairingCodesSnapshot.size} codes, ${quizzesSnapshot.size} quizzes, ${memoryPhotosSnapshot.size} photos` 
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Reset data failed', error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
 
 export async function GET() {
-  return NextResponse.json({ 
-    message: 'POST to this endpoint with x-reset-secret header to reset all user data. Only works in development.' 
-  });
+  return NextResponse.json({ error: 'Method not allowed' }, { status: 405 });
 }

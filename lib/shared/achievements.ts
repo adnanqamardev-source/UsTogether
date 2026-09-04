@@ -1,7 +1,6 @@
-import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { doc, serverTimestamp, collection, query, getDocs, runTransaction } from 'firebase/firestore';
 import { db } from '@/lib/firebase/client';
 import { AchievementDefinition } from '@/types';
-
 const ACHIEVEMENT_DEFS: AchievementDefinition[] = [
   { id: 'first_quiz',      title: 'First Quiz',       description: 'Complete your first quiz together', icon: '🎯', category: 'participation' },
   { id: 'five_quizzes',    title: 'Quiz Marathon',    description: 'Complete 5 quizzes',               icon: '🏃', category: 'participation' },
@@ -44,12 +43,6 @@ function meetsCondition(def: AchievementDefinition, ctx: AchievementContext): bo
 }
 
 export async function getEligibleAchievements(userId: string, ctx: AchievementContext): Promise<AchievementDefinition[]> {
-  const itemsRef = doc(db, 'achievements', userId);
-  // Note: In Firestore, getDoc on a non-existent doc returns exists=false.
-  // The UI typically uses `achievements/{userId}/items` subcollection via hooks,
-  // but we can query the subcollection directly for eligibility.
-  const { collection, query, where, getDocs } = await import('firebase/firestore');
-
   const q = query(collection(db, 'achievements', userId, 'items'));
   const snapshot = await getDocs(q);
   const existingIds = new Set(snapshot.docs.map((d) => d.id));
@@ -57,21 +50,24 @@ export async function getEligibleAchievements(userId: string, ctx: AchievementCo
   return ACHIEVEMENT_DEFS.filter((def) => meetsCondition(def, ctx) && !existingIds.has(def.id));
 }
 
-async function awardAchievement(userId: string, def: AchievementDefinition): Promise<void> {
-  const itemRef = doc(db, 'achievements', userId, 'items', def.id);
-  await setDoc(itemRef, {
-    title: def.title,
-    description: def.description,
-    unlockedAt: serverTimestamp(),
-  });
-}
-
 export async function checkAndAwardAchievements(userId: string, ctx: AchievementContext): Promise<string[]> {
-  const eligible = await getEligibleAchievements(userId, ctx);
-  const unlocked: string[] = [];
-  for (const def of eligible) {
-    await awardAchievement(userId, def);
-    unlocked.push(def.id);
-  }
-  return unlocked;
+  return runTransaction(db, async (transaction) => {
+    const col = collection(db, 'achievements', userId, 'items');
+    const snapshot = await getDocs(query(col));
+    const existingIds = new Set(snapshot.docs.map((d) => d.id));
+
+    const eligible = ACHIEVEMENT_DEFS.filter((def) => meetsCondition(def, ctx) && !existingIds.has(def.id));
+
+    const unlocked: string[] = [];
+    for (const def of eligible) {
+      const itemRef = doc(db, 'achievements', userId, 'items', def.id);
+      transaction.set(itemRef, {
+        title: def.title,
+        description: def.description,
+        unlockedAt: serverTimestamp(),
+      });
+      unlocked.push(def.id);
+    }
+    return unlocked;
+  });
 }

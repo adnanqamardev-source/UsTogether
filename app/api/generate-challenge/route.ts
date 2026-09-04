@@ -15,7 +15,7 @@ const requireUserId = async (req: NextRequest) => {
   if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-  if (!checkRateLimit(`challenge:${userId}`, 12, 60_000)) {
+  if (!(await checkRateLimit(`challenge:${userId}`, 12, 60_000))) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
   return null;
@@ -86,7 +86,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ challenge });
   } catch (err: any) {
     console.error("generate-challenge error:", err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
 
@@ -100,8 +100,19 @@ export async function GET(req: NextRequest) {
     }
 
     const { searchParams } = new URL(req.url);
-    const history = searchParams.get('history') || '[]';
-    const historyString = JSON.stringify(JSON.parse(history));
+    let raw;
+    try {
+      raw = JSON.parse(searchParams.get('history') || '[]');
+    } catch {
+      return NextResponse.json({ error: "Invalid history parameter" }, { status: 400 });
+    }
+
+    const parsed = validateHistoryBody({ history: raw });
+    if (!parsed.ok) {
+      return NextResponse.json({ error: parsed.error }, { status: 400 });
+    }
+
+    const summarized = parsed.history.slice(-5).map((s: any) => s.quizTitle || s.title || 'unknown').join(', ');
 
     const google = createGoogleGenerativeAI({ apiKey: process.env.GEMINI_API_KEY });
 
@@ -116,6 +127,6 @@ Return only the challenge text, max 3 short paragraphs.`,
     return result.toTextStreamResponse();
   } catch (err: any) {
     console.error(err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

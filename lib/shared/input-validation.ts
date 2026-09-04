@@ -12,6 +12,11 @@ export function validateChatBody(body: unknown) {
   }
 
   const messages = maybe.messages as unknown[];
+
+  if (messages.length > 100) {
+    return { ok: false as const, error: 'Too many messages. Limit is 100.' };
+  }
+
   for (const m of messages) {
     if (!m || typeof m !== 'object') {
       return { ok: false as const, error: 'Each message must be an object.' };
@@ -19,6 +24,9 @@ export function validateChatBody(body: unknown) {
     const msg = m as Record<string, unknown>;
     if (typeof msg.role !== 'string' || typeof msg.text !== 'string') {
       return { ok: false as const, error: 'Each message must include string role and text.' };
+    }
+    if (msg.text.length > 2000) {
+      return { ok: false as const, error: 'Each message text must be 2000 characters or fewer.' };
     }
   }
 
@@ -34,6 +42,11 @@ export function validateHistoryBody(body: unknown) {
     return { ok: false as const, error: 'history must be an array.' };
   }
   const history = (body as Record<string, unknown>).history as unknown[];
+
+  if (history.length > 100) {
+    return { ok: false as const, error: 'history is too large. Limit is 100 entries.' };
+  }
+
   return { ok: true as const, history };
 }
 

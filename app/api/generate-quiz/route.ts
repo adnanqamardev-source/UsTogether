@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    if (!checkRateLimit(`quiz:${userId}`, 12, 60_000)) {
+    if (!(await checkRateLimit(`quiz:${userId}`, 12, 60_000))) {
       return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
     }
 
@@ -132,7 +132,7 @@ Make sure exactly one JSON object is returned, with no markdown code blocks arou
   } catch (err: any) {
     console.error("generate-quiz error:", err);
     return NextResponse.json(
-      { error: err.message || "Failed to generate quiz" },
+      { error: "Failed to generate quiz" },
       { status: 500 }
     );
   }

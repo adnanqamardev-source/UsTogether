@@ -24,7 +24,8 @@ interface FirestoreErrorInfo {
   }
 }
 
-export function handleFirestoreError(error: unknown, operationType: OperationType, path: string | null, authUser: any | null = null) {
+export function handleFirestoreError(error: unknown, operationType: OperationType, path: string | null, authUser: any | null = null): string {
+  const code = (error as any)?.code as string | undefined;
   const errInfo: FirestoreErrorInfo = {
     error: error instanceof Error ? error.message : String(error),
     authInfo: {
@@ -41,6 +42,26 @@ export function handleFirestoreError(error: unknown, operationType: OperationTyp
     operationType,
     path
   }
-  console.error('Firestore Error: ', JSON.stringify(errInfo));
-  throw new Error(JSON.stringify(errInfo));
+  // Only log full PII server-side; log sanitized info on the client.
+  if (typeof window === 'undefined') {
+    console.error('Firestore Error: ', JSON.stringify(errInfo));
+  } else {
+    console.error(`Firestore ${operationType} error on ${path || 'unknown'}: ${code || 'unknown'}`);
+  }
+
+  // Return a friendly message instead of throwing with full details.
+  switch (code) {
+    case 'permission-denied':
+      return "You don't have permission to do that.";
+    case 'not-found':
+      return "That record couldn't be found.";
+    case 'already-exists':
+      return "That record already exists.";
+    case 'resource-exhausted':
+      return "Too many requests. Try again in a moment.";
+    case 'unavailable':
+      return "The service is temporarily unavailable. Try again soon.";
+    default:
+      return "Something went wrong. Please try again.";
+  }
 }

@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    if (!checkRateLimit(`chat:${userId}`, 12, 60_000)) {
+    if (!(await checkRateLimit(`chat:${userId}`, 12, 60_000))) {
       return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
     }
 
@@ -41,28 +41,18 @@ export async function POST(req: NextRequest) {
     let systemInstruction = `You are a warm, playful Desi chat companion for couples. Keep replies short, sweet, and culturally warm — chai, samosa, monsoon drives, Bollywood references allowed. Stay friendly and helpful.`;
 
     const safeMessages = messages as ChatMessage[];
-    const last = safeMessages[safeMessages.length - 1];
-    let injectedIcebreaker: string | null = null;
 
-    if (last?.timestamp) {
-      const lastTs = new Date(last.timestamp).getTime();
-      const now = Date.now();
-      if (!Number.isNaN(lastTs) && now - lastTs > 24 * 60 * 60 * 1000) {
-        injectedIcebreaker = "It's been a little while — start with a warm, cheeky desi icebreaker to bring the smile back.";
-      }
-    }
+    const role = (r: string) => (r === "assistant" ? "model" : "user");
 
     const contents = [
-      { role: "user", parts: [{ text: systemInstruction + (injectedIcebreaker ? "\n\n" + injectedIcebreaker : "") }] },
-      ...safeMessages.map((m) => ({
-        role: m.role === "assistant" ? "model" : "user",
-        parts: [{ text: m.text || "" }],
-      })),
+      { role: "user", parts: [{ text: systemInstruction }] },
+      ...safeMessages
+        .filter((m) => m.text && m.text.trim().length > 0)
+        .map((m) => ({
+          role: role(m.role),
+          parts: [{ text: m.text.slice(0, 2000) }],
+        })),
     ];
-
-    if (safeMessages.length === 0 && injectedIcebreaker) {
-      contents[0].parts[0].text += "\n\n" + injectedIcebreaker;
-    }
 
     const response = await ai.models.generateContent({
       model: "gemini-3-flash-preview",
@@ -72,6 +62,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ reply: response.text || "" });
   } catch (err: any) {
     console.error(err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

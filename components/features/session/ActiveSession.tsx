@@ -268,7 +268,9 @@ export default function ActiveSession({ coupleId, sessionId, couple }: { coupleI
                   <div className="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-bounce" style={{ animationDelay: '200ms' }}></div>
                   <p className="text-indigo-400 text-sm font-medium uppercase tracking-widest ml-2">Waiting for partner</p>
                 </div>
-                <button onClick={nextQuestion} className="text-[10px] text-white/20 hover:text-white/60 uppercase tracking-widest transition-colors">Force Next (Dev)</button>
+                {process.env.NODE_ENV !== 'production' && (
+                  <button onClick={nextQuestion} className="text-[10px] text-white/20 hover:text-white/60 uppercase tracking-widest transition-colors">Force Next (Dev)</button>
+                )}
               </div>
             ) : (
               <motion.button

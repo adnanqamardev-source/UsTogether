@@ -11,7 +11,12 @@ import type { ChatMessage, Couple, UserProfile } from '@/types';
 
 function getAvatarUrl(name?: string | null, email?: string | null): string {
   const display = (name || email || 'U')?.trim() || 'U';
-  const initial = display.charAt(0).toUpperCase();
+  const initial = display.charAt(0).toUpperCase()
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&apos;');
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64"><rect width="64" height="64" fill="#6366f1"/><text x="32" y="38" font-size="28" fill="white" text-anchor="middle" font-family="sans-serif">${initial}</text></svg>`;
   return `data:image/svg+xml;base64,${btoa(svg)}`;
 }
