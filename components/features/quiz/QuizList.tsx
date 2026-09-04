@@ -194,7 +194,14 @@ export default function QuizList({ coupleId }: { coupleId: string }) {
   };
 
   const startQuiz = async (quiz: any) => {
+    if (!user) {
+      window.alert("You must be logged in to start a quiz.");
+      return;
+    }
     try {
+      // Force a fresh ID token so Firestore has current auth for security rules
+      await user.getIdToken(true);
+
       const existing = sessions.find((s) => s.status !== "finished");
       if (existing) {
         window.location.hash = `#session/${existing.id}`;
