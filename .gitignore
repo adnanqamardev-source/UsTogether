@@ -12,3 +12,8 @@ D:\VsCode Us Together Staging\UsTogether\config.yaml
 # Global Cline rules (personal, not shared)
 C:/Users/adnan/OneDrive/Documents/Cline/Rules/
 AGENTS.md
+
+.vercel
+.env*
+playwright-report/
+test-results/
