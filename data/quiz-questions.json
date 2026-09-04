@@ -1,0 +1,3603 @@
+[
+  {
+    "id": 1,
+    "category": "Food & Dates",
+    "question": "What's your partner's idea of a perfect evening?",
+    "type": "mcq",
+    "options": [
+      "Chai and long talks",
+      "Dinner at a nice place",
+      "Street food walk",
+      "Netflix and snacks at home"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 2,
+    "category": "Food & Dates",
+    "question": "What comfort food does your partner crave when sad?",
+    "type": "mcq",
+    "options": [
+      "Maggi",
+      "Biryani",
+      "Ice cream",
+      "Rajma chawal"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 3,
+    "category": "Food & Dates",
+    "question": "How does your partner like their chai?",
+    "type": "mcq",
+    "options": [
+      "Extra strong",
+      "Sweet and milky",
+      "Light",
+      "Doesn't drink chai"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 4,
+    "category": "Food & Dates",
+    "question": "Who steals food from the other's plate more?",
+    "type": "mcq",
+    "options": [
+      "Me",
+      "My partner",
+      "Both equally",
+      "Neither"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 5,
+    "category": "Food & Dates",
+    "question": "What would your partner order on a first date?",
+    "type": "mcq",
+    "options": [
+      "Something safe and simple",
+      "The most expensive thing",
+      "What I order",
+      "Something they've never tried"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 6,
+    "category": "Food & Dates",
+    "question": "Who takes longer to decide what to eat?",
+    "type": "mcq",
+    "options": [
+      "Me",
+      "My partner",
+      "Both forever",
+      "We always agree quickly"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 7,
+    "category": "Food & Dates",
+    "question": "What's your partner's go-to late night snack?",
+    "type": "mcq",
+    "options": [
+      "Chips",
+      "Leftover food",
+      "Something sweet",
+      "Nothing, they sleep early"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 8,
+    "category": "Food & Dates",
+    "question": "If your partner had to cook one meal for you, what would it be?",
+    "type": "mcq",
+    "options": [
+      "Their signature dish",
+      "Maggi because it's easy",
+      "They'd order in",
+      "Something from their family recipe"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 9,
+    "category": "Food & Dates",
+    "question": "What kind of restaurant would your partner choose for a special date?",
+    "type": "mcq",
+    "options": [
+      "Rooftop with a view",
+      "Cozy and quiet",
+      "Trendy and aesthetic",
+      "Local dhaba for vibes"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 10,
+    "category": "Food & Dates",
+    "question": "Who pays on dates more often?",
+    "type": "mcq",
+    "options": [
+      "Me always",
+      "My partner always",
+      "We split it",
+      "Whoever feels like it"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 11,
+    "category": "Food & Dates",
+    "question": "What drink is your partner most likely to order?",
+    "type": "mcq",
+    "options": [
+      "Chai or coffee",
+      "Fresh juice",
+      "Cold drink",
+      "Water only"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 12,
+    "category": "Food & Dates",
+    "question": "Would your partner rather cook together or order in?",
+    "type": "mcq",
+    "options": [
+      "Cook together always",
+      "Order in always",
+      "Cook together but end up ordering",
+      "Depends on the mood"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 13,
+    "category": "Food & Dates",
+    "question": "What dessert would your partner choose?",
+    "type": "mcq",
+    "options": [
+      "Gulab jamun",
+      "Ice cream",
+      "Chocolate brownie",
+      "Nothing, not a dessert person"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 14,
+    "category": "Food & Dates",
+    "question": "What kind of food date would your partner plan?",
+    "type": "mcq",
+    "options": [
+      "Street food hopping",
+      "Fine dining",
+      "Home cooked meal",
+      "Trying a new cuisine"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 15,
+    "category": "Food & Dates",
+    "question": "Who gets hangry faster?",
+    "type": "mcq",
+    "options": [
+      "Me",
+      "My partner",
+      "Both",
+      "Neither"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 16,
+    "category": "Daily Habits",
+    "question": "Who wakes up earlier on most days?",
+    "type": "mcq",
+    "options": [
+      "Me",
+      "My partner",
+      "Both at the same time",
+      "Neither, we're both lazy"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 17,
+    "category": "Daily Habits",
+    "question": "What does your partner do first thing in the morning?",
+    "type": "mcq",
+    "options": [
+      "Check their phone",
+      "Make chai or coffee",
+      "Freshen up immediately",
+      "Lie in bed for too long"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 18,
+    "category": "Daily Habits",
+    "question": "Who takes longer to get ready?",
+    "type": "mcq",
+    "options": [
+      "Me",
+      "My partner",
+      "Both take forever",
+      "We're both quick"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 19,
+    "category": "Daily Habits",
+    "question": "What's your partner's mood like on Monday mornings?",
+    "type": "mcq",
+    "options": [
+      "Terrible",
+      "Fine, they're disciplined",
+      "Depends on the week",
+      "They're always cheerful"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 20,
+    "category": "Daily Habits",
+    "question": "How does your partner wind down before sleeping?",
+    "type": "mcq",
+    "options": [
+      "Scrolling phone",
+      "Watching something",
+      "Talking to me",
+      "Reading or journaling"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 21,
+    "category": "Daily Habits",
+    "question": "Who remembers important dates better?",
+    "type": "mcq",
+    "options": [
+      "Me",
+      "My partner",
+      "Both equally",
+      "Neither of us honestly"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 22,
+    "category": "Daily Habits",
+    "question": "What does your partner procrastinate the most?",
+    "type": "mcq",
+    "options": [
+      "Replying to messages",
+      "Work or tasks",
+      "Making decisions",
+      "Cleaning up"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 23,
+    "category": "Daily Habits",
+    "question": "How long can your partner go without checking their phone?",
+    "type": "mcq",
+    "options": [
+      "Not even 5 minutes",
+      "A couple hours",
+      "Half a day",
+      "Full day easily"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 24,
+    "category": "Daily Habits",
+    "question": "What is your partner most likely doing on a lazy Sunday?",
+    "type": "mcq",
+    "options": [
+      "Sleeping in",
+      "Binge watching shows",
+      "Going out somewhere",
+      "Calling family"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 25,
+    "category": "Daily Habits",
+    "question": "How does your partner react when plans suddenly change?",
+    "type": "mcq",
+    "options": [
+      "Gets stressed immediately",
+      "Adjusts easily",
+      "Gets quiet and annoyed",
+      "Doesn't care at all"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 26,
+    "category": "Daily Habits",
+    "question": "Who is messier at home?",
+    "type": "mcq",
+    "options": [
+      "Me",
+      "My partner",
+      "Both equally",
+      "Neither, we're both neat"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 27,
+    "category": "Daily Habits",
+    "question": "What bad habit does your partner have that you secretly don't mind?",
+    "type": "mcq",
+    "options": [
+      "Staying up too late",
+      "Overthinking everything",
+      "Being too stubborn",
+      "Talking too much"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 28,
+    "category": "Daily Habits",
+    "question": "Who is more likely to be running late?",
+    "type": "mcq",
+    "options": [
+      "Me always",
+      "My partner always",
+      "Both",
+      "Neither, we're punctual"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 29,
+    "category": "Daily Habits",
+    "question": "What does your partner do when they're bored?",
+    "type": "mcq",
+    "options": [
+      "Texts me immediately",
+      "Scrolls social media",
+      "Sleeps",
+      "Finds something creative to do"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 30,
+    "category": "Daily Habits",
+    "question": "Who makes more noise at home?",
+    "type": "mcq",
+    "options": [
+      "Me",
+      "My partner",
+      "Both equally",
+      "We're both pretty quiet"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 31,
+    "category": "Communication",
+    "question": "Who texts first most of the time?",
+    "type": "mcq",
+    "options": [
+      "Me always",
+      "My partner always",
+      "Both equally",
+      "Whoever wakes up first"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 32,
+    "category": "Communication",
+    "question": "How does your partner react when they're upset with you?",
+    "type": "mcq",
+    "options": [
+      "Goes silent",
+      "Talks it out immediately",
+      "Gives attitude",
+      "Needs space first then talks"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 33,
+    "category": "Communication",
+    "question": "Who says sorry first after a fight?",
+    "type": "mcq",
+    "options": [
+      "Me always",
+      "My partner always",
+      "Whoever was wrong",
+      "We both avoid it"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 34,
+    "category": "Communication",
+    "question": "How long does your partner take to reply to messages?",
+    "type": "mcq",
+    "options": [
+      "Instantly",
+      "Within an hour",
+      "Hours later",
+      "On their own schedule"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 35,
+    "category": "Communication",
+    "question": "What's your partner's communication style?",
+    "type": "mcq",
+    "options": [
+      "Direct and clear",
+      "Indirect and subtle",
+      "Emotionally expressive",
+      "Short and to the point"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 36,
+    "category": "Communication",
+    "question": "What starts most arguments between you two?",
+    "type": "mcq",
+    "options": [
+      "Miscommunication",
+      "Unmet expectations",
+      "Mood differences",
+      "Time and attention"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 37,
+    "category": "Communication",
+    "question": "How does your partner prefer to sort out a problem?",
+    "type": "mcq",
+    "options": [
+      "Talk right away",
+      "Cool down first then talk",
+      "Text it out",
+      "Let time fix it"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 38,
+    "category": "Communication",
+    "question": "Who is more likely to overthink a small fight?",
+    "type": "mcq",
+    "options": [
+      "Me",
+      "My partner",
+      "Both of us",
+      "Neither"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 39,
+    "category": "Communication",
+    "question": "Does your partner find it easy to say 'I love you'?",
+    "type": "mcq",
+    "options": [
+      "Yes, says it freely",
+      "Sometimes but not always",
+      "Rarely, shows it through actions",
+      "Never says it much"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 40,
+    "category": "Communication",
+    "question": "What does your partner do when they miss you but won't say it?",
+    "type": "mcq",
+    "options": [
+      "Texts random things",
+      "Calls suddenly",
+      "Gets a little cold",
+      "Just says it directly"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 41,
+    "category": "Communication",
+    "question": "Who is more expressive with feelings?",
+    "type": "mcq",
+    "options": [
+      "Me",
+      "My partner",
+      "Both equally",
+      "Neither of us really"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 42,
+    "category": "Communication",
+    "question": "How does your partner respond to criticism?",
+    "type": "mcq",
+    "options": [
+      "Takes it well",
+      "Gets defensive first",
+      "Needs time to process",
+      "Depends on the mood"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 43,
+    "category": "Communication",
+    "question": "What's the one thing your partner wishes you understood better?",
+    "type": "mcq",
+    "options": [
+      "Their need for space",
+      "Their way of showing love",
+      "Their stress levels",
+      "Their family dynamics"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 44,
+    "category": "Communication",
+    "question": "How does your partner handle conflict with your family?",
+    "type": "mcq",
+    "options": [
+      "Stays quiet to keep peace",
+      "Speaks up when needed",
+      "Avoids completely",
+      "Discusses it with me privately"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 45,
+    "category": "Communication",
+    "question": "How long do silent treatments usually last between you two?",
+    "type": "mcq",
+    "options": [
+      "Few hours",
+      "A day max",
+      "More than a day sometimes",
+      "We never do silent treatments"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 46,
+    "category": "Romance & Affection",
+    "question": "What's your partner's love language?",
+    "type": "mcq",
+    "options": [
+      "Quality time",
+      "Words of affirmation",
+      "Acts of service",
+      "Physical touch"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 47,
+    "category": "Romance & Affection",
+    "question": "What would make your partner feel most special today?",
+    "type": "mcq",
+    "options": [
+      "A heartfelt message",
+      "A surprise plan",
+      "A long hug",
+      "Just undivided attention"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 48,
+    "category": "Romance & Affection",
+    "question": "Who is more romantic between you two?",
+    "type": "mcq",
+    "options": [
+      "Me",
+      "My partner",
+      "Both equally",
+      "Neither, we're both practical"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 49,
+    "category": "Romance & Affection",
+    "question": "What does your partner do that makes you fall for them every time?",
+    "type": "mcq",
+    "options": [
+      "Their smile",
+      "The way they talk",
+      "How they care for others",
+      "Their random little gestures"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 50,
+    "category": "Romance & Affection",
+    "question": "How does your partner show love without saying it?",
+    "type": "mcq",
+    "options": [
+      "Checks in on me constantly",
+      "Does things without being asked",
+      "Remembers small details",
+      "Always shows up for me"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 51,
+    "category": "Romance & Affection",
+    "question": "What's the most romantic thing your partner has done for you?",
+    "type": "mcq",
+    "options": [
+      "Surprised me out of nowhere",
+      "Remembered something small I said",
+      "Stayed up all night for me",
+      "Made a special effort during a hard time"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 52,
+    "category": "Romance & Affection",
+    "question": "What's your partner's way of flirting?",
+    "type": "mcq",
+    "options": [
+      "Teasing and jokes",
+      "Deep intense eye contact",
+      "Sweet compliments",
+      "Subtle touches"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 53,
+    "category": "Romance & Affection",
+    "question": "Who gets more jealous?",
+    "type": "mcq",
+    "options": [
+      "Me",
+      "My partner",
+      "Both equally",
+      "Neither"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 54,
+    "category": "Romance & Affection",
+    "question": "What does your partner find most attractive about you?",
+    "type": "mcq",
+    "options": [
+      "My looks",
+      "My personality",
+      "The way I treat them",
+      "My sense of humor"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 55,
+    "category": "Romance & Affection",
+    "question": "When your partner is proud of you, what do they do?",
+    "type": "mcq",
+    "options": [
+      "Says it out loud",
+      "Tells everyone else",
+      "Shows it through actions",
+      "Gets emotional quietly"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 56,
+    "category": "Romance & Affection",
+    "question": "What's your partner's favorite type of hug?",
+    "type": "mcq",
+    "options": [
+      "Long and tight",
+      "Quick but warm",
+      "From behind",
+      "Side hug while doing something"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 57,
+    "category": "Romance & Affection",
+    "question": "How does your partner react when you dress up nicely?",
+    "type": "mcq",
+    "options": [
+      "Compliments immediately",
+      "Stares without saying",
+      "Teases you",
+      "Gets visibly flustered"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 58,
+    "category": "Romance & Affection",
+    "question": "What's the most romantic setting your partner would love?",
+    "type": "mcq",
+    "options": [
+      "Stargazing somewhere quiet",
+      "A beautiful restaurant",
+      "A cozy night at home",
+      "A long drive with music"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 59,
+    "category": "Romance & Affection",
+    "question": "Who falls asleep first during late night calls?",
+    "type": "mcq",
+    "options": [
+      "Me",
+      "My partner",
+      "Both together",
+      "We never call that late"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 60,
+    "category": "Romance & Affection",
+    "question": "What small thing does your partner do that means a lot to you?",
+    "type": "mcq",
+    "options": [
+      "Checks if I've eaten",
+      "Remembers what I mentioned once",
+      "Defends me without being asked",
+      "Always makes time no matter what"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 61,
+    "category": "Spicy & Bold",
+    "question": "What's the one thing your partner would never admit they love about you?",
+    "type": "mcq",
+    "options": [
+      "How possessive you are",
+      "How dependent they've become on you",
+      "How much better you make them feel",
+      "How you always win arguments"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 62,
+    "category": "Spicy & Bold",
+    "question": "What's your partner's biggest turn on?",
+    "type": "mcq",
+    "options": [
+      "Confidence",
+      "Effort and thoughtfulness",
+      "Physical presence",
+      "Deep conversations at night"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 63,
+    "category": "Spicy & Bold",
+    "question": "Who gets more possessive?",
+    "type": "mcq",
+    "options": [
+      "Me",
+      "My partner",
+      "Both equally",
+      "Neither"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 64,
+    "category": "Spicy & Bold",
+    "question": "What's your partner most likely to be secretive about?",
+    "type": "mcq",
+    "options": [
+      "Their feelings",
+      "Their past",
+      "Their insecurities",
+      "Their phone"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 65,
+    "category": "Spicy & Bold",
+    "question": "What would your partner do if they saw you talking to an ex?",
+    "type": "mcq",
+    "options": [
+      "Stay calm but mention it later",
+      "Get visibly uncomfortable",
+      "Not care at all",
+      "Ask questions immediately"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 66,
+    "category": "Spicy & Bold",
+    "question": "What's your partner's biggest weakness in the relationship?",
+    "type": "mcq",
+    "options": [
+      "Overthinking",
+      "Not expressing feelings enough",
+      "Being too stubborn",
+      "Giving too much"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 67,
+    "category": "Spicy & Bold",
+    "question": "What's something your partner does that drives you crazy in a good way?",
+    "type": "mcq",
+    "options": [
+      "The way they look at you",
+      "Their laugh",
+      "How they say your name",
+      "When they get protective"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 68,
+    "category": "Spicy & Bold",
+    "question": "Who would win a staring contest?",
+    "type": "mcq",
+    "options": [
+      "Me easily",
+      "My partner easily",
+      "Both would lose laughing",
+      "We've never tried but I'd win"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 69,
+    "category": "Spicy & Bold",
+    "question": "What would your partner do if you ignored them for a whole day?",
+    "type": "mcq",
+    "options": [
+      "Act fine but spiral inside",
+      "Come to you directly",
+      "Give you the same treatment",
+      "Flood your messages"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 70,
+    "category": "Spicy & Bold",
+    "question": "What's your partner's reaction when someone flirts with you?",
+    "type": "mcq",
+    "options": [
+      "Stays calm but makes their presence clear",
+      "Gets visibly annoyed",
+      "Trusts you completely and doesn't react",
+      "Brings it up later"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 71,
+    "category": "Spicy & Bold",
+    "question": "What's the most daring thing your partner has done for you?",
+    "type": "mcq",
+    "options": [
+      "Stood up for me in public",
+      "Travelled just to see me",
+      "Said how they feel first",
+      "Chose me over something important"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 72,
+    "category": "Spicy & Bold",
+    "question": "What would your partner never compromise on in this relationship?",
+    "type": "mcq",
+    "options": [
+      "Honesty",
+      "Respect",
+      "Their self worth",
+      "Their family"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 73,
+    "category": "Spicy & Bold",
+    "question": "If your partner had to describe you in one word, what would it be?",
+    "type": "mcq",
+    "options": [
+      "Annoying but loveable",
+      "Complicated",
+      "Their person",
+      "Irreplaceable"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 74,
+    "category": "Spicy & Bold",
+    "question": "What's your partner's guilty pleasure they wouldn't admit publicly?",
+    "type": "mcq",
+    "options": [
+      "Romantic movies",
+      "Stalking your old photos",
+      "Re-reading your old conversations",
+      "Talking about you to everyone"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 75,
+    "category": "Spicy & Bold",
+    "question": "What's your partner most insecure about in this relationship?",
+    "type": "mcq",
+    "options": [
+      "Not being enough for you",
+      "Your past relationships",
+      "The future being uncertain",
+      "Other people in your life"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 76,
+    "category": "Travel Together",
+    "question": "What kind of trip would your partner plan for you both?",
+    "type": "mcq",
+    "options": [
+      "Mountains with no signal",
+      "Beach and sunsets",
+      "City exploration",
+      "A road trip with no plan"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 77,
+    "category": "Travel Together",
+    "question": "Who handles travel planning better?",
+    "type": "mcq",
+    "options": [
+      "Me",
+      "My partner",
+      "Both",
+      "Neither, we wing it"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 78,
+    "category": "Travel Together",
+    "question": "What would your partner most likely forget while packing?",
+    "type": "mcq",
+    "options": [
+      "Charger",
+      "Important documents",
+      "Medicines",
+      "Half their wardrobe"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 79,
+    "category": "Travel Together",
+    "question": "What's your couple travel style?",
+    "type": "mcq",
+    "options": [
+      "Planned and organized",
+      "Spontaneous and free",
+      "Luxury and comfort",
+      "Budget and adventurous"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 80,
+    "category": "Travel Together",
+    "question": "Who takes more photos on trips?",
+    "type": "mcq",
+    "options": [
+      "Me",
+      "My partner",
+      "Both equally",
+      "Neither, we just experience it"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 81,
+    "category": "Travel Together",
+    "question": "What's your partner's priority on a vacation?",
+    "type": "mcq",
+    "options": [
+      "Food and local experiences",
+      "Rest and relaxation",
+      "Adventure and activities",
+      "Aesthetic spots for photos"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 82,
+    "category": "Travel Together",
+    "question": "Who gets more travel anxious?",
+    "type": "mcq",
+    "options": [
+      "Me",
+      "My partner",
+      "Both",
+      "Neither"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 83,
+    "category": "Travel Together",
+    "question": "What's the one place your partner really wants to visit with you?",
+    "type": "mcq",
+    "options": [
+      "Somewhere in Europe",
+      "A hill station nearby",
+      "A beach destination",
+      "Somewhere spiritual"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 84,
+    "category": "Travel Together",
+    "question": "How does your partner behave on a long train or flight?",
+    "type": "mcq",
+    "options": [
+      "Sleeps the whole way",
+      "Talks the entire time",
+      "Looks out the window quietly",
+      "Eats constantly"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 85,
+    "category": "Travel Together",
+    "question": "Who is more likely to get lost?",
+    "type": "mcq",
+    "options": [
+      "Me",
+      "My partner",
+      "Both",
+      "Neither, we use maps"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 86,
+    "category": "Travel Together",
+    "question": "What mode of travel does your partner prefer?",
+    "type": "mcq",
+    "options": [
+      "Train for the experience",
+      "Flight to save time",
+      "Road trip by car",
+      "Whatever is cheapest"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 87,
+    "category": "Travel Together",
+    "question": "What would your partner do if the trip went completely off plan?",
+    "type": "mcq",
+    "options": [
+      "Stress but manage",
+      "Find it exciting",
+      "Get annoyed initially then adjust",
+      "Blame the planning"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 88,
+    "category": "Travel Together",
+    "question": "What's the first thing your partner does after reaching a new place?",
+    "type": "mcq",
+    "options": [
+      "Finds food",
+      "Takes photos",
+      "Freshens up and rests",
+      "Explores immediately"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 89,
+    "category": "Travel Together",
+    "question": "Who complains more on tiring trips?",
+    "type": "mcq",
+    "options": [
+      "Me",
+      "My partner",
+      "Both equally",
+      "Neither, we just push through"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 90,
+    "category": "Travel Together",
+    "question": "What's your dream trip together?",
+    "type": "mcq",
+    "options": [
+      "International honeymoon style",
+      "Solo road trip just us two",
+      "Backpacking adventure",
+      "Resort and do nothing"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 91,
+    "category": "Money & Spending",
+    "question": "Who is more careful with money?",
+    "type": "mcq",
+    "options": [
+      "Me",
+      "My partner",
+      "Both equally",
+      "Neither of us honestly"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 92,
+    "category": "Money & Spending",
+    "question": "What does your partner spend money on without thinking twice?",
+    "type": "mcq",
+    "options": [
+      "Food and experiences",
+      "Clothes and shopping",
+      "Gadgets",
+      "Things for others"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 93,
+    "category": "Money & Spending",
+    "question": "Who is more likely to suggest splitting expenses?",
+    "type": "mcq",
+    "options": [
+      "Me",
+      "My partner",
+      "Both",
+      "Whoever has less that month"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 94,
+    "category": "Money & Spending",
+    "question": "What's your partner's attitude toward saving money?",
+    "type": "mcq",
+    "options": [
+      "Saves religiously",
+      "Saves but also spends",
+      "Spends first saves later",
+      "Doesn't really save"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 95,
+    "category": "Money & Spending",
+    "question": "Who makes more impulsive purchases?",
+    "type": "mcq",
+    "options": [
+      "Me",
+      "My partner",
+      "Both",
+      "Neither"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 96,
+    "category": "Money & Spending",
+    "question": "How does your partner feel about sharing finances in the future?",
+    "type": "mcq",
+    "options": [
+      "Fully joint everything",
+      "Split equally",
+      "Each handles their own",
+      "Still figuring it out"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 97,
+    "category": "Money & Spending",
+    "question": "What would your partner splurge on for a special occasion?",
+    "type": "mcq",
+    "options": [
+      "A fancy dinner",
+      "A meaningful gift",
+      "A trip somewhere",
+      "Something practical we both need"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 98,
+    "category": "Money & Spending",
+    "question": "Who is better at budgeting for the month?",
+    "type": "mcq",
+    "options": [
+      "Me",
+      "My partner",
+      "Both",
+      "Neither, we both figure it out late"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 99,
+    "category": "Money & Spending",
+    "question": "What does your partner value more?",
+    "type": "mcq",
+    "options": [
+      "Financial security",
+      "Enjoying the present",
+      "Building a future together",
+      "Balance of both"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 100,
+    "category": "Money & Spending",
+    "question": "If your partner got a big bonus, what would they do first?",
+    "type": "mcq",
+    "options": [
+      "Save it all",
+      "Spend on something for us",
+      "Give some to family",
+      "Treat themselves first"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 101,
+    "category": "Money & Spending",
+    "question": "Would your partner rather have a bigger salary or more free time?",
+    "type": "mcq",
+    "options": [
+      "Bigger salary always",
+      "More free time always",
+      "Balance of both",
+      "Depends on where we are in life"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 102,
+    "category": "Money & Spending",
+    "question": "Who researches more before making a big purchase?",
+    "type": "mcq",
+    "options": [
+      "Me",
+      "My partner",
+      "Both",
+      "Neither, we just buy"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 103,
+    "category": "Money & Spending",
+    "question": "How would your partner react if you spent a big amount without telling them?",
+    "type": "mcq",
+    "options": [
+      "Calmly ask about it",
+      "Get upset immediately",
+      "Not care at all",
+      "Make a joke but note it"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 104,
+    "category": "Money & Spending",
+    "question": "What's your partner's one financial goal right now?",
+    "type": "mcq",
+    "options": [
+      "Buy a home",
+      "Travel more",
+      "Build savings",
+      "Pay off debts or responsibilities"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 105,
+    "category": "Money & Spending",
+    "question": "Who is more generous with money for others?",
+    "type": "mcq",
+    "options": [
+      "Me",
+      "My partner",
+      "Both equally",
+      "Neither, we both protect our wallets"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 106,
+    "category": "Family & Relationships",
+    "question": "How important is your family's approval to your partner?",
+    "type": "mcq",
+    "options": [
+      "Extremely important",
+      "Somewhat important",
+      "Not much",
+      "They respect it but make their own choice"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 107,
+    "category": "Family & Relationships",
+    "question": "How does your partner get along with your family?",
+    "type": "mcq",
+    "options": [
+      "Very well, everyone loves them",
+      "Okay, still warming up",
+      "It's complicated",
+      "Hasn't met them yet"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 108,
+    "category": "Family & Relationships",
+    "question": "What does your partner think about joint families?",
+    "type": "mcq",
+    "options": [
+      "Loves the idea",
+      "Would prefer independence",
+      "Okay with it if boundaries exist",
+      "Hasn't thought about it"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 109,
+    "category": "Family & Relationships",
+    "question": "How close is your partner to their family?",
+    "type": "mcq",
+    "options": [
+      "Very close, talks daily",
+      "Close but gives space",
+      "Complicated relationship",
+      "Independent and distant"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 110,
+    "category": "Family & Relationships",
+    "question": "Would your partner choose you over family in a conflict?",
+    "type": "mcq",
+    "options": [
+      "Yes without hesitation",
+      "Would try to balance both",
+      "Family always first",
+      "Depends on the situation"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 111,
+    "category": "Family & Relationships",
+    "question": "How does your partner feel about having kids someday?",
+    "type": "mcq",
+    "options": [
+      "Definitely wants them",
+      "Maybe, not sure yet",
+      "Does not want kids",
+      "Whenever the time is right"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 112,
+    "category": "Family & Relationships",
+    "question": "What kind of parent do you think your partner would be?",
+    "type": "mcq",
+    "options": [
+      "Fun and cool",
+      "Strict but loving",
+      "Super protective",
+      "The gentle understanding type"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 113,
+    "category": "Family & Relationships",
+    "question": "How does your partner handle pressure from their family about your relationship?",
+    "type": "mcq",
+    "options": [
+      "Stands firm for us",
+      "Gets caught between both",
+      "Avoids the topic",
+      "Tells me everything and we figure it out"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 114,
+    "category": "Family & Relationships",
+    "question": "What kind of wedding would your partner want?",
+    "type": "mcq",
+    "options": [
+      "Big traditional wedding",
+      "Small intimate one",
+      "Court marriage and a party",
+      "Destination wedding"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 115,
+    "category": "Family & Relationships",
+    "question": "How does your partner handle their family's expectations?",
+    "type": "mcq",
+    "options": [
+      "Tries to meet them all",
+      "Balances their own needs too",
+      "Struggles with it",
+      "Has set clear boundaries"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 116,
+    "category": "Family & Relationships",
+    "question": "Does your partner talk about you to their family?",
+    "type": "mcq",
+    "options": [
+      "All the time",
+      "Sometimes",
+      "Only when asked",
+      "Not yet"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 117,
+    "category": "Family & Relationships",
+    "question": "What does your partner value most in a home environment?",
+    "type": "mcq",
+    "options": [
+      "Peace and calm",
+      "Warmth and togetherness",
+      "Independence and space",
+      "Fun and chaos"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 118,
+    "category": "Family & Relationships",
+    "question": "How would your partner introduce you to their family?",
+    "type": "mcq",
+    "options": [
+      "With full confidence",
+      "Nervously but proudly",
+      "Casually and simply",
+      "Still thinking about the right time"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 119,
+    "category": "Family & Relationships",
+    "question": "Who in your partner's family do they trust most?",
+    "type": "mcq",
+    "options": [
+      "Their mother",
+      "Their sibling",
+      "A close cousin",
+      "No one, just me"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 120,
+    "category": "Family & Relationships",
+    "question": "How does your partner feel about your friendships with others?",
+    "type": "mcq",
+    "options": [
+      "Fully supportive",
+      "Okay but slightly watchful",
+      "A little uncomfortable sometimes",
+      "Trusts completely without questions"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 121,
+    "category": "Future Plans",
+    "question": "Where does your partner see you both in five years?",
+    "type": "mcq",
+    "options": [
+      "Settled and married",
+      "Building something together",
+      "Still figuring it out",
+      "Happy wherever we are"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 122,
+    "category": "Future Plans",
+    "question": "What's your partner's biggest dream they want to achieve?",
+    "type": "mcq",
+    "options": [
+      "Career success",
+      "Financial freedom",
+      "Travel the world",
+      "Build a beautiful family life"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 123,
+    "category": "Future Plans",
+    "question": "Would your partner relocate for love?",
+    "type": "mcq",
+    "options": [
+      "Yes without hesitation",
+      "Yes but it would take time",
+      "Only if it makes sense",
+      "Probably not"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 124,
+    "category": "Future Plans",
+    "question": "What kind of home does your partner want to build someday?",
+    "type": "mcq",
+    "options": [
+      "Simple and cozy",
+      "Big and family friendly",
+      "Modern and minimal",
+      "Anywhere as long as we're together"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 125,
+    "category": "Future Plans",
+    "question": "What's your partner most afraid of about the future?",
+    "type": "mcq",
+    "options": [
+      "Losing connection over time",
+      "Financial instability",
+      "Family pressure",
+      "Not achieving what they want"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 126,
+    "category": "Future Plans",
+    "question": "What does commitment mean to your partner?",
+    "type": "mcq",
+    "options": [
+      "Loyalty above everything",
+      "Growing together",
+      "Being each other's priority",
+      "All of these"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 127,
+    "category": "Future Plans",
+    "question": "Would your partner choose love over career if it came to that?",
+    "type": "mcq",
+    "options": [
+      "Love first always",
+      "Career first, love will wait",
+      "Would find a way for both",
+      "Hasn't thought that far"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 128,
+    "category": "Future Plans",
+    "question": "What's something your partner wants to do with you before getting married?",
+    "type": "mcq",
+    "options": [
+      "Travel somewhere special",
+      "Live in the same city",
+      "Meet all important people in each other's life",
+      "Just feel fully ready"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 129,
+    "category": "Future Plans",
+    "question": "What's your partner's vision of a happy life?",
+    "type": "mcq",
+    "options": [
+      "Simple, peaceful and together",
+      "Successful and adventurous",
+      "Comfortable with family around",
+      "Doing what makes them feel alive"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 130,
+    "category": "Future Plans",
+    "question": "How long does your partner think is the right time before marriage?",
+    "type": "mcq",
+    "options": [
+      "When it feels right not time based",
+      "At least a year or two",
+      "After all major life things settle",
+      "As soon as possible"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 131,
+    "category": "Future Plans",
+    "question": "How does your partner handle uncertainty about the future?",
+    "type": "mcq",
+    "options": [
+      "Stays calm and trusts the process",
+      "Gets anxious easily",
+      "Makes plans to control it",
+      "Distracts themselves"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 132,
+    "category": "Future Plans",
+    "question": "What's one thing your partner wants to change about the relationship in the future?",
+    "type": "mcq",
+    "options": [
+      "More quality time",
+      "Better communication",
+      "More certainty and stability",
+      "Less distance between us"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 133,
+    "category": "Future Plans",
+    "question": "Does your partner believe in growing old together?",
+    "type": "mcq",
+    "options": [
+      "100 percent yes",
+      "Hopes so deeply",
+      "Tries not to think too far ahead",
+      "Yes and plans for it"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 134,
+    "category": "Future Plans",
+    "question": "What role do you play in your partner's future plans?",
+    "type": "mcq",
+    "options": [
+      "Central to everything",
+      "A big part but they keep options open",
+      "They're still figuring it out",
+      "They've told me I'm their plan"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 135,
+    "category": "Future Plans",
+    "question": "What kind of couple do you both want to be in ten years?",
+    "type": "mcq",
+    "options": [
+      "Still dating each other everyday",
+      "A solid team building life",
+      "Best friends who are in love",
+      "All of the above"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 136,
+    "category": "Emotional Depth",
+    "question": "What does your partner need most when they're going through something hard?",
+    "type": "mcq",
+    "options": [
+      "Just presence",
+      "Solutions and advice",
+      "Space to process alone",
+      "Words of comfort"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 137,
+    "category": "Emotional Depth",
+    "question": "How does your partner handle their low days?",
+    "type": "mcq",
+    "options": [
+      "Goes quiet and withdraws",
+      "Talks to me about everything",
+      "Distracts themselves",
+      "Acts fine but isn't"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 138,
+    "category": "Emotional Depth",
+    "question": "What does your partner struggle with emotionally that they rarely talk about?",
+    "type": "mcq",
+    "options": [
+      "Self doubt",
+      "Fear of losing people",
+      "Feeling misunderstood",
+      "Carrying too much alone"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 139,
+    "category": "Emotional Depth",
+    "question": "How does your partner feel loved on their worst days?",
+    "type": "mcq",
+    "options": [
+      "Just being there silently",
+      "Checking in and not giving up",
+      "Saying the right words",
+      "Holding them close"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 140,
+    "category": "Emotional Depth",
+    "question": "What's the most vulnerable your partner has ever been with you?",
+    "type": "mcq",
+    "options": [
+      "Cried in front of me",
+      "Shared their deepest fear",
+      "Admitted when they were wrong",
+      "Told me they were scared to lose me"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 141,
+    "category": "Emotional Depth",
+    "question": "What triggers your partner's anxiety or stress most?",
+    "type": "mcq",
+    "options": [
+      "Uncertainty about the future",
+      "Distance or disconnection from me",
+      "Family situations",
+      "Work and responsibility pressure"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 142,
+    "category": "Emotional Depth",
+    "question": "What does your partner look like when they are truly happy?",
+    "type": "mcq",
+    "options": [
+      "Eyes light up completely",
+      "Gets louder and sillier",
+      "Becomes softer and warm",
+      "Just smiles differently"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 143,
+    "category": "Emotional Depth",
+    "question": "What's the one fear your partner has about this relationship?",
+    "type": "mcq",
+    "options": [
+      "Growing apart over time",
+      "Not being enough for me",
+      "Losing themselves in love",
+      "The future being uncertain"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 144,
+    "category": "Emotional Depth",
+    "question": "How does your partner deal with feeling unloved or ignored?",
+    "type": "mcq",
+    "options": [
+      "Pulls away and gets quiet",
+      "Asks directly",
+      "Overthinks everything",
+      "Acts normal but hurts inside"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 145,
+    "category": "Emotional Depth",
+    "question": "What heals your partner after a really bad day?",
+    "type": "mcq",
+    "options": [
+      "Talking to me",
+      "Being left alone",
+      "Food and sleep",
+      "A genuine hug"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 146,
+    "category": "Emotional Depth",
+    "question": "What's something your partner has never said but you can feel?",
+    "type": "mcq",
+    "options": [
+      "How scared they are to lose you",
+      "How proud they are of you",
+      "How much they need you",
+      "How deeply they love you"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 147,
+    "category": "Emotional Depth",
+    "question": "What makes your partner feel truly safe with you?",
+    "type": "mcq",
+    "options": [
+      "That you never judge them",
+      "That you always show up",
+      "That you understand without them explaining",
+      "That you choose them every day"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 148,
+    "category": "Emotional Depth",
+    "question": "What's something your partner hasn't fully healed from yet?",
+    "type": "mcq",
+    "options": [
+      "Past relationship pain",
+      "Family wounds",
+      "Broken trust by someone",
+      "Old version of themselves they're letting go"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 149,
+    "category": "Emotional Depth",
+    "question": "How does your partner show you they care without words?",
+    "type": "mcq",
+    "options": [
+      "Checks on you without reason",
+      "Does things before you ask",
+      "Remembers everything you say",
+      "Always makes time"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 150,
+    "category": "Emotional Depth",
+    "question": "What's the realest moment you've had with your partner?",
+    "type": "mcq",
+    "options": [
+      "A late night honest conversation",
+      "When one of us was struggling and the other stayed",
+      "A fight that led to deeper understanding",
+      "A quiet moment that said everything"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 151,
+    "category": "Personality & Quirks",
+    "question": "What's your partner's most lovable quirk?",
+    "type": "mcq",
+    "options": [
+      "The way they laugh",
+      "How they get excited over small things",
+      "Their random overthinking",
+      "Their stubbornness that somehow makes sense"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 152,
+    "category": "Personality & Quirks",
+    "question": "What mood is your partner in most of the time?",
+    "type": "mcq",
+    "options": [
+      "Chill and relaxed",
+      "Energetic and talkative",
+      "Thoughtful and quiet",
+      "Changes fast and unpredictably"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 153,
+    "category": "Personality & Quirks",
+    "question": "What does your partner do when they're nervous?",
+    "type": "mcq",
+    "options": [
+      "Gets quiet",
+      "Talks too much",
+      "Makes jokes",
+      "Plays with their hands or hair"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 154,
+    "category": "Personality & Quirks",
+    "question": "What's your partner's reaction when they get a compliment?",
+    "type": "mcq",
+    "options": [
+      "Gets shy immediately",
+      "Deflects it with humor",
+      "Accepts it gracefully",
+      "Doesn't believe it"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 155,
+    "category": "Personality & Quirks",
+    "question": "What makes your partner laugh the hardest?",
+    "type": "mcq",
+    "options": [
+      "Inside jokes with me",
+      "Memes and videos",
+      "Real life situations",
+      "When I do something silly"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 156,
+    "category": "Personality & Quirks",
+    "question": "What's something your partner does that's completely irrational but you find endearing?",
+    "type": "mcq",
+    "options": [
+      "Worries about things that won't happen",
+      "Talks to things that aren't people",
+      "Has very specific routines",
+      "Gets attached to random objects or habits"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 157,
+    "category": "Personality & Quirks",
+    "question": "What is your partner most passionate about?",
+    "type": "mcq",
+    "options": [
+      "Their career or craft",
+      "People they love",
+      "A hobby or interest",
+      "Making a difference somehow"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 158,
+    "category": "Personality & Quirks",
+    "question": "What's your partner like when they're in a really good mood?",
+    "type": "mcq",
+    "options": [
+      "Extra affectionate",
+      "Silly and playful",
+      "Makes plans for everything",
+      "Wants to be with me constantly"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 159,
+    "category": "Personality & Quirks",
+    "question": "What's your partner's biggest personality contradiction?",
+    "type": "mcq",
+    "options": [
+      "Independent but needs constant reassurance",
+      "Strong but emotionally sensitive",
+      "Carefree but secretly anxious",
+      "Introvert who craves deep connection"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 160,
+    "category": "Personality & Quirks",
+    "question": "How does your partner handle being wrong?",
+    "type": "mcq",
+    "options": [
+      "Admits it quickly",
+      "Needs time to accept",
+      "Gets defensive first",
+      "Apologizes through actions not words"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 161,
+    "category": "Personality & Quirks",
+    "question": "What does your partner find most annoying about themselves?",
+    "type": "mcq",
+    "options": [
+      "Overthinking everything",
+      "Getting too emotional",
+      "Being too stubborn",
+      "Not saying what they feel"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 162,
+    "category": "Personality & Quirks",
+    "question": "What's your partner's energy like in social settings?",
+    "type": "mcq",
+    "options": [
+      "Life of the gathering",
+      "Warm but selective",
+      "Quiet observer who's actually noticing everything",
+      "Only comfortable around close ones"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 163,
+    "category": "Personality & Quirks",
+    "question": "What's your partner's definition of a perfect day off?",
+    "type": "mcq",
+    "options": [
+      "Complete rest at home",
+      "An outing somewhere",
+      "Long conversations and good food",
+      "Doing something fun and unplanned"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 164,
+    "category": "Personality & Quirks",
+    "question": "What's one thing that makes your partner uniquely them?",
+    "type": "mcq",
+    "options": [
+      "The way they love",
+      "How they see the world differently",
+      "Their loyalty that never wavers",
+      "How they make everyone feel seen"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 165,
+    "category": "Fun & Silly",
+    "question": "Who would survive longer without their phone?",
+    "type": "mcq",
+    "options": [
+      "Me",
+      "My partner",
+      "Neither",
+      "Both would spiral"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 166,
+    "category": "Fun & Silly",
+    "question": "Who is more likely to cry during a movie?",
+    "type": "mcq",
+    "options": [
+      "Me",
+      "My partner",
+      "Both",
+      "Neither"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 167,
+    "category": "Fun & Silly",
+    "question": "Who would win in an argument about something completely useless?",
+    "type": "mcq",
+    "options": [
+      "Me",
+      "My partner",
+      "Neither, we both give up",
+      "Both go on forever"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 168,
+    "category": "Fun & Silly",
+    "question": "Who is the better dancer?",
+    "type": "mcq",
+    "options": [
+      "Me",
+      "My partner",
+      "Both are disasters",
+      "Both are secretly amazing"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 169,
+    "category": "Fun & Silly",
+    "question": "Who is more likely to laugh at inappropriate times?",
+    "type": "mcq",
+    "options": [
+      "Me",
+      "My partner",
+      "Both",
+      "Neither"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 170,
+    "category": "Fun & Silly",
+    "question": "Who sings louder in the car?",
+    "type": "mcq",
+    "options": [
+      "Me",
+      "My partner",
+      "Both equally",
+      "Neither"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 171,
+    "category": "Fun & Silly",
+    "question": "Who is more likely to cancel plans at the last minute?",
+    "type": "mcq",
+    "options": [
+      "Me",
+      "My partner",
+      "Both equally",
+      "Neither we keep our word"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 172,
+    "category": "Fun & Silly",
+    "question": "Who would win a food eating competition?",
+    "type": "mcq",
+    "options": [
+      "Me",
+      "My partner",
+      "Both would give up",
+      "Depends on the food"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 173,
+    "category": "Fun & Silly",
+    "question": "Who has more dramatic reactions to small things?",
+    "type": "mcq",
+    "options": [
+      "Me",
+      "My partner",
+      "Both",
+      "Neither"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 174,
+    "category": "Fun & Silly",
+    "question": "Who is more likely to turn a small trip into an adventure?",
+    "type": "mcq",
+    "options": [
+      "Me",
+      "My partner",
+      "Both equally",
+      "Neither, we just go and come back"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 175,
+    "category": "Fun & Silly",
+    "question": "Who takes more selfies when you're together?",
+    "type": "mcq",
+    "options": [
+      "Me",
+      "My partner",
+      "Both",
+      "Neither, we forget to"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 176,
+    "category": "Fun & Silly",
+    "question": "Who is more likely to get lost even with Google Maps?",
+    "type": "mcq",
+    "options": [
+      "Me",
+      "My partner",
+      "Both",
+      "Neither"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 177,
+    "category": "Fun & Silly",
+    "question": "Who would be worse at keeping a surprise secret?",
+    "type": "mcq",
+    "options": [
+      "Me",
+      "My partner",
+      "Both would ruin it",
+      "Neither, we're great at surprises"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 178,
+    "category": "Fun & Silly",
+    "question": "Who is the bigger baby when sick?",
+    "type": "mcq",
+    "options": [
+      "Me",
+      "My partner",
+      "Both equally dramatic",
+      "Neither, we handle it fine"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 179,
+    "category": "Fun & Silly",
+    "question": "Who would survive better in a reality show?",
+    "type": "mcq",
+    "options": [
+      "Me",
+      "My partner",
+      "Neither, we'd both be eliminated early",
+      "Both would dominate"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 180,
+    "category": "Trust & Honesty",
+    "question": "How honest is your partner with you when something is wrong?",
+    "type": "mcq",
+    "options": [
+      "Very honest even when it's hard",
+      "Honest but softens the truth",
+      "Tells me eventually after time",
+      "Keeps things in to protect me"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 181,
+    "category": "Trust & Honesty",
+    "question": "Does your partner keep secrets from you?",
+    "type": "mcq",
+    "options": [
+      "No, they're an open book",
+      "Small things yes, big things no",
+      "Sometimes and I sense it",
+      "I don't think so but not sure"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 182,
+    "category": "Trust & Honesty",
+    "question": "What would your partner do if they made a serious mistake?",
+    "type": "mcq",
+    "options": [
+      "Tell me immediately",
+      "Take time but confess",
+      "Avoid it and hope I don't find out",
+      "Fix it first then tell me"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 183,
+    "category": "Trust & Honesty",
+    "question": "How much do you trust your partner completely?",
+    "type": "mcq",
+    "options": [
+      "100 percent no doubts",
+      "Mostly but have had moments",
+      "Still building that trust",
+      "Trust is there but has been tested"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 184,
+    "category": "Trust & Honesty",
+    "question": "Would your partner tell you the truth even if it hurt?",
+    "type": "mcq",
+    "options": [
+      "Yes always",
+      "Yes but very gently",
+      "Only if I ask directly",
+      "Probably softens or avoids it"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 185,
+    "category": "Trust & Honesty",
+    "question": "Has your partner ever surprised you with their honesty?",
+    "type": "mcq",
+    "options": [
+      "Yes in a beautiful way",
+      "Yes and it was hard to hear",
+      "Not really",
+      "All the time"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 186,
+    "category": "Trust & Honesty",
+    "question": "What does trust look like for your partner?",
+    "type": "mcq",
+    "options": [
+      "Full transparency",
+      "Giving each other space without questioning",
+      "Consistency over time",
+      "All of these"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 187,
+    "category": "Trust & Honesty",
+    "question": "What's one thing your partner does that builds your trust every day?",
+    "type": "mcq",
+    "options": [
+      "Always follows through on what they say",
+      "Checks in without being asked",
+      "Is the same person in private and public",
+      "Never makes me question their intentions"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 188,
+    "category": "Trust & Honesty",
+    "question": "How does your partner react if you question them?",
+    "type": "mcq",
+    "options": [
+      "Answers openly and patiently",
+      "Gets slightly defensive",
+      "Understands where it comes from",
+      "Shuts down immediately"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 189,
+    "category": "Trust & Honesty",
+    "question": "What's something you trust your partner with completely?",
+    "type": "mcq",
+    "options": [
+      "My deepest secrets",
+      "My emotional wellbeing",
+      "My future",
+      "All of the above"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 190,
+    "category": "Compatibility",
+    "question": "What's the biggest difference between you and your partner?",
+    "type": "mcq",
+    "options": [
+      "How we handle emotions",
+      "Our social energy",
+      "Our life pace",
+      "Our communication styles"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 191,
+    "category": "Compatibility",
+    "question": "What's one thing you and your partner are perfectly aligned on?",
+    "type": "mcq",
+    "options": [
+      "Values and priorities",
+      "Sense of humor",
+      "Love for food or travel",
+      "How we treat people"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 192,
+    "category": "Compatibility",
+    "question": "Where do you and your partner clash the most?",
+    "type": "mcq",
+    "options": [
+      "Decision making",
+      "Time and attention",
+      "Family matters",
+      "How we handle stress"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 193,
+    "category": "Compatibility",
+    "question": "What makes you and your partner work despite your differences?",
+    "type": "mcq",
+    "options": [
+      "Genuine love and effort",
+      "Patience for each other",
+      "Shared goals",
+      "The fact that we choose each other anyway"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 194,
+    "category": "Compatibility",
+    "question": "What's something your partner does better than anyone else for you?",
+    "type": "mcq",
+    "options": [
+      "Makes me feel understood",
+      "Calms me down",
+      "Makes me laugh",
+      "Loves me in the way I need"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 195,
+    "category": "Compatibility",
+    "question": "What's your couple's biggest strength?",
+    "type": "mcq",
+    "options": [
+      "Communication",
+      "Loyalty",
+      "Fun and humor",
+      "How deeply we understand each other"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 196,
+    "category": "Compatibility",
+    "question": "What do you both need to work on more?",
+    "type": "mcq",
+    "options": [
+      "Expressing more openly",
+      "Spending quality time",
+      "Handling conflict better",
+      "Planning the future together"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 197,
+    "category": "Compatibility",
+    "question": "What's a habit of yours that your partner has quietly adapted to?",
+    "type": "mcq",
+    "options": [
+      "My food choices",
+      "My schedule and pace",
+      "My need for space or closeness",
+      "My way of communicating"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 198,
+    "category": "Compatibility",
+    "question": "What do you think your partner admires most about you?",
+    "type": "mcq",
+    "options": [
+      "My strength and resilience",
+      "How I love them",
+      "My honesty",
+      "How I make them feel"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 199,
+    "category": "Compatibility",
+    "question": "What's the one thing about your relationship you'd never change?",
+    "type": "mcq",
+    "options": [
+      "The depth of understanding",
+      "How safe it feels",
+      "The laughter and fun",
+      "The fact that it's us"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 200,
+    "category": "Serious Questions",
+    "question": "What's the one thing your partner needs you to do more of?",
+    "type": "mcq",
+    "options": [
+      "Show up more consistently",
+      "Communicate feelings openly",
+      "Make time without being asked",
+      "Appreciate them out loud"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 201,
+    "category": "Serious Questions",
+    "question": "What's a boundary your partner has that you fully respect?",
+    "type": "mcq",
+    "options": [
+      "Their need for alone time",
+      "What they share and when",
+      "Their personal decisions",
+      "Their space in certain relationships"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 202,
+    "category": "Serious Questions",
+    "question": "What conversation do you both need to have but keep avoiding?",
+    "type": "mcq",
+    "options": [
+      "About the future and timeline",
+      "About unresolved tension",
+      "About needs not being met",
+      "About fears around this relationship"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 203,
+    "category": "Serious Questions",
+    "question": "What does your partner need to hear from you more often?",
+    "type": "mcq",
+    "options": [
+      "That you're proud of them",
+      "That you choose them",
+      "That they are enough",
+      "That you're not going anywhere"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 204,
+    "category": "Serious Questions",
+    "question": "What's one thing you wish your partner understood about you better?",
+    "type": "mcq",
+    "options": [
+      "Why I need space sometimes",
+      "How much I actually feel",
+      "Why certain things hurt me",
+      "How hard I'm trying"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 205,
+    "category": "Serious Questions",
+    "question": "What would your partner say is your biggest growing edge?",
+    "type": "mcq",
+    "options": [
+      "Being more open emotionally",
+      "Trusting more easily",
+      "Communicating needs sooner",
+      "Being more present"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 206,
+    "category": "Serious Questions",
+    "question": "What's the hardest thing about loving your partner?",
+    "type": "mcq",
+    "options": [
+      "Giving them space when I want closeness",
+      "Watching them hurt and not being able to fix it",
+      "Navigating differences patiently",
+      "The uncertainty of the future"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 207,
+    "category": "Serious Questions",
+    "question": "What would genuinely break your relationship?",
+    "type": "mcq",
+    "options": [
+      "Betrayal of trust",
+      "Feeling invisible and unimportant",
+      "Consistent dishonesty",
+      "Loss of respect for each other"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 208,
+    "category": "Serious Questions",
+    "question": "What's something you've both been through that made you stronger?",
+    "type": "mcq",
+    "options": [
+      "Distance",
+      "A serious fight",
+      "An external pressure or crisis",
+      "A difficult conversation we finally had"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 209,
+    "category": "Serious Questions",
+    "question": "What's the most important thing you've learned about love through this relationship?",
+    "type": "mcq",
+    "options": [
+      "Love is a daily choice not a feeling",
+      "Real love involves growing",
+      "Love without communication breaks",
+      "Choosing someone imperfect and doing it anyway is love"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 210,
+    "category": "Intimacy & Closeness",
+    "question": "When do you feel closest to your partner?",
+    "type": "mcq",
+    "options": [
+      "During late night conversations",
+      "After resolving a fight",
+      "In quiet comfortable silences",
+      "When they hold me without any reason"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 211,
+    "category": "Intimacy & Closeness",
+    "question": "What's a moment that made you realize how deeply you love your partner?",
+    "type": "mcq",
+    "options": [
+      "When they stayed during a hard time",
+      "Something small they did without knowing I noticed",
+      "When I imagined life without them",
+      "A look or a moment that just said everything"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 212,
+    "category": "Intimacy & Closeness",
+    "question": "What's something only you know about your partner?",
+    "type": "mcq",
+    "options": [
+      "A hidden fear",
+      "A soft spot they hide from others",
+      "A dream they haven't shared widely",
+      "A side of them nobody else sees"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 213,
+    "category": "Intimacy & Closeness",
+    "question": "What does emotional intimacy look like with your partner?",
+    "type": "mcq",
+    "options": [
+      "Saying the real things not the easy ones",
+      "Being seen without explanation",
+      "Vulnerability without fear of judgment",
+      "All of the above"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 214,
+    "category": "Intimacy & Closeness",
+    "question": "What does your partner do that makes you feel understood without words?",
+    "type": "mcq",
+    "options": [
+      "Notices my mood before I speak",
+      "Does exactly what I needed without asking",
+      "Looks at me the right way at the right time",
+      "Stays close when I'm not okay"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 215,
+    "category": "Intimacy & Closeness",
+    "question": "What's the version of your partner that only you get to see?",
+    "type": "mcq",
+    "options": [
+      "The vulnerable and soft one",
+      "The silly and ridiculous one",
+      "The deeply feeling one",
+      "The one who lets all walls down"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 216,
+    "category": "Intimacy & Closeness",
+    "question": "What's your partner's most intimate gesture?",
+    "type": "mcq",
+    "options": [
+      "Holding my hand when I need it",
+      "Looking at me like I'm the only person",
+      "Saying things they'd never say to anyone else",
+      "Choosing me quietly every single day"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 217,
+    "category": "Intimacy & Closeness",
+    "question": "What does being close with your partner actually feel like?",
+    "type": "mcq",
+    "options": [
+      "Like coming home",
+      "Like being completely known",
+      "Like I never have to pretend",
+      "Like safety mixed with excitement"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 218,
+    "category": "Intimacy & Closeness",
+    "question": "What's something you've never said to your partner but should?",
+    "type": "mcq",
+    "options": [
+      "How much they've changed you",
+      "How safe they make you feel",
+      "That you're scared of how much you love them",
+      "That choosing them was the best thing"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 219,
+    "category": "Intimacy & Closeness",
+    "question": "What does your partner look like when they look at you with love?",
+    "type": "mcq",
+    "options": [
+      "Soft and quiet",
+      "Bright and warm",
+      "Like nothing else matters",
+      "Like they've found what they were looking for"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 220,
+    "category": "Growth Together",
+    "question": "How has your partner made you a better person?",
+    "type": "mcq",
+    "options": [
+      "Pushed me to be more patient",
+      "Showed me what real love looks like",
+      "Made me communicate more honestly",
+      "Helped me believe in myself more"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 221,
+    "category": "Growth Together",
+    "question": "What's something you've both grown through together?",
+    "type": "mcq",
+    "options": [
+      "Distance or time apart",
+      "A conflict that changed everything",
+      "Life pressure that tested us",
+      "Learning to love each other properly"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 222,
+    "category": "Growth Together",
+    "question": "What's one habit you've both developed as a couple?",
+    "type": "mcq",
+    "options": [
+      "Checking in on each other daily",
+      "Talking things out instead of holding it in",
+      "Planning and dreaming together",
+      "Laughing at the same things"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 223,
+    "category": "Growth Together",
+    "question": "What's changed in you because of this relationship?",
+    "type": "mcq",
+    "options": [
+      "I open up more than I used to",
+      "I understand love differently now",
+      "I'm more patient and thoughtful",
+      "I'm more myself than I've ever been"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 224,
+    "category": "Growth Together",
+    "question": "What's one challenge that actually brought you closer?",
+    "type": "mcq",
+    "options": [
+      "Being apart for a while",
+      "Going through something hard together",
+      "A fight that led to real honesty",
+      "A moment where someone needed the other completely"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 225,
+    "category": "Growth Together",
+    "question": "What's something your partner has taught you about love?",
+    "type": "mcq",
+    "options": [
+      "That it's shown not just said",
+      "That consistency matters more than intensity",
+      "That it involves choosing every day",
+      "That it's safe when it's real"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 226,
+    "category": "Growth Together",
+    "question": "What's a version of yourself your partner helped you become?",
+    "type": "mcq",
+    "options": [
+      "More emotionally open",
+      "More patient and grounded",
+      "More confident in who I am",
+      "Someone who actually believes in love"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 227,
+    "category": "Growth Together",
+    "question": "What's something you're still learning about your partner?",
+    "type": "mcq",
+    "options": [
+      "How they process deep emotions",
+      "What they truly need from me",
+      "The depth of what they feel",
+      "New things every day"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 228,
+    "category": "Growth Together",
+    "question": "What goal do you both share for the relationship right now?",
+    "type": "mcq",
+    "options": [
+      "Closing the distance",
+      "Building more stability",
+      "Communicating more openly",
+      "Just being more present for each other"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 229,
+    "category": "Growth Together",
+    "question": "What does growing together mean to you both?",
+    "type": "mcq",
+    "options": [
+      "Supporting each other's individual goals",
+      "Evolving and not growing apart",
+      "Choosing each other through every version",
+      "Building something that lasts"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 230,
+    "category": "Memories & Moments",
+    "question": "What's the best memory you have with your partner so far?",
+    "type": "mcq",
+    "options": [
+      "A trip we took",
+      "A quiet ordinary moment",
+      "Something they did that surprised me",
+      "The first time everything felt real"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 231,
+    "category": "Memories & Moments",
+    "question": "What's a moment that made you both laugh so hard you couldn't stop?",
+    "type": "mcq",
+    "options": [
+      "Something completely random",
+      "A mess we both created",
+      "Something only we understood",
+      "A silly fight about nothing"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 232,
+    "category": "Memories & Moments",
+    "question": "What's the first thing you noticed about your partner?",
+    "type": "mcq",
+    "options": [
+      "Their eyes or smile",
+      "The way they talked",
+      "Their energy in the room",
+      "Something specific and small"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 233,
+    "category": "Memories & Moments",
+    "question": "When did you know this person was different?",
+    "type": "mcq",
+    "options": [
+      "Very early on",
+      "After a specific moment",
+      "When I imagined them in my future",
+      "When I realized I was completely myself with them"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 234,
+    "category": "Memories & Moments",
+    "question": "What's a moment from your relationship you'd want to relive?",
+    "type": "mcq",
+    "options": [
+      "The very beginning",
+      "A specific date or day",
+      "A deep conversation that changed things",
+      "A quiet ordinary moment"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 235,
+    "category": "Memories & Moments",
+    "question": "What's a photo or memory with your partner you keep coming back to?",
+    "type": "mcq",
+    "options": [
+      "A candid moment",
+      "A planned and beautiful one",
+      "Just a screenshot of a conversation",
+      "A look they gave me"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 236,
+    "category": "Memories & Moments",
+    "question": "What's something your partner did that you'll never forget?",
+    "type": "mcq",
+    "options": [
+      "Showed up when I didn't ask",
+      "Said something that changed how I see myself",
+      "A moment of pure care and effort",
+      "Chose me even when it was hard"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 237,
+    "category": "Memories & Moments",
+    "question": "What was your partner's reaction the first time you said I love you?",
+    "type": "mcq",
+    "options": [
+      "Said it right back",
+      "Got emotional",
+      "Smiled without words",
+      "Already knew"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 238,
+    "category": "Memories & Moments",
+    "question": "What's a small moment with your partner that felt like everything?",
+    "type": "mcq",
+    "options": [
+      "Just sitting together quietly",
+      "A look across a room",
+      "A text at the right time",
+      "Being held when I needed it most"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 239,
+    "category": "Memories & Moments",
+    "question": "What's something from early in your relationship that still makes you smile?",
+    "type": "mcq",
+    "options": [
+      "How nervous we both were",
+      "Something they said or did",
+      "How everything felt new and exciting",
+      "The first time things felt truly comfortable"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 240,
+    "category": "Love & Devotion",
+    "question": "What's the most loving thing your partner has ever done for you?",
+    "type": "mcq",
+    "options": [
+      "Stayed without being asked",
+      "Gave up something for me",
+      "Loved me through a difficult version of me",
+      "Did something they knew I needed without me saying"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 241,
+    "category": "Love & Devotion",
+    "question": "What does love in action look like in your relationship?",
+    "type": "mcq",
+    "options": [
+      "Showing up consistently",
+      "Doing small things that add up",
+      "Being honest even when hard",
+      "All of these together"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 242,
+    "category": "Love & Devotion",
+    "question": "What would your partner sacrifice for you without hesitating?",
+    "type": "mcq",
+    "options": [
+      "Their comfort",
+      "Their time",
+      "Their pride in an argument",
+      "Sleep, food, anything you need"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 243,
+    "category": "Love & Devotion",
+    "question": "What does your partner do that says I love you without those words?",
+    "type": "mcq",
+    "options": [
+      "Notices everything about me",
+      "Protects my peace",
+      "Defends me to others",
+      "Makes sure I'm okay before anything else"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 244,
+    "category": "Love & Devotion",
+    "question": "What's the purest form of love your partner has shown you?",
+    "type": "mcq",
+    "options": [
+      "Accepting me at my worst",
+      "Wanting nothing in return",
+      "Being patient when I wasn't easy to love",
+      "Staying when leaving would've been easier"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 245,
+    "category": "Love & Devotion",
+    "question": "What's your partner willing to do that proves how much they love you?",
+    "type": "mcq",
+    "options": [
+      "Apologize first every time",
+      "Travel or go out of their way",
+      "Change habits that bothered me",
+      "Just always be there"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 246,
+    "category": "Love & Devotion",
+    "question": "What does your partner love most about you that you wish more people saw?",
+    "type": "mcq",
+    "options": [
+      "My heart and how I love",
+      "My strength quietly carried",
+      "My realness and honesty",
+      "How deeply I feel everything"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 247,
+    "category": "Love & Devotion",
+    "question": "What would you want your partner to always remember about your love?",
+    "type": "mcq",
+    "options": [
+      "That it was always real",
+      "That I chose you every day",
+      "That I was trying even when I seemed not to be",
+      "That you were never alone"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 248,
+    "category": "Love & Devotion",
+    "question": "If you had to describe your love for your partner in one phrase, what would it be?",
+    "type": "mcq",
+    "options": [
+      "You are home",
+      "Worth every complicated moment",
+      "My favorite choice",
+      "I'd find you in every lifetime"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 249,
+    "category": "Love & Devotion",
+    "question": "What's something you want your partner to never doubt?",
+    "type": "mcq",
+    "options": [
+      "That you chose them on purpose",
+      "That they are more than enough",
+      "That you aren't going anywhere",
+      "That loving them is the easiest part"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 250,
+    "category": "Who Knows Who Better",
+    "question": "What's your partner's most used phrase?",
+    "type": "mcq",
+    "options": [
+      "Something they say when stressed",
+      "A go-to reply in texts",
+      "A phrase they picked up from me",
+      "Something only I know they say constantly"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 251,
+    "category": "Who Knows Who Better",
+    "question": "What song would your partner say is their current mood?",
+    "type": "mcq",
+    "options": [
+      "Something romantic and soft",
+      "Something they overplay",
+      "Something sad they pretend is fine",
+      "Something that reminds them of me"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 252,
+    "category": "Who Knows Who Better",
+    "question": "What does your partner order at a new restaurant?",
+    "type": "mcq",
+    "options": [
+      "Something familiar and safe",
+      "The most interesting thing on the menu",
+      "Whatever I recommend",
+      "Takes forever and then copies my order"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 253,
+    "category": "Who Knows Who Better",
+    "question": "What's your partner most likely doing at 11pm?",
+    "type": "mcq",
+    "options": [
+      "Talking to me",
+      "Scrolling their phone",
+      "Already asleep",
+      "Overthinking something"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 254,
+    "category": "Who Knows Who Better",
+    "question": "What would your partner buy if they had a random five hundred rupees to spend?",
+    "type": "mcq",
+    "options": [
+      "Food immediately",
+      "Something for me",
+      "Save it obviously",
+      "Something completely unnecessary"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 255,
+    "category": "Who Knows Who Better",
+    "question": "What's your partner's reaction when you do something sweet for them?",
+    "type": "mcq",
+    "options": [
+      "Gets visibly emotional",
+      "Gets shy and smiles big",
+      "Pretends it's nothing but clearly loves it",
+      "Goes quiet and savors the moment"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 256,
+    "category": "Who Knows Who Better",
+    "question": "What does your partner do when they're trying not to smile?",
+    "type": "mcq",
+    "options": [
+      "Bites their lip",
+      "Looks away",
+      "Makes a straight face and fails",
+      "Covers their face"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 257,
+    "category": "Who Knows Who Better",
+    "question": "What's the one text your partner sends that always changes your mood?",
+    "type": "mcq",
+    "options": [
+      "A random I was thinking of you",
+      "A meme that is perfectly timed",
+      "A voice note out of nowhere",
+      "Just my name nothing else"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 258,
+    "category": "Who Knows Who Better",
+    "question": "What does your partner do when they're excited about something?",
+    "type": "mcq",
+    "options": [
+      "Can't stop talking about it",
+      "Tells me first immediately",
+      "Gets louder and more animated",
+      "Gets quiet but their eyes give it away"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 259,
+    "category": "Who Knows Who Better",
+    "question": "What does your partner look like when they're trying to be serious but can't?",
+    "type": "mcq",
+    "options": [
+      "Fights a smile and loses",
+      "Gets louder instead of calmer",
+      "Gives up and laughs",
+      "Points at me and blames me for it"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 260,
+    "category": "Relationship Check-In",
+    "question": "What's one thing you need more of in this relationship right now?",
+    "type": "mcq",
+    "options": [
+      "More quality time together",
+      "More honest conversations",
+      "More reassurance and warmth",
+      "More shared plans for the future"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 261,
+    "category": "Relationship Check-In",
+    "question": "What's one thing your partner could do tomorrow that would mean a lot?",
+    "type": "mcq",
+    "options": [
+      "Just say something real",
+      "Reach out first",
+      "Plan something for us",
+      "Tell me they appreciate me"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 262,
+    "category": "Relationship Check-In",
+    "question": "How connected do you feel to your partner right now?",
+    "type": "mcq",
+    "options": [
+      "Very connected",
+      "Good but can be deeper",
+      "A little distant lately",
+      "Working on it together"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 263,
+    "category": "Relationship Check-In",
+    "question": "What would you want your partner to stop doing?",
+    "type": "mcq",
+    "options": [
+      "Holding things in",
+      "Assuming instead of asking",
+      "Minimizing their own needs",
+      "Overthinking us"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 264,
+    "category": "Relationship Check-In",
+    "question": "What's something you haven't thanked your partner for lately?",
+    "type": "mcq",
+    "options": [
+      "Always being patient with me",
+      "Showing up without fanfare",
+      "Caring in quiet ways I take for granted",
+      "Just being them"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 265,
+    "category": "Relationship Check-In",
+    "question": "What's one promise you want to make to your partner today?",
+    "type": "mcq",
+    "options": [
+      "To communicate more",
+      "To never stop choosing them",
+      "To be more present",
+      "To love them in the way they actually need"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 266,
+    "category": "Relationship Check-In",
+    "question": "How do you think your partner is really feeling about things right now?",
+    "type": "mcq",
+    "options": [
+      "Happy and secure",
+      "Content but needs more",
+      "Quietly carrying something",
+      "Better than they let on"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 267,
+    "category": "Relationship Check-In",
+    "question": "What's one thing you could do to be a better partner this week?",
+    "type": "mcq",
+    "options": [
+      "Check in more genuinely",
+      "Say the things I keep to myself",
+      "Make more effort with small gestures",
+      "Be fully present when we talk"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 268,
+    "category": "Relationship Check-In",
+    "question": "What's something your relationship needs more of right now?",
+    "type": "mcq",
+    "options": [
+      "Laughter and lightness",
+      "Depth and real conversations",
+      "Shared experiences",
+      "Rest and ease"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 269,
+    "category": "Relationship Check-In",
+    "question": "If your relationship was a chapter right now, what would it be called?",
+    "type": "mcq",
+    "options": [
+      "Finding our rhythm",
+      "Deeper than ever",
+      "Working through it together",
+      "Just us being real"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 270,
+    "category": "Deep Questions",
+    "question": "What's the one thing that could make your partner walk away?",
+    "type": "mcq",
+    "options": [
+      "Betrayal of trust",
+      "Feeling consistently unvalued",
+      "Dishonesty that runs deep",
+      "Losing respect for each other"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 271,
+    "category": "Deep Questions",
+    "question": "What's your partner afraid of losing most?",
+    "type": "mcq",
+    "options": [
+      "You",
+      "The version of themselves they've become with you",
+      "The safety this relationship gives",
+      "The future they've imagined with you"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 272,
+    "category": "Deep Questions",
+    "question": "What does your partner want that they've never fully asked for?",
+    "type": "mcq",
+    "options": [
+      "To be chosen loudly not quietly",
+      "More depth and presence",
+      "Reassurance that this is real",
+      "To feel truly seen"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 273,
+    "category": "Deep Questions",
+    "question": "What version of yourself does your partner bring out?",
+    "type": "mcq",
+    "options": [
+      "The most honest one",
+      "The most soft and open one",
+      "The most myself I've ever been",
+      "The one I actually like"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 274,
+    "category": "Deep Questions",
+    "question": "What would your partner do if they knew you were struggling but didn't say?",
+    "type": "mcq",
+    "options": [
+      "They'd know without me saying",
+      "Gently ask without pushing",
+      "Give space and stay close",
+      "Find a way to just be there"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 275,
+    "category": "Deep Questions",
+    "question": "What does loving your partner require of you that is hard?",
+    "type": "mcq",
+    "options": [
+      "Patience I didn't know I had",
+      "Vulnerability I'm still learning",
+      "Letting go of control",
+      "Showing up even on hard days"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 276,
+    "category": "Deep Questions",
+    "question": "What would your partner want you to forgive yourself for?",
+    "type": "mcq",
+    "options": [
+      "For not always getting it right",
+      "For the moments I fell short",
+      "For not saying things sooner",
+      "For being hard to love sometimes"
+    ],
+    "text_fallback_allowed": true
+  },
+  {
+    "id": 277,
+    "category": "Deep Questions",
+    "question": "What truth about this relationship do you both know but haven't said out loud?",
+    "type": "mcq",
+    "options": [
+      "How much we both need this",
+      "How scared we are to lose it",
+      "How it's changed us both",
+      "How it's the best thing in our lives"
+    ],
+    "text_fallback_allowed": true
+  }
+]

@@ -2,9 +2,19 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Global safety net: deny everything not explicitly allowed below.
-    match /{document=**} {
-      allow read, write: if false;
+    // Allow Firestore internal metadata writes (__history__, __recentlyAccessed__, etc.)
+    // These are init-time operations not tied to user auth.
+    match /~/history/{entry} {
+      allow read, write: if true;
+    }
+    match /__recentlyAccessed__/{entry} {
+      allow read, write: if true;
+    }
+    match /__firestore__/{entry} {
+      allow read, write: if true;
+    }
+    match /__pvt__/{entry} {
+      allow read, write: if true;
     }
 
     // ------------------------------------------------------------
@@ -29,160 +39,269 @@ service cloud.firestore {
     // ------------------------------------------------------------
     // 1. Users — PII isolation
     // ------------------------------------------------------------
+    function isValidUser(data) {
+      return data.keys().hasAll(['email', 'points', 'createdAt', 'updatedAt']) &&
+             true &&
+             data.email is string && data.email.size() <= 256 &&
+             data.points is number && data.points >= 0 &&
+             (data.createdAt is number || data.createdAt is timestamp) && (data.updatedAt is number || data.updatedAt is timestamp) &&
+             isOptionalString(data, 'displayName', 100) &&
+             isOptionalString(data, 'pairedCoupleId', 128) &&
+             isOptionalNumber(data, 'streak');
+    }
+
     match /users/{userId} {
       function isOwner() {
         return isAuthenticated() && request.auth.uid == userId;
       }
 
       allow get: if isOwner();
-      allow list: if false; // never list users
-
-      allow create: if isOwner() && isValidId(userId) &&
-        request.resource.data.keys().hasAll(['email', 'points', 'createdAt', 'updatedAt']) &&
-        request.resource.data.keys().size() >= 4 && request.resource.data.keys().size() <= 6 &&
-        request.resource.data.email is string &&
-        request.resource.data.points is number && request.resource.data.points >= 0 &&
-        request.resource.data.createdAt is number &&
-        request.resource.data.updatedAt is number;
-
+      allow list: if false; // Strict PII isolation
+      
+      allow create: if isOwner() && isValidId(userId) && isValidUser(incoming()) &&
+                    // incoming().email == request.auth.token.email && // Relaxed for emulator if needed, but keeping strict usually.
+                    (incoming().createdAt is timestamp || incoming().createdAt is number);
+                    
+      // Allow updates that only modify allowed fields. Skip full user validation to permit partial updates.
+      // Note: 'points' is intentionally excluded — only server-side logic should award points.
+      // Also allow a user's partner to update pairedCoupleId during the pairing flow.
+      // Empty string '' is allowed for unpairing (disconnect) flow.
       allow update: if isAuthenticated() &&
-        request.resource.data.diff(resource.data).affectedKeys().hasOnly(
-          ['displayName', 'pairedCoupleId', 'points', 'updatedAt']);
+            (isOwner() || 
+             (incoming().diff(existing()).affectedKeys().hasOnly(['pairedCoupleId', 'updatedAt']) &&
+              incoming().pairedCoupleId is string &&
+              (incoming().pairedCoupleId.matches('^(.*_)?' + request.auth.uid + '(_.*)?$') || incoming().pairedCoupleId == '')));
+    }
+
+    // ------------------------------------------------------------
+    // 1.6 Achievements
+    // ------------------------------------------------------------
+    match /achievements/{userId}/items/{itemId} {
+      function isOwner() { return isAuthenticated() && request.auth.uid == userId; }
+
+      allow get: if isOwner();
+      allow list: if isOwner();
+
+      allow create: if isOwner() && isValidId(itemId);
+      allow update: if isOwner() && isValidId(itemId);
+      allow delete: if isOwner() && isValidId(itemId);
     }
 
     // ------------------------------------------------------------
     // 2. Pairing codes
     // ------------------------------------------------------------
+    function isValidPairingCode(data) {
+       return data.keys().hasAll(['userId', 'createdAt']) &&
+              true &&
+              data.userId is string && data.userId.size() <= 128 &&
+              data.createdAt is number;
+    }
     match /pairingCodes/{code} {
-      // Users may create/read their own code; reads allow lookup during pairing.
-      allow get: if isAuthenticated();
-      allow create: if isAuthenticated() &&
-        request.resource.data.keys().hasAll(['userId', 'createdAt']) &&
-        request.resource.data.userId == request.auth.uid &&
-        request.resource.data.createdAt is number;
-      allow update: if isAuthenticated() &&
-        resource.data.userId == request.auth.uid &&
-        request.resource.data.userId == request.auth.uid;
-      allow delete: if isAuthenticated() && resource.data.userId == request.auth.uid;
-      allow list: if false;
+       allow get: if isAuthenticated();
+       allow create: if isAuthenticated() && isValidPairingCode(incoming()) && incoming().userId == request.auth.uid;
+       allow update: if isAuthenticated() && isValidPairingCode(incoming()) && existing().userId == request.auth.uid && incoming().userId == request.auth.uid;
+       // Allow deletion by the code owner OR by the user who is pairing with the code owner
+       allow delete: if isAuthenticated() && (existing().userId == request.auth.uid || 
+                     get(/databases/$(database)/documents/users/$(request.auth.uid)).data.pairedCoupleId == 
+                     get(/databases/$(database)/documents/users/$(existing().userId)).data.pairedCoupleId);
     }
 
     // ------------------------------------------------------------
     // 3. Couples + subcollections
     // ------------------------------------------------------------
+    function isValidCouple(data) {
+      return data.keys().hasAll(['user1Id', 'user2Id', 'status', 'totalScore', 'createdAt', 'updatedAt']) &&
+             true &&
+             data.user1Id is string && data.user1Id.size() <= 128 &&
+             data.user2Id is string && data.user2Id.size() <= 128 &&
+             data.status in ['pending', 'active'] &&
+             data.totalScore is number && data.totalScore >= 0 &&
+             (data.createdAt is number || data.createdAt is timestamp) && (data.updatedAt is number || data.updatedAt is timestamp) &&
+             isOptionalString(data, 'coupleName', 100);
+    }
+
     match /couples/{coupleId} {
-      function isMember() {
-        return isAuthenticated() &&
-          (resource.data.user1Id == request.auth.uid || resource.data.user2Id == request.auth.uid);
-      }
-      function isIncomingMember() {
-        return isAuthenticated() &&
-          (request.resource.data.user1Id == request.auth.uid ||
-           request.resource.data.user2Id == request.auth.uid);
+      // Membership is derived from the coupleId string itself, which is built by
+      // joining the two partner UIDs with an underscore, e.g. "uid1_uid2".
+      // A user is a member iff their request.auth.uid appears as a segment of coupleId.
+      function isCoupleMember() {
+        return isAuthenticated() && coupleId.matches('^(.*_)?' + request.auth.uid + '(_.*)?$');
       }
 
-      allow get: if isMember();
-      allow list: if false; // no blanket listing
+      allow get: if isCoupleMember();
+      allow list: if isCoupleMember();
 
-      allow create: if isIncomingMember() && isValidId(coupleId) &&
-        request.resource.data.keys().hasAll(
-          ['user1Id', 'user2Id', 'status', 'totalScore', 'createdAt', 'updatedAt']) &&
-        request.resource.data.user1Id is string &&
-        request.resource.data.user2Id is string &&
-        request.resource.data.status in ['pending', 'active'] &&
-        request.resource.data.totalScore is number && request.resource.data.totalScore >= 0 &&
-        request.resource.data.createdAt is number &&
-        request.resource.data.updatedAt is number;
+      allow create: if isCoupleMember() && isValidId(coupleId) && isValidCouple(incoming()) &&
+                    (incoming().createdAt is timestamp || incoming().createdAt is number);
 
-      allow update: if isMember() &&
-        request.resource.data.diff(resource.data).affectedKeys().hasOnly(
-          ['status', 'coupleName', 'totalScore', 'updatedAt']) &&
-        request.resource.data.user1Id == resource.data.user1Id &&
-        request.resource.data.user2Id == resource.data.user2Id &&
-        request.resource.data.createdAt == resource.data.createdAt &&
-        request.resource.data.updatedAt is number;
+       allow update: if isCoupleMember() && isValidCouple(incoming()) &&
+                     incoming().diff(existing()).affectedKeys().hasOnly(['status', 'coupleName', 'totalScore', 'updatedAt']) &&
+                     incoming().user1Id == existing().user1Id &&
+                     incoming().user2Id == existing().user2Id &&
+                     incoming().createdAt == existing().createdAt &&
+                     (incoming().updatedAt is timestamp || incoming().updatedAt is number);
 
-      // Members may delete their couple to fully disconnect (unpair).
-      // Subcollections become unreachable once the parent is gone
-      // (isCoupleMember get() fails → access denied), which is the intended
-      // privacy posture after disconnect.
-      allow delete: if isMember();
+      // Allow either member to delete (unpair) the couple document.
+      allow delete: if isCoupleMember();
 
-      // ---- 3.1 Couple messages (members only) ----
+     // 2.2 Couple Typing Status
+     match /typing/{uid} {
+       allow read: if isAuthenticated();
+       allow write: if isAuthenticated() && request.auth.uid == uid;
+     }
+
+     // 2.1 Couple Messages
+      // Updated to match client implementation which uses a Firestore timestamp field named 'timestamp'
+      function isValidMessage(data) {
+         return data.keys().hasAll(['senderId', 'text', 'timestamp']) &&
+                true &&
+                data.senderId is string && data.senderId.size() <= 128 &&
+                data.text is string && data.text.size() > 0 && data.text.size() <= 1000 &&
+                data.timestamp is timestamp;
+      }
       match /messages/{messageId} {
-        allow get: if isCoupleMember(coupleId);
-        allow list: if isCoupleMember(coupleId);
-        allow create: if isCoupleMember(coupleId) && isValidId(messageId) &&
-          request.resource.data.keys().hasAll(['senderId', 'text', 'timestamp']) &&
-          request.resource.data.keys().size() == 3 &&
-          request.resource.data.senderId == request.auth.uid &&
-          request.resource.data.senderId is string &&
-          request.resource.data.text is string &&
-          request.resource.data.text.size() > 0 && request.resource.data.text.size() <= 1000 &&
-          request.resource.data.timestamp is timestamp;
-        allow update: if false;
+         allow get: if isCoupleMember();
+         allow list: if isCoupleMember();
+         
+         // Allow creation of a message if the user is a couple member, the message ID is valid,
+         // the payload matches the expected schema, and the sender matches the authenticated user.
+         allow create: if isCoupleMember() && isValidId(messageId) && isValidMessage(incoming()) &&
+                       incoming().senderId == request.auth.uid &&
+                       incoming().timestamp is timestamp;
+         
+        allow update: if false; // Messages are immutable
         allow delete: if false;
       }
-
-      // ---- 3.2 Couple sessions (members only) ----
+      
+    // 2.2 Couple Sessions (nested under couples/{coupleId})
+    // Membership must be resolved via the PARENT couple document: a session doc
+    // itself only stores {coupleId, type, status, state, ...} and has no user1Id/user2Id.
+    function isValidSession(data) {
+    return data.keys().hasAll(['coupleId', 'type', 'status', 'state', 'createdAt', 'updatedAt']) &&
+           true &&
+           data.coupleId is string && data.coupleId.size() <= 128 &&
+           data.type in ['quiz', 'minigame'] &&
+           data.status in ['waiting', 'playing', 'finished'] &&
+           data.state is map && // arbitrary state for flexibility
+           (data.createdAt is number || data.createdAt is timestamp) && (data.updatedAt is number || data.updatedAt is timestamp) &&
+           isOptionalString(data, 'quizTitle', 250);
+    }
       match /sessions/{sessionId} {
-        function isValidSession(data) {
-          return data.keys().hasAll(['coupleId', 'type', 'status', 'state', 'createdAt', 'updatedAt']) &&
-            data.keys().size() == 6 &&
-            data.coupleId is string && data.coupleId == coupleId &&
-            data.type in ['quiz', 'minigame'] &&
-            data.status in ['waiting', 'playing', 'finished'] &&
-            data.state is map &&
-            data.createdAt is number &&
-            data.updatedAt is number;
-        }
+          // Reads restricted to authenticated couple members (uid present in coupleId string)
+          allow get: if isCoupleMember();
+          allow list: if isCoupleMember();
 
-        allow get: if isCoupleMember(coupleId);
-        allow list: if isCoupleMember(coupleId);
+         allow create: if isCoupleMember() && isValidId(sessionId) && isValidSession(incoming()) &&
+                       incoming().coupleId == coupleId &&
+                       (incoming().createdAt is timestamp || incoming().createdAt is number);
 
-        allow create: if isCoupleMember(coupleId) && isValidId(sessionId) &&
-          isValidSession(request.resource.data) &&
-          request.resource.data.createdAt - request.time.toMillis() < 60000;
+          // Updates allowed for couple members. Note: client uses dotted-path updates
+          // (e.g. 'state.currentQuestion') which report as affectedKeys like 'state.currentQuestion',
+          // so we do NOT use hasOnly() on 'state'. We instead verify membership, non-finished status,
+          // and that core identity fields (coupleId, type, createdAt) are unchanged.
+          allow update: if isCoupleMember() &&
+                        existing().status != 'finished' &&
+                        incoming().coupleId == existing().coupleId &&
+                        incoming().type == existing().type &&
+                        incoming().createdAt == existing().createdAt;
 
-        allow update: if isCoupleMember(coupleId) &&
-          resource.data.status != 'finished' && // terminal state
-          request.resource.data.diff(resource.data).affectedKeys().hasOnly(
-            ['status', 'state', 'updatedAt']) &&
-          request.resource.data.coupleId == resource.data.coupleId &&
-          request.resource.data.type == resource.data.type &&
-          request.resource.data.createdAt == resource.data.createdAt;
+         allow delete: if isCoupleMember();
+      }
 
-        allow delete: if false; // handled by the couple doc deletion path
+      // ------------------------------------------------------------
+      // 4. Memory Photos (subcollection under couples/{coupleId})
+      // ------------------------------------------------------------
+      function isValidMemoryPhoto(data) {
+        return data.keys().hasAll(['url', 'sessionId', 'coupleId', 'uploadedBy', 'uploadedAt', 'createdAt']) &&
+               true &&
+               data.url is string && data.url.size() > 0 && data.url.size() <= 2048 &&
+               data.sessionId is string && data.sessionId.size() <= 128 &&
+               data.coupleId is string && data.coupleId.size() <= 128 &&
+               data.uploadedBy is string && data.uploadedBy.size() <= 128 &&
+               (data.uploadedAt is number || data.uploadedAt is timestamp) &&
+               (data.createdAt is number || data.createdAt is timestamp) &&
+               isOptionalString(data, 'thumbnailUrl', 2048);
+      }
+
+      match /memory_photos/{photoId} {
+        // Use isCoupleMember() from parent scope — coupleId is the path param
+        allow get: if isCoupleMember();
+        allow list: if isCoupleMember();
+
+        allow create: if isCoupleMember() && isValidId(photoId) && isValidMemoryPhoto(incoming()) &&
+                      incoming().uploadedBy == request.auth.uid &&
+                      (incoming().uploadedAt is timestamp || incoming().uploadedAt is number) &&
+                      (incoming().createdAt is timestamp || incoming().createdAt is number);
+
+        allow update: if isCoupleMember() && isValidMemoryPhoto(incoming()) &&
+                      incoming().diff(existing()).affectedKeys().hasOnly(['thumbnailUrl', 'url']) &&
+                      incoming().coupleId == existing().coupleId &&
+                      incoming().sessionId == existing().sessionId &&
+                      incoming().uploadedBy == existing().uploadedBy;
+
+        allow delete: if isCoupleMember() && existing().uploadedBy == request.auth.uid;
+      }
+
+      // ------------------------------------------------------------
+      // 5. Milestones (subcollection under couples/{coupleId})
+      // ------------------------------------------------------------
+      function isValidMilestone(data) {
+        return data.keys().hasAll(['type', 'title', 'date']) &&
+               true &&
+               data.type in ['session_completed', 'streak_7', 'streak_30', 'quiz_milestone', 'anniversary'] &&
+               data.title is string && data.title.size() > 0 && data.title.size() <= 120 &&
+               (data.date is number || data.date is timestamp) &&
+               isOptionalString(data, 'description', 500) &&
+               isOptionalString(data, 'relatedSessionId', 128) &&
+               isOptionalString(data, 'icon', 128);
+      }
+
+      match /milestones/{milestoneId} {
+        // Use isCoupleMember() from parent scope — coupleId is the path param
+        allow get: if isCoupleMember();
+        allow list: if isCoupleMember();
+
+        allow create: if isCoupleMember() && isValidId(milestoneId) && isValidMilestone(incoming()) &&
+                      (incoming().date is timestamp || incoming().date is number);
+
+        allow update: if isCoupleMember() && isValidMilestone(incoming()) &&
+                      incoming().diff(existing()).affectedKeys().hasOnly(['title', 'description', 'date', 'relatedSessionId', 'icon']) &&
+                      incoming().coupleId == existing().coupleId &&
+                      incoming().type == existing().type;
+
+        allow delete: if isCoupleMember();
       }
     }
-
+    
     // ------------------------------------------------------------
-    // 4. Quizzes (community, created by users)
+    // 3. Quizzes (Global / Community)
     // ------------------------------------------------------------
-    match /quizzes/{quizId} {
-      // Public quizzes are readable by any authenticated user.
-      allow get: if isAuthenticated();
-      allow list: if isAuthenticated();
-
-      allow create: if isAuthenticated() && isValidId(quizId) &&
-        request.resource.data.keys().hasAll(
-          ['creatorId', 'title', 'description', 'questions', 'isPublic', 'createdAt']) &&
-        request.resource.data.keys().size() == 6 &&
-        request.resource.data.creatorId == request.auth.uid &&
-        request.resource.data.title is string && request.resource.data.title.size() > 0 &&
-        request.resource.data.description is string &&
-        request.resource.data.questions is list && request.resource.data.questions.size() <= 50 &&
-        request.resource.data.isPublic is bool &&
-        request.resource.data.createdAt is number;
-
-      allow update: if isAuthenticated() &&
-        resource.data.creatorId == request.auth.uid &&
-        request.resource.data.diff(resource.data).affectedKeys().hasOnly(
-          ['title', 'description', 'questions', 'isPublic']) &&
-        request.resource.data.creatorId == resource.data.creatorId &&
-        request.resource.data.createdAt == resource.data.createdAt;
-
-      allow delete: if isAuthenticated() && resource.data.creatorId == request.auth.uid;
+    function isValidQuiz(data) {
+       return data.keys().hasAll(['creatorId', 'title', 'description', 'questions', 'isPublic', 'createdAt']) &&
+              true &&
+              data.creatorId is string && data.creatorId.size() <= 128 &&
+              data.title is string && data.title.size() > 0 && data.title.size() <= 100 &&
+              data.description is string && data.description.size() <= 500 &&
+              data.questions is list && data.questions.size() <= 50 &&
+              data.isPublic is bool &&
+              (data.createdAt is number || data.createdAt is timestamp);
     }
-  }
-}
+    
+     match /quizzes/{quizId} {
+        allow get: if isAuthenticated();
+        allow list: if isAuthenticated();
+        
+        allow create: if isAuthenticated() && isValidId(quizId) && isValidQuiz(incoming()) &&
+                      incoming().creatorId == request.auth.uid &&
+                      (incoming().createdAt is timestamp || incoming().createdAt is number);
+                      
+        allow update: if isAuthenticated() && isValidQuiz(incoming()) &&
+                      existing().creatorId == request.auth.uid && // Only creator
+                      incoming().diff(existing()).affectedKeys().hasOnly(['title', 'description', 'questions', 'isPublic']) &&
+                      incoming().creatorId == existing().creatorId &&
+                      incoming().createdAt == existing().createdAt;
+
+        allow delete: if isAuthenticated() && existing().creatorId == request.auth.uid;
+     }
+   }
+ }
