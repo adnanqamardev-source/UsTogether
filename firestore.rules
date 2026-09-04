@@ -37,13 +37,11 @@ service cloud.firestore {
     function isOptionalNumber(data, key) {
       return !(key in data) || data[key] == null || data[key] is number;
     }
-    // True if request.auth.uid is a member of the couple at /couples/{coupleId}
-    function isCoupleMember(coupleId) {
-      return isAuthenticated() &&
-        (request.auth.uid in coupleId.split('_') ||
-         (exists(/databases/$(database)/documents/couples/$(coupleId)) &&
-          (get(/databases/$(database)/documents/couples/$(coupleId)).data.user1Id == request.auth.uid ||
-           get(/databases/$(database)/documents/couples/$(coupleId)).data.user2Id == request.auth.uid)));
+    function incoming() {
+      return request.resource.data;
+    }
+    function existing() {
+      return resource.data;
     }
 
     // ------------------------------------------------------------
