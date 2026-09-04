@@ -1,58 +1,76 @@
 "use client";
 
-import { initializeApp, getApps } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
+import { initializeApp, getApps, FirebaseApp } from "firebase/app";
+import { getAuth, Auth } from "firebase/auth";
 import {
   getFirestore,
   initializeFirestore,
   persistentLocalCache,
-} from 'firebase/firestore';
-import { getStorage } from 'firebase/storage';
-import appletConfig from '../../firebase-applet-config.json';
+  Firestore,
+} from "firebase/firestore";
+import { getStorage, FirebaseStorage } from "firebase/storage";
+import appletConfig from "../../firebase-applet-config.json";
+
+const isBrowser = typeof window !== "undefined";
 
 // Note: measurementId removed to prevent ad blocker interference with Privacy Sandbox features
 const useEnv = Boolean(
   process.env.NEXT_PUBLIC_FIREBASE_API_KEY &&
-  process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN &&
-  process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID &&
-  process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET &&
-  process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID &&
-  process.env.NEXT_PUBLIC_FIREBASE_APP_ID
+    process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN &&
+    process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID &&
+    process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET &&
+    process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID &&
+    process.env.NEXT_PUBLIC_FIREBASE_APP_ID
 );
 
-// Build config from environment variables or fallback to applet config
-// measurementId is intentionally omitted to prevent ad blocker blocking of Google Analytics
+// Build config from environment variables or fallback to applet config.
+// measurementId is intentionally omitted to prevent ad blocker blocking of Google Analytics.
 const firebaseConfig = useEnv
   ? {
-      apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-      authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-      projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-      storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
-      messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-      appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+      apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY as string,
+      authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN as string,
+      projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID as string,
+      storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET as string,
+      messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID as string,
+      appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID as string,
     }
   : appletConfig;
 
-const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
+let appRef: FirebaseApp | undefined;
+let dbInstance: Firestore | undefined;
 
-// Use the modern `FirestoreSettings.localCache` API (replaces the deprecated
-// enableMultiTabIndexedDbPersistence()). initializeFirestore throws if the
-// Firestore instance was already created (e.g. during HMR), so fall back to
-// getFirestore in that case.
-let db: ReturnType<typeof getFirestore>;
-try {
-  db = initializeFirestore(app, {
-    localCache: persistentLocalCache({}),
-  });
-} catch {
-  db = getFirestore(app);
+function ensureApp(): FirebaseApp {
+  if (!appRef) {
+    appRef = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
+  }
+  return appRef;
 }
 
-const auth = getAuth(app);
+function ensureDb(): Firestore {
+  if (!dbInstance) {
+    const theApp = ensureApp();
+    try {
+      dbInstance = initializeFirestore(theApp, {
+        localCache: persistentLocalCache({}),
+      });
+    } catch {
+      dbInstance = getFirestore(theApp);
+    }
+  }
+  return dbInstance;
+}
 
-export { db, auth };
-export const storage = getStorage(app);
+// Firebase services are ONLY usable (and only initialized) in the browser.
+// During server-side rendering / static prerendering (e.g. /_not-found) this
+// module is still evaluated on the server; calling getAuth/getFirestore there
+// throws (e.g. 'auth/invalid-api-key' when build-time env vars are absent).
+// On the server we export null so SSR never crashes. All consumers use these
+// inside client-only effects/hooks, so null is never touched on the server.
+export const app = isBrowser ? ensureApp() : (null as unknown as FirebaseApp);
+export const db = isBrowser ? ensureDb() : (null as unknown as Firestore);
+export const auth = isBrowser ? getAuth(ensureApp()) : (null as unknown as Auth);
+export const storage = isBrowser ? getStorage(ensureApp()) : (null as unknown as FirebaseStorage);
 
-export * from '../shared/firestore-helpers';
-export * from '../../hooks/useFirestoreDocument';
-export * from '../../hooks/useFirestoreCollection';
+export * from "../shared/firestore-helpers";
+export * from "../../hooks/useFirestoreDocument";
+export * from "../../hooks/useFirestoreCollection";
