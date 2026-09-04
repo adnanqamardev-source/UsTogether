@@ -222,7 +222,7 @@ export default function QuizList({ coupleId }: { coupleId: string }) {
         coupleId,
         type: "quiz",
         status: "waiting",
-        quizTitle: quiz.title,
+        quizTitle: quiz.title || 'Untitled Quiz',
         state: {
           quizId: quiz.id,
           currentQuestion: 0,

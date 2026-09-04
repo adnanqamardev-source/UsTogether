@@ -31,17 +31,19 @@ service cloud.firestore {
     }
     // True if the key is absent, or present with a valid string value (optionally bounded).
     function isOptionalString(data, key, maxLength) {
-      return !(key in data) || (data[key] is string && data[key].size() <= maxLength);
+      return !(key in data) || data[key] == null || (data[key] is string && data[key].size() <= maxLength);
     }
     // True if the key is absent, or present with a number value.
     function isOptionalNumber(data, key) {
-      return !(key in data) || data[key] is number;
+      return !(key in data) || data[key] == null || data[key] is number;
     }
     // True if request.auth.uid is a member of the couple at /couples/{coupleId}
     function isCoupleMember(coupleId) {
       return isAuthenticated() &&
-        (get(/databases/$(database)/documents/couples/$(coupleId)).data.user1Id == request.auth.uid ||
-         get(/databases/$(database)/documents/couples/$(coupleId)).data.user2Id == request.auth.uid);
+        (request.auth.uid in coupleId.split('_') ||
+         (exists(/databases/$(database)/documents/couples/$(coupleId)) &&
+          (get(/databases/$(database)/documents/couples/$(coupleId)).data.user1Id == request.auth.uid ||
+           get(/databases/$(database)/documents/couples/$(coupleId)).data.user2Id == request.auth.uid)));
     }
 
     // ------------------------------------------------------------
@@ -129,11 +131,13 @@ service cloud.firestore {
     }
 
     match /couples/{coupleId} {
-      // Membership is derived from the coupleId string itself, which is built by
-      // joining the two partner UIDs with an underscore, e.g. "uid1_uid2".
-      // A user is a member iff their request.auth.uid appears as a segment of coupleId.
+      // Membership is derived from the coupleId string itself (uid1_uid2) or document fields.
       function isCoupleMember() {
-        return isAuthenticated() && coupleId.matches('^(.*_)?' + request.auth.uid + '(_.*)?$');
+        return isAuthenticated() &&
+          (request.auth.uid in coupleId.split('_') ||
+           (exists(/databases/$(database)/documents/couples/$(coupleId)) &&
+            (get(/databases/$(database)/documents/couples/$(coupleId)).data.user1Id == request.auth.uid ||
+             get(/databases/$(database)/documents/couples/$(coupleId)).data.user2Id == request.auth.uid)));
       }
 
       allow get: if isCoupleMember();
