@@ -3,7 +3,7 @@
 import { motion } from "motion/react";
 import { Users, Trophy, Flame } from "lucide-react";
 
-export default function LandingSections() {
+export default function LandingSections({ onGetStarted }: { onGetStarted?: () => void }) {
   return (
     <div className="relative overflow-hidden">
       {/* Floating gradient orbs */}
@@ -96,7 +96,10 @@ export default function LandingSections() {
           transition={{ duration: 0.6, delay: 1.1 }}
           className="mt-16"
         >
-          <button className="bg-white/10 hover:bg-white/20 text-white font-bold uppercase tracking-[0.2em] text-sm py-4 px-10 rounded-full transition-all border border-white/10 hover:border-rose-500/40 hover:shadow-[0_0_30px_rgba(244,63,94,0.3)]">
+          <button
+            onClick={onGetStarted}
+            className="bg-white/10 hover:bg-white/20 text-white font-bold uppercase tracking-[0.2em] text-sm py-4 px-10 rounded-full transition-all border border-white/10 hover:border-rose-500/40 hover:shadow-[0_0_30px_rgba(244,63,94,0.3)]"
+          >
             Get Started Free
           </button>
         </motion.div>
