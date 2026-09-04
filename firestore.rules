@@ -29,6 +29,14 @@ service cloud.firestore {
     function isValidId(id) {
       return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
     }
+    // True if the key is absent, or present with a valid string value (optionally bounded).
+    function isOptionalString(data, key, maxLength) {
+      return !(key in data) || (data[key] is string && data[key].size() <= maxLength);
+    }
+    // True if the key is absent, or present with a number value.
+    function isOptionalNumber(data, key) {
+      return !(key in data) || data[key] is number;
+    }
     // True if request.auth.uid is a member of the couple at /couples/{coupleId}
     function isCoupleMember(coupleId) {
       return isAuthenticated() &&
