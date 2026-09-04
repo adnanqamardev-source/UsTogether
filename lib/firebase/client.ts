@@ -10,6 +10,7 @@ import {
 } from "firebase/firestore";
 import { getStorage, FirebaseStorage } from "firebase/storage";
 import appletConfig from "../../firebase-applet-config.json";
+import { demoDb, demoAuth, demoStorage } from "./demo";
 
 const isBrowser = typeof window !== "undefined";
 
@@ -66,10 +67,35 @@ function ensureDb(): Firestore {
 // throws (e.g. 'auth/invalid-api-key' when build-time env vars are absent).
 // On the server we export null so SSR never crashes. All consumers use these
 // inside client-only effects/hooks, so null is never touched on the server.
-export const app = isBrowser ? ensureApp() : (null as unknown as FirebaseApp);
-export const db = isBrowser ? ensureDb() : (null as unknown as Firestore);
-export const auth = isBrowser ? getAuth(ensureApp()) : (null as unknown as Auth);
-export const storage = isBrowser ? getStorage(ensureApp()) : (null as unknown as FirebaseStorage);
+//
+// Demo mode (NEXT_PUBLIC_DEMO_MODE=true with no real Firebase keys) swaps in
+// an in-memory Firestore/Auth/Storage so the whole app renders without
+// backend credentials — used by the design harness evaluator.
+const isDemo =
+  isBrowser &&
+  process.env.NEXT_PUBLIC_DEMO_MODE === "true" &&
+  !useEnv;
+
+export const app = isDemo
+  ? (null as unknown as FirebaseApp)
+  : isBrowser
+    ? ensureApp()
+    : (null as unknown as FirebaseApp);
+export const db = isDemo
+  ? (demoDb as unknown as Firestore)
+  : isBrowser
+    ? ensureDb()
+    : (null as unknown as Firestore);
+export const auth = isDemo
+  ? demoAuth
+  : isBrowser
+    ? getAuth(ensureApp())
+    : (null as unknown as Auth);
+export const storage = isDemo
+  ? (demoStorage as unknown as FirebaseStorage)
+  : isBrowser
+    ? getStorage(ensureApp())
+    : (null as unknown as FirebaseStorage);
 
 export * from "../shared/firestore-helpers";
 export * from "../../hooks/useFirestoreDocument";
