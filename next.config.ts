@@ -1,4 +1,5 @@
 import path from "path";
+import type { NextConfig } from "next";
 
 const isDemo = process.env.NEXT_PUBLIC_DEMO_MODE === "true";
 const demoModule = "./lib/firebase/demo.ts";
@@ -23,14 +24,12 @@ const nextConfig: NextConfig = {
           };
           return config;
         },
-        experimental: {
-          turbo: {
-            resolveAlias: {
-              "firebase/firestore": demoModule,
-              "firebase/auth": demoModule,
-              "firebase/storage": demoModule,
-              "@firebase/auth": demoModule,
-            },
+        turbopack: {
+          resolveAlias: {
+            "firebase/firestore": demoModule,
+            "firebase/auth": demoModule,
+            "firebase/storage": demoModule,
+            "@firebase/auth": demoModule,
           },
         },
       }
