@@ -1,0 +1,46 @@
+{
+  "instincts": [
+    {
+      "trigger": "Firebase auth/invalid-api-key error during SSR or build",
+      "action": "Guard Firebase service initialization with `typeof window !== 'undefined'` and export null for server context",
+      "confidence": 0.92,
+      "source": "git-history: 9f28827, 20b128b"
+    },
+    {
+      "trigger": "E2E test failure with selector not found, especially after landing page redesign",
+      "action": "Check if tests reference old AuthWrapper fallback text. The landing page now renders full LandingSections for unauthenticated users via app/page.tsx — update selectors to match actual rendered elements",
+      "confidence": 0.88,
+      "source": "git-history: 1cfb081, 7320b59"
+    },
+    {
+      "trigger": "TypeScript error: Cannot find name 'NextConfig' in next.config.ts",
+      "action": "Add `import type { NextConfig } from 'next'` at top of next.config.ts",
+      "confidence": 0.95,
+      "source": "git-history: e51f5f3"
+    },
+    {
+      "trigger": "Next.js 16+ build error about experimental.turbo resolveAlias",
+      "action": "Move `experimental.turbo.resolveAlias` to top-level `turbopack.resolveAlias` in next.config.ts",
+      "confidence": 0.95,
+      "source": "git-history: e51f5f3"
+    },
+    {
+      "trigger": "Permission-denied on Firestore write immediately after user login",
+      "action": "Call `await u.getIdToken()` before first write and wrap getDoc in retryGetDoc with exponential backoff",
+      "confidence": 0.85,
+      "source": "git-history: 0a33642"
+    },
+    {
+      "trigger": "Playwright test fails due to Firebase popup blocking or ad blocker interference",
+      "action": "Use signInWithPopup (more reliable than redirect) and add retry/timeout for auth flows. Add `firebase` and `auth/` to error filters in console-error tests",
+      "confidence": 0.80,
+      "source": "git-history: 9f28827"
+    },
+    {
+      "trigger": "NEXT_PUBLIC_DEMO_MODE set but Firebase still initializes in browser",
+      "action": "Ensure `isDemo` condition also checks `!useEnv` — remove `!useEnv` check so demo mode works even if env vars partially exist, OR set all NEXT_PUBLIC_FIREBASE_* vars to empty strings",
+      "confidence": 0.82,
+      "source": "git-history: 1cfb081"
+    }
+  ]
+}
