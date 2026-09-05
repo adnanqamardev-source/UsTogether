@@ -75,9 +75,7 @@ const MobileMenu = ({ isOpen, onClose, sessionId, isMemories, isStats, onUnpair,
             <button onClick={() => { onUnpair(); onClose(); }} className="text-left text-rose-400 flex items-center gap-3">
               <UserMinus size={18} /> Disconnect
             </button>
-            <button onClick={() => { onLogout(); onClose(); }} className="text-left text-slate-400 flex items-center gap-3">
-              <LogOut size={18} /> Log Out
-            </button>
+            {/* Log Out hidden in Demo mode */}
           </div>
         </motion.div>
       </>
@@ -215,6 +213,7 @@ export default function CoupleDashboard({ coupleId }: { coupleId: string }) {
             <span className="font-bold text-xl text-white">U</span>
           </div>
           <span className="text-xl font-medium tracking-tight hidden sm:block">Us<span className="font-bold">Together</span></span>
+          <span className="text-[10px] px-2 py-1 bg-rose-500/20 text-rose-300 font-mono tracking-widest rounded border border-rose-500/30 ml-2 hidden sm:block">DEMO MODE</span>
         </div>
 
         {/* Desktop Center Links */}
@@ -232,7 +231,7 @@ export default function CoupleDashboard({ coupleId }: { coupleId: string }) {
           <button onClick={handleUnpair} className={`hover:text-rose-400 transition-colors flex items-center gap-2`}>
             <UserMinus className="w-4 h-4" /> Disconnect
           </button>
-          <button onClick={logOut} className={`hover:text-white transition-colors`}>Log Out</button>
+          
           <div className="w-10 h-10 rounded-full bg-indigo-500 flex items-center justify-center text-sm font-bold text-white shadow-md">
             {user?.displayName?.[0].toUpperCase() || user?.email?.[0].toUpperCase() || 'U'}
           </div>

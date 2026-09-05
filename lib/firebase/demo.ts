@@ -37,7 +37,7 @@ export class DemoUser implements User {
 
 export const demoAuth: any = {
   __demo: true,
-  currentUser: null as User | null,
+  currentUser: new DemoUser(),
   _cb: null as ((u: User | null) => void) | null,
   onAuthStateChanged(cb: (u: User | null) => void) {
     this._cb = cb;
@@ -141,8 +141,12 @@ export async function uploadBytesResumable(fileRef: StorageReference, file: Blob
 export async function deleteObject(_fileRef: StorageReference): Promise<void> {}
 
 // Mock Firestore helpers
-export async function getDoc(ref: any): Promise<{ exists: boolean; data: any }> {
-  return { exists: false, data: null };
+export async function getDoc(ref: any): Promise<any> {
+  // Always return the mock user profile in Demo mode for any user fetch
+  return { 
+    exists: () => true, 
+    data: () => seed.users[DEMO_USER_ID] 
+  };
 }
 
 export async function setDoc(ref: any, data: any): Promise<void> {

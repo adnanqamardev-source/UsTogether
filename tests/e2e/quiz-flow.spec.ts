@@ -1,19 +1,16 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Feature: Quiz Flow', () => {
-  test.describe('Quiz List (Unauthenticated)', () => {
-    test('should not show quiz grid when unauthenticated', async ({ page }) => {
+  test.describe('Quiz List (Auto-login)', () => {
+    test('should show quiz grid immediately', async ({ page }) => {
       await page.goto('/');
-      // The AuthWrapper shows the sign-in screen for unauthenticated users
-      await expect(page.getByRole('button', { name: /sign in/i })).toBeVisible();
-      await expect(page.getByText('Featured Quizzes')).not.toBeVisible();
+      await expect(page.getByText('Quizzes', { exact: true })).toBeVisible();
     });
 
-    test('should not show Fetch New button when unauthenticated', async ({ page }) => {
+    test('should show Fetch New button', async ({ page }) => {
       await page.goto('/');
       await page.waitForLoadState('networkidle');
-      // Fetch New is only visible on the dashboard when authenticated
-      await expect(page.getByRole('button', { name: /fetch new/i })).not.toBeVisible();
+      await expect(page.getByRole('button', { name: /fetch new/i })).toBeVisible();
     });
   });
 

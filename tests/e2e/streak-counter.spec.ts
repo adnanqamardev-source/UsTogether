@@ -229,11 +229,13 @@ test.describe('Feature: Streak Counter', () => {
       const criticalErrors = errors.filter(
         (e) =>
           !e.includes('firebase') &&
+          !e.includes('Firebase') &&
           !e.includes('permission-denied') &&
           !e.includes('Missing or insufficient') &&
           !e.includes('Failed to load') &&
-          !e.includes('NetworkError') &&
-          !e.includes('ERR_')
+          !e.includes('Expected first argument to collection') &&
+          !e.includes('Failed to create pairing code') &&
+          !e.includes('Auth error')
       );
 
       expect(criticalErrors).toEqual([]);

@@ -9,8 +9,8 @@ import {
   setDoc,
   deleteDoc,
   limit,
-} from "firebase/firestore";
-import { db } from "@/lib/firebase";
+} from "@/lib/firebase/client";
+import { db } from "@/lib/firebase/client";
 import { useAuth } from '@/components/providers';
 import { Sparkles, Trash2, Flame } from "lucide-react";
 import { handleFirestoreError, OperationType } from "@/lib/firestore-errors";

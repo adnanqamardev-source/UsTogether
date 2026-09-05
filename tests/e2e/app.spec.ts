@@ -5,10 +5,10 @@ import { test, expect } from '@playwright/test';
  * Kept for backward compatibility
  */
 test.describe('Landing Page (Legacy)', () => {
-  test('renders tagline and sign-in when unauthenticated', async ({ page }) => {
+  test('renders dashboard immediately (autologin demo mode)', async ({ page }) => {
     await page.goto('/');
-    await expect(page.getByText('How well do you', { exact: false })).toBeVisible();
-    await expect(page.getByRole('button', { name: /Sign In/i })).toBeVisible();
+    await expect(page.getByText('Quizzes', { exact: true })).toBeVisible();
+    await expect(page.getByText('Memories', { exact: true })).toBeVisible();
   });
 
   test('does not show dashboard nav when unauthenticated', async ({ page }) => {

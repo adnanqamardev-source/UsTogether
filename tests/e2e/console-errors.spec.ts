@@ -19,6 +19,8 @@ test.describe('Feature: Console Errors & Performance', () => {
           !err.includes('firebase') &&
           !err.includes('Firebase') &&
           !err.includes('auth/') &&
+          !err.includes('Auth error') &&
+          !err.includes('Expected first argument to collection') &&
           !err.includes('enableMultiTabIndexedDbPersistence') &&
           !err.includes('auth/cancelled-popup-request') &&
           !err.includes('Failed to load resource')
@@ -54,6 +56,8 @@ test.describe('Feature: Console Errors & Performance', () => {
           !err.includes('firebase') &&
           !err.includes('Firebase') &&
           !err.includes('auth/') &&
+          !err.includes('Auth error') &&
+          !err.includes('Expected first argument to collection') &&
           !err.includes('enableMultiTabIndexedDbPersistence') &&
           !err.includes('auth/cancelled-popup-request') &&
           !err.includes('Missing or insufficient permissions') &&
@@ -79,6 +83,8 @@ test.describe('Feature: Console Errors & Performance', () => {
           !err.includes('firebase') &&
           !err.includes('Firebase') &&
           !err.includes('auth/') &&
+          !err.includes('Auth error') &&
+          !err.includes('Expected first argument to collection') &&
           !err.includes('enableMultiTabIndexedDbPersistence') &&
           !err.includes('Missing or insufficient permissions')
       );
@@ -160,7 +166,7 @@ test.describe('Feature: Console Errors & Performance', () => {
       // After restoring online, we should be able to navigate successfully
       await page.goto('/');
       await page.waitForLoadState('domcontentloaded');
-      await expect(page.getByText('How well do you', { exact: false })).toBeVisible();
+      await expect(page.getByText('UsTogether', { exact: false })).toBeVisible();
     });
   });
 

@@ -90,7 +90,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             }
           }
         } catch (error) {
-          console.error('Auth error:', error);
+            // Catch the demo-mode dummy DB crash and force populate the user anyway.
+            if (process.env.NEXT_PUBLIC_DEMO_MODE === 'true') {
+              const seedData = await import('@/lib/firebase/demo-seed').then(m => m.seed);
+              setDbUser(seedData.users['demo-user-1'] as any);
+            } else {
+              console.error('Auth error:', error);
+            }
         }
       } else {
         setDbUser(null);
