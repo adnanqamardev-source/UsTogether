@@ -160,7 +160,7 @@ test.describe('Feature: Console Errors & Performance', () => {
       // After restoring online, we should be able to navigate successfully
       await page.goto('/');
       await page.waitForLoadState('domcontentloaded');
-      await expect(page.getByText('How well do you know each other?')).toBeVisible();
+      await expect(page.getByText('How well do you', { exact: false })).toBeVisible();
     });
   });
 

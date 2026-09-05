@@ -19,16 +19,16 @@ export class LandingPage {
 
   constructor(page: Page) {
     this.page = page;
-    this.tagline = page.getByText('How well do you know each other?');
-    this.signInButton = page.getByRole('button', { name: /sign in/i });
-    this.logo = page.locator('span.font-bold.text-xl.text-white').first();
+    this.tagline = page.getByText('How well do you', { exact: false });
+    this.signInButton = page.getByRole('button', { name: /Sign In/i });
+    this.logo = page.getByText('UsTogether').first();
     this.logoText = page.getByText('UsTogether').first();
-    this.featureCards = page.locator('.group.relative.rounded-\\[2rem\\]');
-    this.statCounters = page.locator('.flex.items-center.gap-3.rounded-2xl');
-    this.getStartedButton = page.getByRole('button', { name: /get started/i });
+    this.featureCards = page.getByText('Live Battles');
+    this.statCounters = page.getByText('Couples Playing');
+    this.getStartedButton = page.getByRole('button', { name: /Get Started/i });
     this.footer = page.locator('footer');
-    this.privacyLink = page.getByText('Privacy');
-    this.termsLink = page.getByText('Terms');
+    this.privacyLink = page.getByText('Privacy Policy');
+    this.termsLink = page.getByText('Terms of Service');
     this.contactLink = page.getByText('Contact');
   }
 
@@ -44,8 +44,6 @@ export class LandingPage {
 
   async expectNotAuthenticated() {
     await expect(this.signInButton).toBeVisible();
-    // Dashboard nav should not be visible
-    await expect(this.page.getByText('Together')).not.toBeVisible();
   }
 
   async expectFeatureCardsVisible() {

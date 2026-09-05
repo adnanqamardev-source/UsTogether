@@ -19,6 +19,7 @@ export default function StreakCounter({ streak = 0, label = "Day Streak" }: Stre
 
   return (
     <motion.div
+      data-testid="streak-counter"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, ease: "easeOut" }}
@@ -61,7 +62,7 @@ export default function StreakCounter({ streak = 0, label = "Day Streak" }: Stre
         </div>
         <div>
           <p className="text-[10px] uppercase tracking-[0.25em] text-indigo-300">{label}</p>
-          <p className="text-3xl font-bold text-[#F8FAFC]">{streak}</p>
+          <p data-testid="streak-value" className="text-3xl font-bold text-[#F8FAFC]">{streak}</p>
         </div>
       </div>
 

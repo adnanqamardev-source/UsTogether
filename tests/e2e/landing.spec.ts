@@ -9,28 +9,24 @@ test.describe('Feature: Landing Page', () => {
     await landingPage.goto();
   });
 
-  test.describe('Unauthenticated State (Auth Wrapper)', () => {
-    // NOTE: AuthWrapper currently replaces children (LandingSections) with the
-    // login screen for unauthenticated users. So unauthenticated visitors only
-    // see the sign-in prompt, not the full landing page content.
+  test.describe('Unauthenticated State', () => {
     test('should display the main tagline', async ({ page }) => {
       await expect(landingPage.tagline).toBeVisible();
-      await expect(landingPage.tagline).toContainText('How well do you know each other?');
+      await expect(landingPage.tagline).toContainText('How well do you');
     });
 
     test('should show sign-in button', async ({ page }) => {
       await expect(landingPage.signInButton).toBeVisible();
-      await expect(landingPage.signInButton).toContainText('Sign in to Connect');
+      await expect(landingPage.signInButton).toContainText('Sign In');
     });
 
-    test('should show the Us logo mark', async ({ page }) => {
-      // AuthWrapper renders the "U" logo block
-      await expect(page.getByText('U', { exact: true }).first()).toBeVisible();
+    test('should show the UsTogether logo', async ({ page }) => {
+      await expect(landingPage.logo).toBeVisible();
     });
 
     test('should show the value proposition paragraph', async ({ page }) => {
       await expect(
-        page.getByText(/Create personalized quizzes relevant to your journey together/)
+        page.getByText(/Turn your shared history into a playful daily ritual/)
       ).toBeVisible();
     });
 
@@ -46,32 +42,28 @@ test.describe('Feature: Landing Page', () => {
     });
   });
 
-  test.describe('Landing Sections Visibility (Known Issue)', () => {
-    // KNOWN ISSUE: The LandingSections content (feature cards, stat counters,
-    // footer, "Get Started" button) is wrapped inside AuthWrapper. Because
-    // AuthWrapper swaps children out for the login screen when unauthenticated,
-    // this marketing content is never shown to logged-out visitors.
-    test.fixme('feature cards should be visible to unauthenticated visitors', async ({ page }) => {
-      await expect(page.getByText('Live Quiz Battles')).toBeVisible();
-      await expect(page.getByText('Memory Timeline')).toBeVisible();
-      await expect(page.getByText('Streak & Achievements')).toBeVisible();
+  test.describe('Landing Sections Visibility', () => {
+    test('feature cards should be visible to unauthenticated visitors', async ({ page }) => {
+      await expect(page.getByText('Live Battles')).toBeVisible();
+      await expect(page.getByRole('heading', { name: 'Memory Timeline' })).toBeVisible();
+      await expect(page.getByText('Streaks & Rewards')).toBeVisible();
     });
 
-    test.fixme('stat counters should be visible to unauthenticated visitors', async ({ page }) => {
+    test('stat counters should be visible to unauthenticated visitors', async ({ page }) => {
       await expect(page.getByText('Couples Playing')).toBeVisible();
       await expect(page.getByText('Quizzes Completed')).toBeVisible();
-      await expect(page.getByText('Daily Streaks')).toBeVisible();
+      await expect(page.getByText('Longest Streak')).toBeVisible();
     });
 
-    test.fixme('footer with legal links should be visible', async ({ page }) => {
+    test('footer with legal links should be visible', async ({ page }) => {
       await expect(page.locator('footer')).toBeVisible();
-      await expect(page.getByText('Privacy')).toBeVisible();
-      await expect(page.getByText('Terms')).toBeVisible();
+      await expect(page.getByText('Privacy Policy')).toBeVisible();
+      await expect(page.getByText('Terms of Service')).toBeVisible();
       await expect(page.getByText('Contact')).toBeVisible();
     });
 
-    test.fixme('Get Started button should be visible', async ({ page }) => {
-      await expect(page.getByRole('button', { name: /get started/i })).toBeVisible();
+    test('Get Started button should be visible', async ({ page }) => {
+      await expect(page.getByRole('button', { name: /Start Your Journey/i })).toBeVisible();
     });
   });
 

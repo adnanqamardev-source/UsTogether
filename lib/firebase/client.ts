@@ -73,8 +73,7 @@ function ensureDb(): Firestore {
 // backend credentials — used by the design harness evaluator.
 const isDemo =
   isBrowser &&
-  process.env.NEXT_PUBLIC_DEMO_MODE === "true" &&
-  !useEnv;
+  process.env.NEXT_PUBLIC_DEMO_MODE === "true";
 
 export const app = isDemo
   ? (null as unknown as FirebaseApp)
