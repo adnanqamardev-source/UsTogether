@@ -59,5 +59,22 @@ export function validateQuizBody(body: unknown) {
     ? (maybe.recentTopics as unknown[]).filter((t): t is string => typeof t === 'string').slice(0, 20)
     : [];
   const preferredCategory = typeof maybe.preferredCategory === 'string' ? maybe.preferredCategory : undefined;
-  return { ok: true as const, recentTopics, preferredCategory };
+
+  if (maybe.questions !== undefined) {
+    if (!Array.isArray(maybe.questions)) {
+      return { ok: false as const, error: 'questions must be an array.' };
+    }
+    for (const q of maybe.questions) {
+      if (!q || typeof q !== 'object') return { ok: false as const, error: 'Each question must be an object.' };
+      const qq = q as Record<string, unknown>;
+      if (typeof qq.type !== 'string' || typeof qq.q !== 'string') {
+        return { ok: false as const, error: 'Each question needs type and q strings.' };
+      }
+      if (qq.options !== undefined && (!Array.isArray(qq.options) || qq.options.length !== 4 || !qq.options.every((o) => typeof o === 'string'))) {
+        return { ok: false as const, error: 'Each question must have exactly 4 string options.' };
+      }
+    }
+  }
+
+  return { ok: true as const, recentTopics, preferredCategory, questions: maybe.questions as any[] | undefined };
 }

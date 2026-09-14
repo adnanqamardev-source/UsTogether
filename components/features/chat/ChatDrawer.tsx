@@ -144,7 +144,7 @@ export default function ChatDrawer({ coupleId, onClose }: { coupleId: string; on
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: 40 }}
       transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-    className="h-full w-full bg-slate-950 border-l border-white/10 shadow-2xl flex flex-col overflow-hidden"
+    className="h-full w-full max-w-sm bg-slate-950 border-l border-white/10 shadow-2xl flex flex-col overflow-hidden"
     >
       <div className="p-4 border-b border-white/10 flex items-center justify-between pb-3">
         <div>

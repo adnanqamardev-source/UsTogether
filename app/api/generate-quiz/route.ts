@@ -81,45 +81,28 @@ Output format MUST be valid JSON matching this schema:
 Make sure exactly one JSON object is returned, with no markdown code blocks around it if possible, just the raw JSON or wrapped in \`\`\`json.`;
 
     const response = await ai.models.generateContent({
-        model: "gemini-2.5-flash",
+        model: "gemini-1.5-flash",
         contents: prompt,
         config: {
           temperature: 0.8,
           responseMimeType: "application/json",
-          responseSchema: {
-            type: "object",
-            properties: {
-              title: { type: "string" },
-              description: { type: "string" },
-              questions: {
-                type: "array",
-                items: {
-                  type: "object",
-                  properties: {
-                    type: { type: "string", enum: ["choice"] },
-                    q: { type: "string" },
-                    options: { type: "array", items: { type: "string" } }
-                  },
-                  required: ["type", "q", "options"]
-                }
-              }
-            },
-            required: ["title", "description", "questions"]
-          }
         }
     });
 
     const text = response.text || '';
+    console.log("AI response text:", text);
 
     let aiParsed;
     try {
-      const cleaned = text.replace(/\`\`\`json\n?/, '').replace(/\`\`\`\n?/, '');
+      const cleaned = text.replace(/```json\n?/, '').replace(/```\n?/, '');
       aiParsed = JSON.parse(cleaned);
     } catch (e) {
+      console.error("Failed to parse AI response as JSON.", text, e);
       throw new Error("Failed to parse AI response as JSON.");
     }
 
     if (!aiParsed.questions || !Array.isArray(aiParsed.questions) || aiParsed.questions.length === 0) {
+      console.error("AI returned invalid quiz format.", aiParsed);
       throw new Error("AI returned invalid quiz format.");
     }
 

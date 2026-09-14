@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$ref": "#/$defs/Config",
+  "$defs": {
+    "LogLevel": {
+      "type": "string",
+      "enum": [
+        "DEBUG",
+        "INFO",
+        "WARN",
+        "ERROR"
+      ],
+      "description": "Log level"
+    },
+    "ServerConfig": {
+      "type": "object",
+      "properties": {
+        "port": {
+          "exclusiveMinimum": 0,
+          "type": "integer",
+          "maximum": 65535,
+          "description": "Port to listen on"
+        },
+        "hostname": {
+          "type": "string",
+          "description": "Hostname to listen on"
+        }
+      },
+      "additionalProperties": false
+    },
+    "Plugin": {
+        "type": "string"
+    },
+    "Config": {
+        "properties": {
+            "mcp": {
+                "type": "object"
+            },
+            "plugin": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+        }
+    }
+  },
+  "allowComments": true,
+  "allowTrailingCommas": true
+}
