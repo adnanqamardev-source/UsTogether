@@ -42,6 +42,23 @@ export function useFirestoreCollection<T>(
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
+    // Demo Mode bypass
+    if (process.env.NEXT_PUBLIC_DEMO_MODE === 'true' && safeSegments.length) {
+      const fetchDemoData = async () => {
+        const seedData = await import('@/lib/firebase/demo-seed').then(m => m.seed);
+        let mockData: T[] = [];
+        if (pathKey.includes('sessions')) mockData = Object.values((seedData as any)['couples/demo-couple-1/sessions']).map((d: any) => transform(d.quizId || Math.random().toString(), d)) as T[];
+        else if (pathKey.includes('quizzes')) mockData = Object.values((seedData as any).quizzes).map((d: any, i: number) => transform('q' + (i+1), d)) as T[];
+        else if (pathKey.includes('messages')) mockData = Object.values((seedData as any)['couples/demo-couple-1/messages']).map((d: any, i: number) => transform('msg' + (i+1), d)) as T[];
+        else if (pathKey.includes('achievements')) mockData = Object.values((seedData as any)['achievements/demo-user-1/items']).map((d: any) => transform(d.id, d)) as T[];
+        
+        setData(mockData);
+        setLoading(false);
+      };
+      fetchDemoData();
+      return () => {};
+    }
+
     if (!safeSegments.length) {
       setLoading(false);
       return;

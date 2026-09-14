@@ -23,9 +23,11 @@ export default function Dashboard() {
       if (user && !myCode && !dbUser?.pairedCoupleId) {
         const code = user.uid.substring(0, 8).toUpperCase();
         setMyCode(code);
-        createPairingCode(user.uid).catch((err) => {
-          console.error('Failed to create pairing code:', err);
-        });
+        if (process.env.NEXT_PUBLIC_DEMO_MODE !== 'true') {
+          createPairingCode(user.uid).catch((err) => {
+            console.error('Failed to create pairing code:', err);
+          });
+        }
       }
   }, [user, dbUser, myCode]);
 
@@ -97,10 +99,8 @@ export default function Dashboard() {
           <span className="text-2xl font-light tracking-tight text-[#F8FAFC]">Us<span className="font-bold">Together</span></span>
         </div>
         <div className="flex items-center gap-4">
+          <span className="text-xs px-2 py-1 bg-rose-500/20 text-rose-300 font-mono tracking-widest rounded border border-rose-500/30">DEMO MODE</span>
           <span className="text-xs text-indigo-300 font-bold uppercase tracking-widest">{user?.displayName || user?.email?.split('@')[0]}</span>
-          <button onClick={logOut} className="text-xs uppercase tracking-widest text-slate-500 hover:text-rose-400 transition-colors">
-            Log Out
-          </button>
         </div>
       </nav>
 
