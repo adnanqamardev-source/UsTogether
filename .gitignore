@@ -20,3 +20,6 @@ test-results/
 next-env.d.ts
 tsconfig.tsbuildinfo
 ECC
+
+# opencode config contains API tokens — never commit
+opencode.json
