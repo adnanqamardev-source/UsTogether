@@ -47,6 +47,28 @@ jobs:
       - name: Build
         run: npm run build
 
+  firestore-rules:
+    name: Deploy Firestore Rules
+    needs: dependencies-and-build
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            rules:
+              - 'firestore.rules'
+              - 'firebase.json'
+              - 'firestore.indexes.json'
+      - if: steps.filter.outputs.rules == 'true'
+        run: |
+          echo "firestore.rules changed — deploying"
+          npx firebase-tools@latest deploy --only firestore --project ustogether-5bd5e --non-interactive
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+
   e2e:
     name: Playwright Tests
     needs: dependencies-and-build
