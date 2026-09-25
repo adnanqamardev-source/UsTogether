@@ -62,7 +62,7 @@ const MobileMenu = ({ isOpen, onClose, sessionId, isMemories, isStats, onUnpair,
           initial={{ opacity: 0, y: -20, scale: 0.95 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: -20, scale: 0.95 }}
-          className="md:hidden fixed top-24 left-4 right-4 bg-slate-900/95 backdrop-blur-xl z-50 rounded-2xl border border-white/10 shadow-2xl p-6"
+          className="md:hidden fixed inset-4 top-20 bg-slate-900/95 backdrop-blur-xl z-50 rounded-2xl border border-white/10 shadow-2xl p-6 overflow-y-auto"
         >
           <div className="flex flex-col gap-6 text-sm uppercase tracking-widest font-bold">
             <a href="#" onClick={() => { window.location.hash = ''; onClose(); }} className={`${!sessionId && !isMemories && !isStats ? 'text-rose-400' : 'text-slate-300'}`}>Quizzes</a>

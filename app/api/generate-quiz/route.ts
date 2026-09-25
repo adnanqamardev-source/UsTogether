@@ -81,7 +81,7 @@ Output format MUST be valid JSON matching this schema:
 Make sure exactly one JSON object is returned, with no markdown code blocks around it if possible, just the raw JSON or wrapped in \`\`\`json.`;
 
     const response = await ai.models.generateContent({
-        model: "gemini-3-flash-preview",
+        model: "gemini-1.5-flash",
         contents: prompt,
         config: {
           temperature: 0.8,
