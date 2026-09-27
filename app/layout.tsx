@@ -3,10 +3,6 @@ import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import Providers from "./providers";
 
-// DESIGN.md font substitutes: Inter ≈ figmaSans, JetBrains Mono ≈ figmaMono.
-// Inter variable exercises the fine-grained weight axis (wght 100..900).
-// Inter is a variable font — load the full axis (100–900) so we can
-// exercise fine-grained weights (320/330/340/480/540) per DESIGN.md.
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-sans",
@@ -22,18 +18,41 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   title: "UsTogether — How well do you know each other?",
   description:
-    "Create personalized quizzes, compete on leaderboards, and share real-time memories with your partner.",
+    "Create personalized quizzes, compete in real-time, and capture the moments that make your relationship unforgettable.",
+  keywords: [
+    "couples",
+    "relationship app",
+    "date ideas",
+    "shared memories",
+    "relationship quiz",
+    "couple activities",
+  ],
+  openGraph: {
+    title: "UsTogether",
+    description:
+      "A playful relationship app for deeper connection, shared memories, and everyday rituals.",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "UsTogether",
+    description:
+      "Turn your story into a daily ritual of connection, memories, and playful competition.",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className="dark">
-      <body className="bg-space-bg text-slate-100 min-h-screen relative">
-        {/* Warm radial ambient glows */}
-        <div className="fixed inset-0 pointer-events-none z-0" aria-hidden="true">
-          <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-rose-500/5 blur-[120px] rounded-full -translate-x-1/4 -translate-y-1/4" />
-          <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-indigo-500/5 blur-[120px] rounded-full translate-x-1/4 -translate-y-1/4" />
+    <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable}`} suppressHydrationWarning>
+      <body className="relative min-h-screen bg-editorial text-[#18131d] antialiased selection:bg-rose-200/60">
+        <div className="noise-bg pointer-events-none fixed inset-0 -z-10 opacity-80" aria-hidden="true" />
+
+        <div className="pointer-events-none fixed inset-0 -z-10" aria-hidden="true">
+          <div className="absolute -left-20 top-0 h-[28rem] w-[28rem] rounded-full bg-rose-300/30 blur-[120px]" />
+          <div className="absolute right-0 top-20 h-[30rem] w-[30rem] rounded-full bg-indigo-300/25 blur-[130px]" />
+          <div className="absolute bottom-0 left-1/3 h-[22rem] w-[22rem] rounded-full bg-amber-200/25 blur-[100px]" />
         </div>
+
         <div className="relative z-10">
           <Providers>{children}</Providers>
         </div>
