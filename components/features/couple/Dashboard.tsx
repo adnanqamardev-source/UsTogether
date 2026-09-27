@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/components/providers';
 import { motion } from 'motion/react';
-import { Heart, Users, ArrowRight } from 'lucide-react';
+import { Heart, Users, ArrowRight, Copy, Check } from 'lucide-react';
 import { doc } from 'firebase/firestore';
 import { db } from '@/lib/firebase/client';
 import { createPairingCode, getPairingCode, batchWrite } from '@/lib/firebase/client';
@@ -18,6 +18,7 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [myCode, setMyCode] = useState<string>('');
+  const [codeCopied, setCodeCopied] = useState(false);
 
   useEffect(() => {
       if (user && !myCode && !dbUser?.pairedCoupleId) {
@@ -89,6 +90,14 @@ export default function Dashboard() {
     }
   };
 
+  const handleCopyCode = () => {
+    if (myCode) {
+      navigator.clipboard.writeText(myCode);
+      setCodeCopied(true);
+      setTimeout(() => setCodeCopied(false), 2000);
+    }
+  };
+
   return (
     <div className="flex-1 flex flex-col font-sans p-6 relative w-full h-full max-w-6xl mx-auto">
       <nav className="flex justify-between items-center mb-12 relative z-10 gap-4 mt-6">
@@ -99,7 +108,9 @@ export default function Dashboard() {
           <span className="text-2xl font-light tracking-tight text-[#F8FAFC]">Us<span className="font-bold">Together</span></span>
         </div>
         <div className="flex items-center gap-4">
-          <span className="text-xs px-2 py-1 bg-rose-500/20 text-rose-300 font-mono tracking-widest rounded border border-rose-500/30">DEMO MODE</span>
+          {process.env.NEXT_PUBLIC_DEMO_MODE === 'true' && (
+            <span className="text-xs px-2 py-1 bg-rose-500/20 text-rose-300 font-mono tracking-widest rounded border border-rose-500/30">DEMO MODE</span>
+          )}
           <span className="text-xs text-indigo-300 font-bold uppercase tracking-widest">{user?.displayName || user?.email?.split('@')[0]}</span>
         </div>
       </nav>
@@ -119,9 +130,22 @@ export default function Dashboard() {
             Share your connection code with your partner, or enter theirs below to start playing.
           </p>
 
-          <div className="bg-black/20 p-6 rounded-3xl mb-10 border border-white/5 hover:scale-105 hover:bg-black/30 hover:border-white/10 hover:shadow-[0_0_20px_rgba(99,102,241,0.2)] transition-all cursor-pointer">
-             <p className="text-xs text-slate-400 mb-2 uppercase tracking-[0.2em] font-bold">Your Code</p>
-             <p className="font-mono text-3xl md:text-4xl tracking-[0.2em] text-white font-light text-shadow-sm">{myCode || '...'}</p>
+          <div className="bg-black/20 p-8 rounded-3xl mb-10 border border-white/5 hover:scale-105 hover:bg-black/30 hover:border-white/10 hover:shadow-[0_0_20px_rgba(99,102,241,0.2)] transition-all duration-300 cursor-pointer group" onClick={handleCopyCode}>
+             <p className="text-xs text-slate-400 mb-4 uppercase tracking-[0.2em] font-bold">Your Code</p>
+             <p className="font-mono text-5xl md:text-6xl tracking-[0.2em] text-white font-light break-all leading-relaxed select-all">{myCode || '........'}</p>
+             <div className="flex items-center justify-center gap-2 mt-4 opacity-0 group-hover:opacity-100 transition-opacity">
+               {codeCopied ? (
+                 <>
+                   <Check className="w-4 h-4 text-green-400" />
+                   <span className="text-xs text-green-400 font-mono">Copied!</span>
+                 </>
+               ) : (
+                 <>
+                   <Copy className="w-4 h-4 text-indigo-300" />
+                   <span className="text-xs text-indigo-300 font-mono">Click to copy</span>
+                 </>
+               )}
+             </div>
           </div>
 
           <form onSubmit={handlePair} className="flex flex-col gap-4">
@@ -129,7 +153,7 @@ export default function Dashboard() {
                type="text" 
                value={partnerCode}
                onChange={e => setPartnerCode(e.target.value)}
-               className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 focus:outline-none focus:ring-2 focus:ring-rose-500/50 text-white font-mono tracking-widest text-center uppercase" 
+               className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 focus:outline-none focus:ring-2 focus:ring-rose-500/50 text-white font-mono tracking-widest text-center uppercase placeholder:text-slate-500 text-lg" 
                placeholder="ENTER PARTNER CODE"
                maxLength={8}
             />
