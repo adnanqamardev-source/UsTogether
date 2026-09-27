@@ -99,7 +99,7 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="flex-1 flex flex-col font-sans p-6 relative w-full h-full max-w-6xl mx-auto">
+    <div className="flex-1 flex flex-col font-sans p-4 sm:p-6 relative w-full h-full max-w-6xl mx-auto">
       <nav className="flex justify-between items-center mb-12 relative z-10 gap-4 mt-6">
         <div className="flex items-center space-x-3">
           <div className="w-10 h-10 bg-gradient-to-br from-rose-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-rose-500/20">
@@ -111,29 +111,31 @@ export default function Dashboard() {
           {process.env.NEXT_PUBLIC_DEMO_MODE === 'true' && (
             <span className="text-xs px-2 py-1 bg-rose-500/20 text-rose-300 font-mono tracking-widest rounded border border-rose-500/30">DEMO MODE</span>
           )}
-          <span className="text-xs text-indigo-300 font-bold uppercase tracking-widest">{user?.displayName || user?.email?.split('@')[0]}</span>
+          <span className="text-xs text-indigo-300 font-bold uppercase tracking-widest hidden sm:inline">{user?.displayName || user?.email?.split('@')[0]}</span>
         </div>
       </nav>
 
-      <main className="flex-1 flex flex-col items-center justify-center relative z-10 w-full mb-20">
+      <main className="flex-1 flex flex-col items-center justify-center relative z-10 w-full mb-20 px-2">
         <motion.div 
           initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-          className="bg-white/5 backdrop-blur-md rounded-[40px] shadow-2xl border border-white/10 p-8 md:p-12 text-center w-full max-w-lg mx-auto relative overflow-hidden"
+          className="bg-white/5 backdrop-blur-md rounded-[40px] shadow-2xl border border-white/10 p-6 sm:p-8 md:p-12 text-center w-full max-w-2xl mx-auto relative overflow-hidden"
         >
           <div className="absolute top-[-20%] right-[-10%] w-[60%] h-[60%] bg-rose-600/20 rounded-full blur-[80px] pointer-events-none"></div>
           
           <div className="w-20 h-20 bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-inner shadow-indigo-500/20">
             <Users className="w-10 h-10" />
           </div>
-          <h2 className="text-3xl font-serif italic mb-4 text-[#F8FAFC]">Connect with your Partner</h2>
-          <p className="text-indigo-200/80 mb-10 leading-relaxed font-light">
+          <h2 className="text-2xl sm:text-3xl font-serif italic mb-4 text-[#F8FAFC]">Connect with your Partner</h2>
+          <p className="text-sm sm:text-base text-indigo-200/80 mb-10 leading-relaxed font-light">
             Share your connection code with your partner, or enter theirs below to start playing.
           </p>
 
-          <div className="bg-black/20 p-8 rounded-3xl mb-10 border border-white/5 hover:scale-105 hover:bg-black/30 hover:border-white/10 hover:shadow-[0_0_20px_rgba(99,102,241,0.2)] transition-all duration-300 cursor-pointer group" onClick={handleCopyCode}>
+          <div className="bg-black/20 p-6 sm:p-8 rounded-3xl mb-10 border border-white/5 hover:scale-105 hover:bg-black/30 hover:border-white/10 hover:shadow-[0_0_20px_rgba(99,102,241,0.2)] transition-all duration-300 cursor-pointer group">
              <p className="text-xs text-slate-400 mb-4 uppercase tracking-[0.2em] font-bold">Your Code</p>
-             <p className="font-mono text-5xl md:text-6xl tracking-[0.2em] text-white font-light break-all leading-relaxed select-all">{myCode || '........'}</p>
-             <div className="flex items-center justify-center gap-2 mt-4 opacity-0 group-hover:opacity-100 transition-opacity">
+             <div className="bg-black/30 rounded-xl p-4 mb-4 min-h-[80px] sm:min-h-[100px] flex items-center justify-center overflow-hidden">
+               <p className="font-mono text-4xl sm:text-5xl md:text-6xl tracking-widest text-white font-light select-all word-break break-all text-center">{myCode || '........'}</p>
+             </div>
+             <div className="flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                {codeCopied ? (
                  <>
                    <Check className="w-4 h-4 text-green-400" />
@@ -153,14 +155,14 @@ export default function Dashboard() {
                type="text" 
                value={partnerCode}
                onChange={e => setPartnerCode(e.target.value)}
-               className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 focus:outline-none focus:ring-2 focus:ring-rose-500/50 text-white font-mono tracking-widest text-center uppercase placeholder:text-slate-500 text-lg" 
+               className="w-full bg-white/5 border border-white/10 rounded-2xl px-4 sm:px-6 py-3 sm:py-4 focus:outline-none focus:ring-2 focus:ring-rose-500/50 text-white font-mono tracking-widest text-center uppercase placeholder:text-slate-500 text-base sm:text-lg" 
                placeholder="ENTER PARTNER CODE"
                maxLength={8}
             />
             <button 
                type="submit" 
                disabled={loading || !partnerCode}
-               className="bg-rose-500 text-white rounded-2xl px-6 py-4 font-bold uppercase tracking-widest hover:bg-rose-600 disabled:opacity-50 disabled:hover:bg-rose-500 transition-all flex items-center justify-center gap-2 shadow-lg shadow-rose-500/20"
+               className="bg-rose-500 text-white rounded-2xl px-4 sm:px-6 py-3 sm:py-4 font-bold uppercase tracking-widest hover:bg-rose-600 disabled:opacity-50 disabled:hover:bg-rose-500 transition-all flex items-center justify-center gap-2 shadow-lg shadow-rose-500/20 text-sm sm:text-base"
             >
                {loading ? 'Pairing...' : 'Connect'}
                <ArrowRight className="w-5 h-5" />
