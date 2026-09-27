@@ -1,4 +1,4 @@
-import { doc, serverTimestamp, collection, query, getDocs, runTransaction } from 'firebase/firestore';
+import { doc, serverTimestamp, collection, query, getDocs, runTransaction } from '@/lib/firestore';
 import { db } from '@/lib/firebase/client';
 import { AchievementDefinition } from '@/types';
 const ACHIEVEMENT_DEFS: AchievementDefinition[] = [

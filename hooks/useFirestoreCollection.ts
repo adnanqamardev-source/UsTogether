@@ -1,13 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import {
-  collection,
-  onSnapshot,
-  query,
-  QueryConstraint,
-  DocumentData,
-} from 'firebase/firestore';
+import { collection, onSnapshot, query, QueryConstraint, DocumentData } from '@/lib/firestore';
 import { db } from '@/lib/firebase/client';
 import { handleFirestoreError, OperationType } from '@/lib/firestore-errors';
 

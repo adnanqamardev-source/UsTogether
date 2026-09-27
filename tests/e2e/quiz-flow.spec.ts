@@ -10,7 +10,7 @@ test.describe('Feature: Quiz Flow', () => {
     test('should show Fetch New button', async ({ page }) => {
       await page.goto('/');
       await page.waitForLoadState('networkidle');
-      await expect(page.getByRole('button', { name: /fetch new/i })).toBeVisible();
+      await expect(page.getByRole('button', { name: 'Fetch New', exact: true })).toBeVisible();
     });
   });
 

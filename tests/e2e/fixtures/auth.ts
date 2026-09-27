@@ -72,11 +72,11 @@ type TestFixtures = {
 };
 
 export const test = base.extend<TestFixtures>({
-  authenticatedContext: async ({ browser }, use) => {
+  authenticatedContext: async ({ browser }, inner) => {
     const context = await browser.newContext();
     await setAuthCookies(context);
     await mockFirebaseAuth(context);
-    await use(context);
+    await inner(context);
     await context.close();
   },
 });

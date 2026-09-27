@@ -11,7 +11,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  dependencies-and-build:
+  build:
     name: Build & Typecheck
     runs-on: ubuntu-latest
     steps:
@@ -26,17 +26,14 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Cache Next.js & npm
+      - name: Cache Next.js build cache
         uses: actions/cache@v4
         with:
-          path: |
-            ~/.npm
-            ${{ github.workspace }}/node_modules
-            ${{ github.workspace }}/.next/cache
-          key: ${{ runner.os }}-deps-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**/*.ts', '**/*.tsx') }}
+          path: ${{ github.workspace }}/.next/cache
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**/*.ts', '**/*.tsx') }}
           restore-keys: |
-            ${{ runner.os }}-deps-${{ hashFiles('**/package-lock.json') }}-
-            ${{ runner.os }}-deps-
+            ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
+            ${{ runner.os }}-nextjs-
 
       - name: Typecheck
         run: npx tsc --noEmit
@@ -47,31 +44,27 @@ jobs:
       - name: Build
         run: npm run build
 
-  firestore-rules:
-    name: Deploy Firestore Rules
-    needs: dependencies-and-build
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+  unit:
+    name: Unit Tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: dorny/paths-filter@v3
-        id: filter
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
-          filters: |
-            rules:
-              - 'firestore.rules'
-              - 'firebase.json'
-              - 'firestore.indexes.json'
-      - if: steps.filter.outputs.rules == 'true'
-        run: |
-          echo "firestore.rules changed — deploying"
-          npx firebase-tools@latest deploy --only firestore --project ustogether-5bd5e --non-interactive
-        env:
-          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run unit tests
+        run: npm run test:unit
 
   e2e:
-    name: Playwright Tests
-    needs: dependencies-and-build
+    name: Playwright E2E Tests
+    needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -90,21 +83,18 @@ jobs:
         uses: actions/cache@v4
         id: playwright-cache
         with:
-          path: ~/.cache/msplaywright
+          path: ~/.cache/ms-playwright
           key: ${{ runner.os }}-playwright-${{ hashFiles('**/package-lock.json') }}
 
       - name: Install Playwright browsers
-        if: steps.playwright-cache.outputs.cache-hit != 'true'
-        run: npx playwright install --with-deps chromium
-
-      - name: Install Playwright OS deps (if cached)
-        if: steps.playwright-cache.outputs.cache-hit == 'true'
         run: npx playwright install --with-deps chromium
 
       - name: Run Playwright E2E tests
         run: npx playwright test --project=chromium
         env:
-          PLAYWRIGHT_TEST_BASE_URL: 'http://localhost:3000'
+          BASE_URL: 'http://localhost:3000'
+          CI: 'true'
+          NEXT_PUBLIC_DEMO_MODE: 'true'
 
       - name: Upload Playwright report
         uses: actions/upload-artifact@v4
@@ -125,3 +115,25 @@ jobs:
             test-results/trace.zip
             test-results/artifacts/
           retention-days: 14
+
+  firestore-rules:
+    name: Deploy Firestore Rules
+    needs: [build, unit, e2e]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            rules:
+              - 'firestore.rules'
+              - 'firebase.json'
+              - 'firestore.indexes.json'
+      - if: steps.filter.outputs.rules == 'true'
+        run: |
+          echo "firestore.rules changed — deploying"
+          npx firebase-tools@latest deploy --only firestore --project ustogether-5bd5e --non-interactive
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}

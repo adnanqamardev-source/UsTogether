@@ -1,9 +1,9 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { updateStreak } from '@/lib/streak';
 
-// Mock Firebase Firestore and db before imports
-vi.mock('firebase/firestore', async () => {
-  const actual = await vi.importActual<typeof import('firebase/firestore')>('firebase/firestore');
+// Mock @/lib/firestore (the demo-aware wrapper) and db before imports
+vi.mock('@/lib/firestore', async () => {
+  const actual = await vi.importActual<typeof import('@/lib/firestore')>('@/lib/firestore');
   return {
     ...actual,
     getDoc: vi.fn(),
@@ -24,9 +24,9 @@ vi.mock('@/lib/firebase', async () => {
 // Mock the underlying client module so the real Firebase client.ts is never
 // evaluated in the jsdom test environment (which would trigger getAuth/getStorage
 // with an invalid api key and throw auth/invalid-api-key at import time).
-vi.mock('@/lib/firebase/client', () => ({ db: {} }));
+vi.mock('@/lib/firebase/client', () => ({ db: {}, isDemo: false }));
 
-import { getDoc, setDoc, doc } from 'firebase/firestore';
+import { getDoc, setDoc, doc } from '@/lib/firestore';
 
 const mockGetDoc = vi.mocked(getDoc);
 const mockSetDoc = vi.mocked(setDoc);

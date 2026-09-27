@@ -1,21 +1,6 @@
 "use client";
 
-import {
-  doc,
-  setDoc,
-  getDoc,
-  getDocs,
-  deleteDoc,
-  addDoc,
-  collection,
-  query,
-  where,
-  orderBy,
-  limit,
-  writeBatch,
-  DocumentReference,
-  QueryConstraint,
-} from 'firebase/firestore';
+import { doc, setDoc, getDoc, getDocs, deleteDoc, addDoc, collection, query, where, orderBy, limit, writeBatch, DocumentReference, QueryConstraint } from '@/lib/firestore';
 import { db } from '@/lib/firebase/client';
 import { handleFirestoreError, OperationType } from './firestore-errors';
 import type {

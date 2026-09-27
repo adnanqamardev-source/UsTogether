@@ -141,11 +141,30 @@ export async function uploadBytesResumable(fileRef: StorageReference, file: Blob
 export async function deleteObject(_fileRef: StorageReference): Promise<void> {}
 
 // Mock Firestore helpers
-export async function getDoc(ref: any): Promise<any> {
+export interface DemoDocSnapshot {
+  exists: () => boolean;
+  data: () => any;
+  id: string;
+}
+
+export interface DemoQuerySnapshot {
+  empty: boolean;
+  docs: Array<{ id: string; data: () => any }>;
+}
+
+export interface DemoTransaction {
+  get(ref: any): Promise<{ exists: boolean; data: any }>;
+  set(ref: any, data: any): Promise<void>;
+  update(ref: any, data: any): Promise<void>;
+  delete(ref: any): Promise<void>;
+}
+
+export async function getDoc(ref: any): Promise<DemoDocSnapshot> {
   // Always return the mock user profile in Demo mode for any user fetch
-  return { 
-    exists: () => true, 
-    data: () => seed.users[DEMO_USER_ID] 
+  return {
+    exists: () => true,
+    data: () => seed.users[DEMO_USER_ID],
+    id: (ref as any)?.id ?? 'demo',
   };
 }
 
@@ -161,40 +180,80 @@ export async function deleteDoc(ref: any): Promise<void> {
   // no-op
 }
 
-export async function collection(parent: any, path: string): Promise<any> {
-  return {};
+export function collection(parent: any, path: string): any {
+  return { __demoCollection: true, path };
 }
 
 export async function addDoc(collection: any, data: any): Promise<{ id: string }> {
   return { id: Math.random().toString(36).substring(2, 15) };
 }
 
-export async function query(...args: any[]): Promise<any> {
-  return {};
+export function query(...args: any[]): any {
+  return { __demoQuery: true, args };
 }
 
-export async function getDocs(query: any): Promise<{ empty: true; docs: [] }> {
+export async function getDocs(query: any): Promise<DemoQuerySnapshot> {
   return { empty: true, docs: [] };
 }
 
 export function orderBy(field: string, directionStr?: 'asc' | 'desc'): any {
-  return {};
+  return { __demoOrderBy: true, field, directionStr };
 }
 
 export function where(field: string, opStr: string, value: any): any {
-  return {};
+  return { __demoWhere: true, field, opStr, value };
 }
 
 export function limit(n: number): any {
-  return {};
+  return { __demoLimit: true, n };
 }
 
-export async function runTransaction(firestore: any, updateFunction: (tx: any) => Promise<any>): Promise<any> {
-  const tx = {
+export async function runTransaction(
+  firestore: any,
+  updateFunction: (tx: DemoTransaction) => Promise<any>
+): Promise<any> {
+  const tx: DemoTransaction = {
     get: async (ref: any) => ({ exists: false, data: null }),
     set: async (ref: any, data: any) => { },
     update: async (ref: any, data: any) => { },
     delete: async (ref: any) => { },
   };
   return await updateFunction(tx);
+}
+
+export function doc(db: any, path: string, ...pathSegments: string[]): any {
+  const fullPath = pathSegments.length > 0 ? `${path}/${pathSegments.join('/')}` : path;
+  const id = pathSegments.length > 0 ? pathSegments[pathSegments.length - 1] : path;
+  return { id, path: fullPath, __demoDoc: true };
+}
+
+export function writeBatch(_db: any): any {
+  return {
+    set: (_ref: any, _data: any) => {},
+    update: (_ref: any, _data: any) => {},
+    delete: (_ref: any) => {},
+    commit: async () => {},
+  };
+}
+
+export function serverTimestamp(): any {
+  return { __demoTimestamp: true, toDate: () => new Date(), toMillis: () => Date.now() };
+}
+
+export function onSnapshot(
+  _ref: any,
+  callback: (snapshot: any) => void,
+  _onError?: (err: Error) => void
+): () => void {
+  // Immediately invoke callback with an empty snapshot so loading states resolve.
+  // The snapshot supports both document-style (.exists(), .data()) and
+  // collection-style (.docs) access patterns.
+  const snapshot = {
+    exists: () => false,
+    data: () => null,
+    docs: [] as Array<{ id: string; data: () => any }>,
+    empty: true,
+  };
+  callback(snapshot);
+  return () => {};
 }

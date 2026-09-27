@@ -5,7 +5,7 @@ class MockQuery {
   where = vi.fn(function (this: MockQuery) { return this; });
 }
 
-vi.mock('firebase/firestore', () => ({
+vi.mock('@/lib/firestore', () => ({
   getDoc: vi.fn(),
   getDocs: vi.fn(),
   setDoc: vi.fn(),
@@ -26,7 +26,7 @@ vi.mock('@/lib/firebase', () => ({ db: {}, auth: {} }));
 // with an invalid api key and throw auth/invalid-api-key at import time).
 vi.mock('@/lib/firebase/client', () => ({ db: {}, auth: {} }));
 
-import { getDoc, getDocs, setDoc, runTransaction, collection, query, doc } from 'firebase/firestore';
+import { getDoc, getDocs, setDoc, runTransaction, collection, query, doc } from '@/lib/firestore';
 
 const mockGetDoc = vi.mocked(getDoc);
 const mockGetDocs = vi.mocked(getDocs);

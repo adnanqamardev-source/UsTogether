@@ -2,13 +2,14 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import React from 'react';
 import { renderHook, act } from '@testing-library/react';
 
-// Mock firebase/firestore. The current AuthProvider uses getDoc (wrapped in
+// Mock @/lib/firestore. The current AuthProvider uses getDoc (wrapped in
 // retryGetDoc with exponential backoff), not onSnapshot.
-vi.mock('firebase/firestore', () => ({
+vi.mock('@/lib/firestore', () => ({
   getFirestore: vi.fn(() => ({})),
   getDoc: vi.fn(),
   doc: vi.fn(),
   serverTimestamp: vi.fn(() => ({ _methodName: 'serverTimestamp' })),
+  FirestoreError: class FirestoreError extends Error {},
 }));
 
 // Mock @/lib/firestore-helpers (AuthProvider imports createUserProfile from here).
@@ -33,6 +34,7 @@ vi.mock('@/lib/firebase/client', () => ({
     onAuthStateChanged: vi.fn(),
   },
   db: {},
+  isDemo: false,
   createUserProfile: vi.fn(),
 }));
 
@@ -44,7 +46,7 @@ vi.mock('firebase/auth', () => ({
   GoogleAuthProvider: vi.fn(),
 }));
 
-import { getDoc, doc } from 'firebase/firestore';
+import { getDoc, doc } from '@/lib/firestore';
 import { AuthProvider, useAuth } from '@/components/providers';
 import { auth } from '@/lib/firebase/client';
 import { createUserProfile } from '@/lib/firestore-helpers';

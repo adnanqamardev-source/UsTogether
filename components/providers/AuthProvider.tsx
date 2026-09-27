@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useEffect, useState } from 'react';
 import { User, GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/auth';
-import { doc, getDoc, FirestoreError } from 'firebase/firestore';
+import { doc, getDoc, FirestoreError } from '@/lib/firestore';
 import { auth, db } from '@/lib/firebase/client';
 import { createUserProfile } from '@/lib/firestore-helpers';
 import type { UserProfile } from '@/types';

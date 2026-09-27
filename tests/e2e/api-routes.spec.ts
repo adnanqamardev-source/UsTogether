@@ -23,7 +23,8 @@ test.describe('Feature: API Routes', () => {
 
     test('reset-data should return 401 when unauthenticated', async ({ request }) => {
       const res = await request.post('/api/reset-data');
-      expect([401, 405]).toContain(res.status());
+      // 401 in dev, 403 in production (route is blocked), 405 for GET
+      expect([401, 403, 405]).toContain(res.status());
     });
   });
 

@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { getUserProfile, batchWrite } from '@/lib/firestore-helpers';
 
-vi.mock('firebase/firestore', () => ({
+vi.mock('@/lib/firestore', () => ({
   getDoc: vi.fn(),
   setDoc: vi.fn(),
   doc: vi.fn(),
@@ -21,7 +21,7 @@ vi.mock('@/lib/firebase', () => ({ db: {} }));
 // with an invalid api key and throw auth/invalid-api-key at import time).
 vi.mock('@/lib/firebase/client', () => ({ db: {} }));
 
-import { getDoc, writeBatch } from 'firebase/firestore';
+import { getDoc, writeBatch } from '@/lib/firestore';
 
 describe('firestore-helpers (Unit)', () => {
   beforeEach(() => {

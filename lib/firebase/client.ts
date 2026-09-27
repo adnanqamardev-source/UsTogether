@@ -71,7 +71,7 @@ function ensureDb(): Firestore {
 // Demo mode (NEXT_PUBLIC_DEMO_MODE=true with no real Firebase keys) swaps in
 // an in-memory Firestore/Auth/Storage so the whole app renders without
 // backend credentials — used by the design harness evaluator.
-const isDemo =
+export const isDemo =
   isBrowser &&
   process.env.NEXT_PUBLIC_DEMO_MODE === "true";
 

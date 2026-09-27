@@ -107,10 +107,10 @@ test.describe('Feature: Navigation & Responsive Design', () => {
         await menuToggle.click();
         await page.waitForTimeout(500);
 
-        // Click overlay to close
+        // Click overlay to close (click top-left corner, outside the menu panel)
         const overlay = page.locator('.fixed.inset-0.bg-black\\/60');
         if (await overlay.isVisible({ timeout: 2000 }).catch(() => false)) {
-          await overlay.click();
+          await overlay.click({ position: { x: 10, y: 10 } });
           await page.waitForTimeout(500);
         }
       }
