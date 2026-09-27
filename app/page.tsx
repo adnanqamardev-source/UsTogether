@@ -1,16 +1,16 @@
-﻿"use client";
+"use client";
 
-import { useAuth } from '@/components/providers';
+import { useCallback } from 'react';
 import dynamic from 'next/dynamic';
+import { useAuth } from '@/components/providers';
 import LandingSections from '@/components/LandingSections';
-import { ArrowRight, Heart } from 'lucide-react';
 
 const DashboardDynamic = dynamic(
-  () => import('@/components/features/couple/Dashboard').then(mod => mod.default),
+  () => import('@/components/features/couple/Dashboard').then((mod) => mod.default),
   {
     loading: () => (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="w-12 h-12 bg-gradient-to-br from-rose-500 to-indigo-600 rounded-xl shadow-lg shadow-rose-500/20 animate-pulse" />
+      <div className="min-h-screen flex items-center justify-center bg-[#f7f3ee]">
+        <div className="h-12 w-12 animate-pulse rounded-xl bg-gradient-to-br from-rose-500 to-indigo-600 shadow-lg shadow-rose-500/20" />
       </div>
     ),
     ssr: false,
@@ -21,14 +21,25 @@ export default function Page() {
   const { user, loading: authLoading, dbUser, signIn } = useAuth();
   const authenticated = !!user && !!dbUser;
 
-  if (authLoading) {
+  const handleGetStarted = useCallback(async () => {
+    try {
+      await signIn();
+    } catch (error) {
+      console.error('Sign in error:', error);
+    }
+  }, [signIn]);
+
+  if (authLoading || (user && !dbUser)) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="w-12 h-12 bg-gradient-to-br from-rose-500 to-indigo-600 rounded-xl shadow-lg shadow-rose-500/20 animate-pulse" />
+      <div className="min-h-screen flex items-center justify-center bg-[#f7f3ee]">
+        <div className="h-12 w-12 animate-pulse rounded-xl bg-gradient-to-br from-rose-500 to-indigo-600 shadow-lg shadow-rose-500/20" />
       </div>
     );
   }
 
-  // Auto-login configuration: bypass marketing landing page completely
-  // and load straight into the app dashboard.
-  return <DashboardDynamic />;}
+  if (authenticated) {
+    return <DashboardDynamic />;
+  }
+
+  return <LandingSections onGetStarted={handleGetStarted} />;
+}
