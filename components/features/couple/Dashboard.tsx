@@ -5,11 +5,14 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/components/providers';
 import { motion } from 'motion/react';
 import { Heart, Users, ArrowRight, Copy, Check } from 'lucide-react';
-import { doc } from 'firebase/firestore';
+import { doc } from '@/lib/firestore';
 import { db } from '@/lib/firebase/client';
 import { createPairingCode, getPairingCode, batchWrite } from '@/lib/firebase/client';
 import CoupleDashboard from './CoupleDashboard';
 import type { UserProfile } from '@/types';
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 
 export default function Dashboard() {
   const router = useRouter();
@@ -56,7 +59,7 @@ export default function Dashboard() {
     try {
         const codeDoc = await getPairingCode(codeStr);
         if (!codeDoc) {
-           throw new Error('Invalid or expired pairing code.');
+            throw new Error('Invalid or expired pairing code.');
         }
         const partnerId = codeDoc.userId;
 
@@ -84,9 +87,9 @@ export default function Dashboard() {
 
         router.refresh();
     } catch (err: any) {
-       setErrorMsg(err.message || 'Error occurred');
+        setErrorMsg(err.message || 'Error occurred');
     } finally {
-       setLoading(false);
+        setLoading(false);
     }
   };
 
@@ -121,7 +124,7 @@ export default function Dashboard() {
           className="bg-white/5 backdrop-blur-md rounded-[40px] shadow-2xl border border-white/10 p-6 sm:p-8 md:p-12 text-center w-full max-w-2xl mx-auto relative overflow-hidden"
         >
           <div className="absolute top-[-20%] right-[-10%] w-[60%] h-[60%] bg-rose-600/20 rounded-full blur-[80px] pointer-events-none"></div>
-          
+           
           <div className="w-20 h-20 bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-inner shadow-indigo-500/20">
             <Users className="w-10 h-10" />
           </div>
@@ -131,42 +134,46 @@ export default function Dashboard() {
           </p>
 
           <div className="bg-black/20 p-6 sm:p-8 rounded-3xl mb-10 border border-white/5 hover:scale-105 hover:bg-black/30 hover:border-white/10 hover:shadow-[0_0_20px_rgba(99,102,241,0.2)] transition-all duration-300 cursor-pointer group">
-             <p className="text-xs text-slate-400 mb-4 uppercase tracking-[0.2em] font-bold">Your Code</p>
-             <div className="bg-black/30 rounded-xl p-4 mb-4 min-h-[80px] sm:min-h-[100px] flex items-center justify-center overflow-hidden">
-               <p className="font-mono text-4xl sm:text-5xl md:text-6xl tracking-widest text-white font-light select-all word-break break-all text-center">{myCode || '........'}</p>
-             </div>
-             <div className="flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-               {codeCopied ? (
-                 <>
-                   <Check className="w-4 h-4 text-green-400" />
-                   <span className="text-xs text-green-400 font-mono">Copied!</span>
-                 </>
-               ) : (
-                 <>
-                   <Copy className="w-4 h-4 text-indigo-300" />
-                   <span className="text-xs text-indigo-300 font-mono">Click to copy</span>
-                 </>
-               )}
-             </div>
+            <p className="text-xs text-slate-400 mb-4 uppercase tracking-[0.2em] font-bold">Your Code</p>
+            <div className="bg-black/30 rounded-xl p-4 mb-4 min-h-[80px] sm:min-h-[100px] flex items-center justify-center overflow-hidden">
+              <p className="font-mono text-4xl sm:text-5xl md:text-6xl tracking-widest text-white font-light select-all word-break break-all text-center">{myCode || '........'}</p>
+            </div>
+            <div className="flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+              {codeCopied ? (
+                <>
+                  <Check className="w-4 h-4 text-green-400" />
+                  <span className="text-xs text-green-400 font-mono">Copied!</span>
+                </>
+              ) : (
+                <>
+                  <Copy className="w-4 h-4 text-indigo-300" />
+                  <span className="text-xs text-indigo-300 font-mono">Click to copy</span>
+                </>
+              )}
+            </div>
           </div>
 
           <form onSubmit={handlePair} className="flex flex-col gap-4">
-            <input 
-               type="text" 
-               value={partnerCode}
-               onChange={e => setPartnerCode(e.target.value)}
-               className="w-full bg-white/5 border border-white/10 rounded-2xl px-4 sm:px-6 py-3 sm:py-4 focus:outline-none focus:ring-2 focus:ring-rose-500/50 text-white font-mono tracking-widest text-center uppercase placeholder:text-slate-500 text-base sm:text-lg" 
-               placeholder="ENTER PARTNER CODE"
-               maxLength={8}
+            <Input
+              type="text"
+              value={partnerCode}
+              onChange={e => setPartnerCode(e.target.value)}
+              placeholder="ENTER PARTNER CODE"
+              maxLength={8}
+              className="text-center font-mono tracking-widest uppercase text-lg"
+              label="Partner Code"
             />
-            <button 
-               type="submit" 
-               disabled={loading || !partnerCode}
-               className="bg-rose-500 text-white rounded-2xl px-4 sm:px-6 py-3 sm:py-4 font-bold uppercase tracking-widest hover:bg-rose-600 disabled:opacity-50 disabled:hover:bg-rose-500 transition-all flex items-center justify-center gap-2 shadow-lg shadow-rose-500/20 text-sm sm:text-base"
+            <Button
+              type="submit"
+              variant="primary"
+              size="lg"
+              isLoading={loading}
+              disabled={!partnerCode}
+              className="w-full"
             >
-               {loading ? 'Pairing...' : 'Connect'}
-               <ArrowRight className="w-5 h-5" />
-            </button>
+              {loading ? 'Pairing...' : 'Connect'}
+              <ArrowRight className="w-5 h-5" />
+            </Button>
           </form>
           {errorMsg && <p className="text-rose-400 text-xs uppercase tracking-widest font-bold mt-6">{errorMsg}</p>}
         </motion.div>

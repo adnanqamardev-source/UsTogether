@@ -1,15 +1,5 @@
 import { useState, useEffect } from "react";
-import {
-  collection,
-  query,
-  where,
-  onSnapshot,
-  addDoc,
-  doc,
-  setDoc,
-  deleteDoc,
-  limit,
-} from "firebase/firestore";
+import { collection, query, where, onSnapshot, addDoc, doc, setDoc, deleteDoc, limit } from '@/lib/firestore';
 import { db } from "@/lib/firebase/client";
 import { useAuth } from '@/components/providers';
 import { Sparkles, Trash2, Flame } from "lucide-react";
@@ -21,8 +11,11 @@ import {
   toFirestoreQuizBatch,
   generateFallbackQuizMetadata,
 } from "@/lib/quiz-data";
+import { SectionHeader } from "@/components/layout";
+import { Button } from "@/components/ui/button";
+import { EmptyState } from "@/components/ui/empty-state";
 
-function SectionHeader({
+function SectionHeaderWrapper({
   title,
   badge,
   icon: Icon,
@@ -33,21 +26,7 @@ function SectionHeader({
   icon?: any;
   accent?: string;
 }) {
-  return (
-    <div className="flex items-center justify-between mb-6">
-      <h2
-        className={`text-xs font-bold uppercase tracking-[0.2em] ${accent} flex items-center gap-2`}
-      >
-        {Icon && <Icon className="w-4 h-4" />}
-        {title}
-        {badge !== undefined && (
-          <span className="ml-2 inline-flex items-center justify-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-white/10 text-white border border-white/10">
-            {badge}
-          </span>
-        )}
-      </h2>
-    </div>
-  );
+  return <SectionHeader title={title} badge={badge} icon={Icon} accent={accent} />;
 }
 
 // A component to list quizzes and active sessions
@@ -302,7 +281,7 @@ export default function QuizList({ coupleId }: { coupleId: string }) {
       {activeSessions.length > 0 && (
         <section>
           <div className="sticky top-0 z-20 bg-[#0F0A1F]/80 backdrop-blur-md border-b border-white/5 -mx-5 sm:-mx-10 px-5 sm:px-10 py-3 mb-6">
-            <SectionHeader
+            <SectionHeaderWrapper
               title="Live Sessions"
               badge={activeSessions.length}
               icon={Flame}
@@ -341,37 +320,30 @@ export default function QuizList({ coupleId }: { coupleId: string }) {
 
       <section>
         <div className="sticky top-0 z-20 bg-[#0F0A1F]/80 backdrop-blur-md border-b border-white/5 -mx-5 sm:-mx-10 px-5 sm:px-10 py-3 mb-6">
-          <SectionHeader title="Featured Quizzes" />
+          <SectionHeaderWrapper title="Featured Quizzes" />
         </div>
         <div className="flex items-center justify-end mb-2">
-          <button
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={fetchNewQuiz}
-            disabled={generatingQuiz}
-            className="text-xs font-bold uppercase tracking-[0.2em] text-rose-400 hover:text-rose-300 transition-colors flex items-center gap-2"
+            isLoading={generatingQuiz}
           >
-            <Sparkles className="w-3 h-3" />{" "}
+            <Sparkles className="w-3 h-3" />
             {generatingQuiz ? "..." : "Fetch New"}
-          </button>
+          </Button>
         </div>
 
         {quizzes.length === 0 ? (
-          <div className="text-center p-10 border border-white/10 rounded-3xl bg-white/5">
-            <div className="flex justify-center mb-4">
-              <div className="w-14 h-14 rounded-full border border-dashed border-white/20 flex items-center justify-center text-xl">
-                🛺
-              </div>
-            </div>
-            <p className="text-indigo-200 mb-4 font-light">
-              No quizzes in the queue — time for a chai break?
-            </p>
-            <button
-              onClick={fetchNewQuiz}
-              disabled={generatingQuiz}
-              className="bg-indigo-500 hover:bg-indigo-400 text-white font-bold py-2 px-6 rounded-full text-sm uppercase tracking-widest transition-all"
-            >
-              {generatingQuiz ? "Generating..." : "Fetch New Quiz"}
-            </button>
-          </div>
+          <EmptyState
+            icon={Sparkles}
+            title="No quizzes in the queue"
+            description="Time for a chai break? Fetch a new quiz to get started."
+            action={{
+              label: "Fetch New Quiz",
+              onClick: fetchNewQuiz,
+            }}
+          />
         ) : (
           <>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -387,12 +359,13 @@ export default function QuizList({ coupleId }: { coupleId: string }) {
             </div>
             {hasMore && (
               <div className="text-center mt-8">
-                <button
+                <Button
+                  variant="secondary"
+                  size="sm"
                   onClick={() => setQuizPage((p) => p + 1)}
-                  className="bg-white/10 hover:bg-white/20 text-white font-bold py-3 px-8 rounded-full text-sm uppercase tracking-widest transition-all border border-white/10"
                 >
                   Load More
-                </button>
+                </Button>
               </div>
             )}
           </>

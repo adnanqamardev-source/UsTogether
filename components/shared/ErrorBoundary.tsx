@@ -1,6 +1,7 @@
 'use client';
 
 import { Component, ReactNode } from 'react';
+import { Button } from "@/components/ui/button";
 
 interface ErrorBoundaryProps {
   children: ReactNode;
@@ -43,12 +44,9 @@ export default class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBo
           <p className="text-slate-400 mb-6 max-w-md">
             We encountered an unexpected error. This has been logged and we'll look into it.
           </p>
-          <button
-            onClick={this.handleReset}
-            className="px-6 py-3 bg-indigo-500 hover:bg-indigo-600 text-white font-medium rounded-xl transition-colors"
-          >
+          <Button variant="primary" size="md" onClick={this.handleReset}>
             Try Again
-          </button>
+          </Button>
         </div>
       );
     }

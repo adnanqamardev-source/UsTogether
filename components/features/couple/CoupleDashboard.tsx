@@ -4,7 +4,7 @@ import { useState, useEffect, Suspense } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useAuth } from '@/components/providers';
 import { MessageCircle, LogOut, UserMinus, Loader, Menu, X } from 'lucide-react';
-import { doc, where } from 'firebase/firestore';
+import { doc, where } from '@/lib/firestore';
 import { db } from '@/lib/firebase/client';
 import {
   useFirestoreDocument,
@@ -22,6 +22,8 @@ import ErrorBoundary from '@/components/shared/ErrorBoundary';
 import BottomNav from '@/components/shared/BottomNav';
 import ChatFAB from '@/components/shared/ChatFAB';
 import { DashboardSkeleton, AchievementsPanelSkeleton, ChatPanelSkeleton } from '@/components/shared/Skeletons';
+import { Button } from "@/components/ui/button";
+import { Container } from "@/components/layout";
 
 const ChatDrawer = dynamic(() => import('../chat/ChatDrawer'), {
   ssr: false,
@@ -150,7 +152,7 @@ export default function CoupleDashboard({ coupleId }: { coupleId: string }) {
         alert('Authentication expired. Please sign in again.');
         return;
       }
-      
+       
       const userRef = doc(db, 'users', user.uid);
       const partnerRef = doc(db, 'users', partnerId);
       const coupleRef = doc(db, 'couples', coupleId);
@@ -161,7 +163,7 @@ export default function CoupleDashboard({ coupleId }: { coupleId: string }) {
         { type: 'update', ref: partnerRef, data: { pairedCoupleId: '', updatedAt: now } },
         { type: 'delete', ref: coupleRef },
       ]);
-      
+       
       // Force page refresh to reset auth state
       window.location.reload();
     } catch (e: any) {
@@ -231,7 +233,7 @@ export default function CoupleDashboard({ coupleId }: { coupleId: string }) {
           <button onClick={handleUnpair} className={`hover:text-rose-400 transition-colors flex items-center gap-2`}>
             <UserMinus className="w-4 h-4" /> Disconnect
           </button>
-          
+           
           <div className="w-10 h-10 rounded-full bg-indigo-500 flex items-center justify-center text-sm font-bold text-white shadow-md">
             {user?.displayName?.[0].toUpperCase() || user?.email?.[0].toUpperCase() || 'U'}
           </div>
@@ -304,9 +306,14 @@ export default function CoupleDashboard({ coupleId }: { coupleId: string }) {
                     <h3 className="text-2xl font-serif italic text-white">You & Partner are paired ✨</h3>
                     <p className="text-indigo-200/60 text-sm mt-1">Complete a quiz together to keep the streak alive.</p>
                   </div>
-                  <button onClick={() => { window.location.hash = ''; }} className="shrink-0 bg-indigo-500 hover:bg-indigo-400 text-white font-bold uppercase tracking-widest text-xs py-3 px-6 rounded-full transition-all shadow-[0_0_20px_rgba(99,102,241,0.3)]">
+                  <Button
+                    variant="primary"
+                    size="md"
+                    onClick={() => { window.location.hash = ''; }}
+                    className="shrink-0"
+                  >
                     Start Quiz
-                  </button>
+                  </Button>
                 </div>
               </motion.div>
 

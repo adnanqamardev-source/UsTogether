@@ -1,14 +1,17 @@
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useAuth } from '@/components/providers';
-import { collection, query, where, getDocs, addDoc, serverTimestamp, deleteDoc } from 'firebase/firestore';
+import { collection, query, where, getDocs, addDoc, serverTimestamp, deleteDoc } from '@/lib/firestore';
 import { db } from '@/lib/firebase/client';
 import { Calendar, Sparkles, Loader, Upload, Trash2, Image as ImageIcon, Milestone as MilestoneIcon } from 'lucide-react';
 import { handleFirestoreError, OperationType } from '@/lib/firestore-errors';
 import Markdown from 'react-markdown';
 import { uploadWithProgress, deletePhoto } from '@/lib/storage';
 import type { MemoryPhoto, Milestone } from '@/types';
-import { doc } from 'firebase/firestore';
+import { doc } from '@/lib/firestore';
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/empty-state";
 
 type Tab = 'memories' | 'photos' | 'milestones';
 
@@ -171,53 +174,57 @@ export default function MemoryBoard({ coupleId }: { coupleId: string }) {
   return (
     <div className="w-full pb-20">
       <header className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
-         <div>
-           <h1 className="text-4xl md:text-5xl font-serif italic mb-4 text-transparent bg-clip-text bg-gradient-to-r from-rose-400 to-indigo-400">Memory Board</h1>
-           <p className="text-indigo-200/60 font-light">Look back on your shared moments and answers.</p>
-         </div>
-         <button
-           onClick={generateChallenge}
-           disabled={generating}
-           className="flex items-center gap-2 bg-indigo-500 hover:bg-indigo-400 text-white px-6 py-3 rounded-full text-sm font-bold uppercase tracking-widest transition-all shadow-[0_0_20px_rgba(99,102,241,0.3)] disabled:opacity-50"
-         >
-           {generating ? <Loader className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
-           <span>AI Challenge</span>
-         </button>
+        <div>
+          <h1 className="text-4xl md:text-5xl font-serif italic mb-4 text-transparent bg-clip-text bg-gradient-to-r from-rose-400 to-indigo-400">Memory Board</h1>
+          <p className="text-indigo-200/60 font-light">Look back on your shared moments and answers.</p>
+        </div>
+        <Button
+          variant="primary"
+          size="md"
+          onClick={generateChallenge}
+          isLoading={generating}
+        >
+          {generating ? <Loader className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
+          <span>AI Challenge</span>
+        </Button>
       </header>
 
       {challenge && (
         <div className="mb-12 bg-indigo-500/10 border border-indigo-500/30 p-6 md:p-8 rounded-[2rem] shadow-xl relative overflow-hidden">
           <div className="absolute top-0 right-0 p-6 opacity-20">
-             <Sparkles className="w-20 h-20 text-indigo-300" />
+            <Sparkles className="w-20 h-20 text-indigo-300" />
           </div>
           <h2 className="text-2xl font-serif italic text-indigo-300 mb-4 flex items-center gap-3">
-             <Sparkles className="w-6 h-6" /> Your Custom Prompt
+            <Sparkles className="w-6 h-6" /> Your Custom Prompt
           </h2>
           <div className="prose prose-invert prose-indigo">
-             <Markdown>{challenge}</Markdown>
+            <Markdown>{challenge}</Markdown>
           </div>
         </div>
       )}
 
       <div className="flex items-center gap-3 mb-8">
-        <button
+        <Button
+          variant={tab === 'memories' ? 'primary' : 'secondary'}
+          size="sm"
           onClick={() => setTab('memories')}
-          className={`px-5 py-2 rounded-full text-sm font-bold tracking-widest uppercase transition-all border ${tab === 'memories' ? 'bg-indigo-500 text-white border-indigo-500' : 'bg-white/5 text-slate-300 border-white/10 hover:bg-white/10'}`}
         >
           Memories
-        </button>
-        <button
+        </Button>
+        <Button
+          variant={tab === 'photos' ? 'primary' : 'secondary'}
+          size="sm"
           onClick={() => setTab('photos')}
-          className={`px-5 py-2 rounded-full text-sm font-bold tracking-widest uppercase transition-all border ${tab === 'photos' ? 'bg-indigo-500 text-white border-indigo-500' : 'bg-white/5 text-slate-300 border-white/10 hover:bg-white/10'}`}
         >
           Photos
-        </button>
-        <button
+        </Button>
+        <Button
+          variant={tab === 'milestones' ? 'primary' : 'secondary'}
+          size="sm"
           onClick={() => setTab('milestones')}
-          className={`px-5 py-2 rounded-full text-sm font-bold tracking-widest uppercase transition-all border ${tab === 'milestones' ? 'bg-indigo-500 text-white border-indigo-500' : 'bg-white/5 text-slate-300 border-white/10 hover:bg-white/10'}`}
         >
           Milestones
-        </button>
+        </Button>
       </div>
 
       <AnimatePresence mode="wait">
@@ -230,11 +237,12 @@ export default function MemoryBoard({ coupleId }: { coupleId: string }) {
             className="columns-2 md:columns-3 gap-6 space-y-6"
           >
             {finishedSessions.length === 0 ? (
-              <div className="col-span-full text-center py-20 bg-white/5 border border-white/10 rounded-3xl">
-                 <div className="mx-auto mb-4 flex items-center justify-center">
-                   <div className="w-16 h-16 rounded-full border border-dashed border-white/20 flex items-center justify-center text-2xl">☕</div>
-                 </div>
-                 <p className="text-indigo-200/50">No chai-sipped quizzes yet — start one and make some memories.</p>
+              <div className="col-span-full">
+                <EmptyState
+                  icon={Calendar}
+                  title="No chai-sipped quizzes yet"
+                  description="Start one and make some memories."
+                />
               </div>
             ) : (
               finishedSessions.map(s => (
@@ -248,7 +256,7 @@ export default function MemoryBoard({ coupleId }: { coupleId: string }) {
                   <h3 className="font-serif italic text-xl mb-2 text-[#F8FAFC] relative z-10">{getQuizTitle(s)}</h3>
                   <p className="text-xs text-indigo-300 uppercase tracking-widest relative z-10">{formatMemoryDate(s.updatedAt)}</p>
                   <button onClick={() => window.location.hash = `#session/${s.id}`} className="mt-6 uppercase text-xs tracking-widest text-indigo-200 hover:text-white transition-colors bg-indigo-500/20 px-6 py-2 rounded-full border border-indigo-500/30 relative z-10 group-hover:bg-indigo-500/40 group-hover:border-indigo-400/50">
-                     View
+                    View
                   </button>
                 </motion.div>
               ))
@@ -264,16 +272,22 @@ export default function MemoryBoard({ coupleId }: { coupleId: string }) {
           >
             <div className="mb-6 flex items-center justify-between">
               <div className="text-sm text-slate-400">Shared photo memories</div>
-              <button onClick={handleUploadClick} disabled={uploading} className="flex items-center gap-2 bg-rose-500 hover:bg-rose-400 text-white px-4 py-2 rounded-full text-xs font-bold uppercase tracking-widest transition-all disabled:opacity-50">
+              <Button
+                variant="primary"
+                size="sm"
+                onClick={handleUploadClick}
+                isLoading={uploading}
+              >
                 <Upload className="w-4 h-4" /> Upload
-              </button>
+              </Button>
               <input ref={fileInputRef} type="file" accept="image/*" multiple onChange={handleFileChange} className="hidden" />
             </div>
             {photos.length === 0 ? (
-              <div className="text-center py-20 bg-white/5 border border-white/10 rounded-3xl">
-                <ImageIcon className="w-10 h-10 text-indigo-300 mx-auto mb-4" />
-                <p className="text-indigo-200/50">No photos yet. Upload your first memory.</p>
-              </div>
+              <EmptyState
+                icon={ImageIcon}
+                title="No photos yet"
+                description="Upload your first memory."
+              />
             ) : (
               <div className="columns-2 md:columns-3 gap-6 space-y-6">
                 {photos.map(p => (
@@ -305,10 +319,11 @@ export default function MemoryBoard({ coupleId }: { coupleId: string }) {
             className="space-y-4"
           >
             {milestones.length === 0 ? (
-              <div className="text-center py-20 bg-white/5 border border-white/10 rounded-3xl">
-                <MilestoneIcon className="w-10 h-10 text-indigo-300 mx-auto mb-4" />
-                <p className="text-indigo-200/50">No milestones yet. They appear when you hit special moments.</p>
-              </div>
+              <EmptyState
+                icon={MilestoneIcon}
+                title="No milestones yet"
+                description="They appear when you hit special moments."
+              />
             ) : (
               milestones.map(m => (
                 <motion.div

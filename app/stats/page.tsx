@@ -3,9 +3,11 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/components/providers';
 import { useFirestoreDocument, useFirestoreCollection } from '@/lib/firebase/client';
-import { where } from 'firebase/firestore';
+import { where } from '@/lib/firestore';
 import { Trophy, Flame, Calendar, BarChart3, Share2 } from 'lucide-react';
 import type { Couple, Session, Achievement } from '@/global.d';
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 
 export default function StatsPage() {
   const { user } = useAuth();
@@ -80,35 +82,40 @@ export default function StatsPage() {
           <h1 className="text-4xl md:text-5xl font-serif italic text-white mb-2">Your Journey</h1>
           <p className="text-slate-400">Track your connection, growth, and milestones together.</p>
         </div>
-        <button onClick={handleShare} className="p-3 bg-slate-800 hover:bg-slate-700 text-white rounded-full transition-colors" aria-label="Share stats">
+        <Button
+          variant="secondary"
+          size="icon"
+          onClick={handleShare}
+          aria-label="Share stats"
+        >
           <Share2 className="w-5 h-5" />
-        </button>
+        </Button>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
-        <div className="bg-white/5 border border-white/10 rounded-2xl p-6 text-center">
+        <Card variant="standard" padding="md" className="text-center">
           <Trophy className="w-8 h-8 text-amber-400 mx-auto mb-2" />
           <div className="text-3xl font-bold text-white">{totalPoints}</div>
           <div className="text-xs text-slate-400 uppercase tracking-widest mt-1">Total Points</div>
-        </div>
-        <div className="bg-white/5 border border-white/10 rounded-2xl p-6 text-center">
+        </Card>
+        <Card variant="standard" padding="md" className="text-center">
           <Flame className="w-8 h-8 text-rose-400 mx-auto mb-2" />
           <div className="text-3xl font-bold text-white">{currentStreak}</div>
           <div className="text-xs text-slate-400 uppercase tracking-widest mt-1">Day Streak</div>
-        </div>
-        <div className="bg-white/5 border border-white/10 rounded-2xl p-6 text-center">
+        </Card>
+        <Card variant="standard" padding="md" className="text-center">
           <BarChart3 className="w-8 h-8 text-indigo-400 mx-auto mb-2" />
           <div className="text-3xl font-bold text-white">{totalSessions}</div>
           <div className="text-xs text-slate-400 uppercase tracking-widest mt-1">Quizzes Done</div>
-        </div>
-        <div className="bg-white/5 border border-white/10 rounded-2xl p-6 text-center">
+        </Card>
+        <Card variant="standard" padding="md" className="text-center">
           <Calendar className="w-8 h-8 text-emerald-400 mx-auto mb-2" />
           <div className="text-3xl font-bold text-white">{totalAchievements}</div>
           <div className="text-xs text-slate-400 uppercase tracking-widest mt-1">Achievements</div>
-        </div>
+        </Card>
       </div>
 
-      <div className="bg-white/5 border border-white/10 rounded-2xl p-6 mb-12">
+      <Card variant="standard" padding="md" className="mb-12">
         <h2 className="text-xl font-semibold text-white mb-6">Last 30 Days Activity</h2>
         <div className="flex flex-wrap gap-2">
           {last30Days.map((date) => {
@@ -129,10 +136,10 @@ export default function StatsPage() {
             );
           })}
         </div>
-      </div>
+      </Card>
 
       {achievements && achievements.length > 0 && (
-        <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
+        <Card variant="standard" padding="md">
           <h2 className="text-xl font-semibold text-white mb-6">Recent Achievements</h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
             {achievements.slice(0, 8).map((a) => (
@@ -145,7 +152,7 @@ export default function StatsPage() {
               </div>
             ))}
           </div>
-        </div>
+        </Card>
       )}
     </div>
   );

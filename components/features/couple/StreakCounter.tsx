@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "motion/react";
 import { Flame } from "lucide-react";
+import { Card } from "@/components/ui/card";
 
 type StreakCounterProps = {
   streak?: number;
@@ -18,12 +19,10 @@ export default function StreakCounter({ streak = 0, label = "Day Streak" }: Stre
   }, []);
 
   return (
-    <motion.div
-      data-testid="streak-counter"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, ease: "easeOut" }}
-      className="relative rounded-[2rem] border border-white/10 bg-white/5 p-6 shadow-lg backdrop-blur-md overflow-hidden"
+    <Card
+      variant="standard"
+      padding="md"
+      className="overflow-hidden"
     >
       {/* animated gradient border glow */}
       <div
@@ -76,6 +75,6 @@ export default function StreakCounter({ streak = 0, label = "Day Streak" }: Stre
           style={{ width: `${Math.min((streak % 7) / 7 * 100, 100)}%` }}
         />
       </div>
-    </motion.div>
+    </Card>
   );
 }

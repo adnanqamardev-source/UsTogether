@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from "react";
 import { useAuth } from '@/components/providers';
 import { motion, AnimatePresence } from 'motion/react';
 import { Heart, CheckCircle2 } from 'lucide-react';
@@ -8,8 +8,12 @@ import { handleFirestoreError, OperationType } from '@/lib/firestore-errors';
 import { useFirestoreDocument, batchWrite } from '@/lib/firebase/client';
 import { checkAndAwardAchievements } from '@/lib/achievements';
 import type { Session, Quiz, Couple } from '@/types';
-import { doc, runTransaction } from 'firebase/firestore';
+import { doc, runTransaction } from '@/lib/firestore';
 import { db } from '@/lib/firebase/client';
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Textarea } from "@/components/ui/input";
 
 export default function ActiveSession({ coupleId, sessionId, couple }: { coupleId: string; sessionId: string; couple?: Couple | null }) {
   const { user } = useAuth();
@@ -131,7 +135,7 @@ export default function ActiveSession({ coupleId, sessionId, couple }: { coupleI
             };
 
             return (
-              <div key={i} className="bg-white/5 border border-white/10 p-6 rounded-2xl w-full">
+              <Card key={i} variant="standard" padding="md">
                 <p className="font-serif italic text-xl text-white mb-4">{i + 1}. {q.q}</p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="bg-indigo-500/10 p-4 rounded-xl border border-indigo-500/20">
@@ -143,14 +147,14 @@ export default function ActiveSession({ coupleId, sessionId, couple }: { coupleI
                     <p className="text-[#F8FAFC] flex content-start">{resolveAns(pAns)}</p>
                   </div>
                 </div>
-              </div>
+              </Card>
             );
           })}
         </div>
 
-        <button onClick={() => window.location.hash = ''} className="py-4 px-8 rounded-3xl bg-rose-500 text-white font-bold text-lg hover:bg-rose-600 transition-all shadow-xl shadow-rose-500/20 ring-2 ring-rose-500/50 ring-offset-4 ring-offset-[#0F0A1F]">
+        <Button variant="primary" size="lg" onClick={() => window.location.hash = ''}>
           Back to Dashboard
-        </button>
+        </Button>
       </div>
     );
   }
@@ -162,9 +166,9 @@ export default function ActiveSession({ coupleId, sessionId, couple }: { coupleI
           <span>{quiz.title}</span>
           <button onClick={endSessionEarly} className="text-white/30 hover:text-rose-400 font-normal underline underline-offset-4">End Session</button>
         </h2>
-        <span className="text-xs font-bold px-3 py-1 bg-white/10 text-white rounded-full border border-white/5 uppercase tracking-widest whitespace-nowrap">
+        <Badge variant="secondary" size="sm">
           Question {currentQIndex + 1} of {quiz.questions.length}
-        </span>
+        </Badge>
       </div>
 
       <AnimatePresence mode="wait">
@@ -184,20 +188,21 @@ export default function ActiveSession({ coupleId, sessionId, couple }: { coupleI
               <div className="w-full max-w-2xl space-y-6">
                 {myAnswer === undefined ? (
                   <div className="flex flex-col gap-4">
-                    <textarea
+                    <Textarea
                       value={textAnswer}
                       onChange={(e) => setTextAnswer(e.target.value)}
                       placeholder="Type your thoughts..."
-                      className="w-full bg-white/5 border border-white/10 rounded-3xl p-6 text-lg text-white placeholder-indigo-200/50 focus:outline-none focus:border-rose-500/50 transition-colors resize-none min-h-[150px]"
+                      className="min-h-[150px] text-lg"
                     />
                     <div className="flex justify-end">
-                      <button
+                      <Button
+                        variant="primary"
+                        size="md"
                         onClick={() => { if (textAnswer.trim()) handleAnswer(textAnswer.trim()) }}
                         disabled={!textAnswer.trim()}
-                        className="bg-indigo-500 hover:bg-indigo-400 text-white font-bold uppercase tracking-widest text-sm py-4 px-8 rounded-full transition-all disabled:opacity-50 disabled:hover:bg-indigo-500 shadow-[0_0_20px_rgba(99,102,241,0.3)]"
                       >
                         Submit
-                      </button>
+                      </Button>
                     </div>
                   </div>
                 ) : (
@@ -271,13 +276,18 @@ export default function ActiveSession({ coupleId, sessionId, couple }: { coupleI
                 )}
               </div>
             ) : (
-              <motion.button
-                onClick={nextQuestion}
+              <motion.div
                 whileTap={{ scale: 0.97 }}
-                className="bg-gradient-to-r from-white to-indigo-50 text-[#0F0A1F] font-bold uppercase tracking-[0.2em] text-sm rounded-full px-10 py-4 w-full max-w-xs hover:scale-105 hover:shadow-[0_0_35px_rgba(99,102,241,0.4)] transition-all shadow-[0_0_25px_rgba(255,255,255,0.15)]"
               >
-                {currentQIndex + 1 >= quiz.questions.length ? 'Finish Quiz' : 'Next Question →'}
-              </motion.button>
+                <Button
+                  variant="primary"
+                  size="lg"
+                  onClick={nextQuestion}
+                  className="w-full max-w-xs"
+                >
+                  {currentQIndex + 1 >= quiz.questions.length ? 'Finish Quiz' : 'Next Question →'}
+                </Button>
+              </motion.div>
             )}
           </div>
 

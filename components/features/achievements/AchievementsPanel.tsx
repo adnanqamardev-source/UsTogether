@@ -3,6 +3,8 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Trophy, ChevronDown, ChevronUp } from "lucide-react";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 type Achievement = {
   id: string;
@@ -20,11 +22,10 @@ export default function AchievementsPanel({ achievements = [] }: AchievementsPan
   const visible = showAll ? achievements : achievements.slice(0, 5);
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, ease: "easeOut" }}
-      className="relative rounded-[2rem] border border-white/10 bg-white/5 p-6 shadow-lg backdrop-blur-md overflow-hidden"
+    <Card
+      variant="standard"
+      padding="md"
+      className="overflow-hidden"
     >
       {/* trophy glow */}
       <div className="absolute -top-10 -right-10 w-32 h-32 bg-indigo-500/20 blur-[60px] rounded-full pointer-events-none" />
@@ -78,16 +79,18 @@ export default function AchievementsPanel({ achievements = [] }: AchievementsPan
           </ul>
 
           {achievements.length > 5 && (
-            <button
+            <Button
+              variant="ghost"
+              size="sm"
               onClick={() => setShowAll(!showAll)}
-              className="mt-4 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-indigo-300 hover:text-white transition-colors relative z-10"
+              className="mt-4 relative z-10"
             >
               {showAll ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
               {showAll ? 'Show Less' : 'View All'}
-            </button>
+            </Button>
           )}
         </>
       )}
-    </motion.div>
+    </Card>
   );
 }
