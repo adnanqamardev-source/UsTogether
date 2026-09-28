@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { GoogleGenAI } from "@google/genai";
-import { getUserId } from "@/lib/api-auth";
-import { validateChatBody } from "@/lib/input-validation";
-import { checkRateLimit } from "@/lib/ratelimit";
+import { getUserId } from "@/lib/server/api-auth";
+import { validateChatBody } from "@/lib/shared/input-validation";
+import { checkRateLimit } from "@/lib/server/ratelimit";
+import { chatModelId } from "@/lib/server/ai-model";
 
 export const maxDuration = 30;
 
@@ -55,7 +56,7 @@ export async function POST(req: NextRequest) {
     ];
 
     const response = await ai.models.generateContent({
-      model: "gemini-3-flash-preview",
+      model: chatModelId(),
       contents,
     });
 

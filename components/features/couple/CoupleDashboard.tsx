@@ -4,15 +4,14 @@ import { useState, useEffect, Suspense } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useAuth } from '@/components/providers';
 import { MessageCircle, LogOut, UserMinus, Loader, Menu, X } from 'lucide-react';
-import { doc, where } from '@/lib/firestore';
-import { db } from '@/lib/firebase/client';
+import { where } from '@/lib/firestore';
 import {
   useFirestoreDocument,
   useFirestoreCollection,
-  batchWrite,
 } from '@/lib/firebase/client';
-import { updateStreak } from '@/lib/streak';
-import { checkAndAwardAchievements } from '@/lib/achievements';
+import { disconnectCouple, isMember, PairingError } from '@/lib/shared/couple-pairing';
+import { updateStreak } from '@/lib/shared/streak';
+import { checkAndAwardAchievements } from '@/lib/shared/achievements';
 import type { Couple, UserProfile, Achievement, Session } from '@/types';
 import dynamic from 'next/dynamic';
 import QuizList from '@/components/features/quiz/QuizList';
@@ -124,12 +123,7 @@ export default function CoupleDashboard({ coupleId }: { coupleId: string }) {
     }
   }, [finishedSessions]);
 
-  const partnerId =
-    couple && user
-      ? couple.user1Id === user.uid
-        ? couple.user2Id
-        : couple.user1Id
-      : '';
+  const canDisconnect = !!user && isMember(couple, user.uid);
 
   const sessionMatch = activeHash.match(/^#session\/(.+)$/);
   const sessionId = sessionMatch ? sessionMatch[1] : null;
@@ -138,7 +132,7 @@ export default function CoupleDashboard({ coupleId }: { coupleId: string }) {
 
   const handleUnpair = async () => {
     if (!window.confirm('Are you sure you want to disconnect from your partner?')) return;
-    if (!user || !couple) {
+    if (!user || !couple || !canDisconnect) {
       alert('Please sign in again to disconnect.');
       return;
     }
@@ -150,21 +144,14 @@ export default function CoupleDashboard({ coupleId }: { coupleId: string }) {
         return;
       }
        
-      const userRef = doc(db, 'users', user.uid);
-      const partnerRef = doc(db, 'users', partnerId);
-      const coupleRef = doc(db, 'couples', coupleId);
-      const now = Date.now();
-
-      await batchWrite([
-        { type: 'update', ref: userRef, data: { pairedCoupleId: '', updatedAt: now } },
-        { type: 'update', ref: partnerRef, data: { pairedCoupleId: '', updatedAt: now } },
-        { type: 'delete', ref: coupleRef },
-      ]);
+      await disconnectCouple(coupleId, user.uid);
        
       window.location.reload();
     } catch (e: any) {
       console.error('Unpair failed', e);
-      if (e?.message?.includes('Missing or insufficient permissions') || e?.code === 'permission-denied') {
+      if (e instanceof PairingError && e.code === 'permission') {
+        alert('Cannot disconnect: Authentication issue. Please disable ad blockers and try again.');
+      } else if (e?.message?.includes('Missing or insufficient permissions') || e?.code === 'permission-denied') {
         alert('Cannot disconnect: Authentication issue. Please disable ad blockers and try again.');
       } else {
         alert('Failed to disconnect. Please try again.');

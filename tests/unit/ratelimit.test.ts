@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { checkRateLimit } from '@/lib/ratelimit';
+import { checkRateLimit } from '@/lib/server/ratelimit';
 
 // Mock redis module
 vi.mock('redis', () => ({

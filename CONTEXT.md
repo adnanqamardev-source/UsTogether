@@ -93,8 +93,11 @@ Recorded so a future reader doesn't mistake them for intent.
    .toUpperCase()` (`features/couple/Dashboard.tsx:28`) but stores a 6-char `generateRandomCode()`
    (`lib/shared/firestore-helpers.ts:189-201`). Typing the on-screen code into the form **cannot
    match** the stored document. Pairing is broken outside demo mode. (Verified still open 2026-09-28.)
-3. **Pairing/Disconnect live in components,** duplicated across two files, not in a
-   module. → **Deepening target #1.**
+3. **Pairing/Disconnect now live in the Couple pairing module**
+    (`lib/shared/couple-pairing.ts`): `deriveCoupleId` (canonical id),
+    `isMember`/`partnerIdOf` (Membership), `pairWithCode` (4-write Pairing),
+    `disconnectCouple` (3-write Disconnect). Callers own UI only — no inline
+    id derivation or write composition. → **Deepening target #1 done.**
 4. **Overlapping demo mechanisms remain in part:** `next.config.js` is now the single
    config (the dead `next.config.ts` was deleted) and all raw env reads route through
    `isDemo` (`lib/firebase/client.ts`, hard-off on real Vercel production via a
@@ -104,11 +107,15 @@ Recorded so a future reader doesn't mistake them for intent.
 5. **Model strings drifted:** `gemini-1.5-flash` (`generate-quiz/route.ts:84`) vs
    `gemini-3-flash-preview` (`generate-challenge/route.ts:45`, `chat/route.ts:58`). → **Target #5.**
    (Verified still open 2026-09-28.)
-6. **Migration shims never removed.** ~25 one-line re-exports at `lib/*.ts` and
-   `components/*.tsx` left over from the completed restructure (plan doc removed
-   2026-09-28; shims remain). Three import paths exist
-   for one concept (`@/lib/storage`, `@/lib/shared/storage`,
-   `@/lib/firebase/client` re-exports). Tests mock all three.
+6. **Migration shims removed (resolved 2026-09-28).** The ~27 one-line
+   re-exports at `lib/*.ts` and `components/*.tsx` (plus
+   `scripts/generate_shims.cjs`, `scripts/update_shims.py`, and the
+   `fix_*.py` import-rewrite helpers) were deleted. One import path per
+   module: `@/lib/shared/*` (shared), `@/lib/server/*` (server-only),
+   `@/lib/firebase/client`, `@/lib/firestore` (demo-aware seam);
+   `@/components/features/...`, `@/components/shared/...`,
+   `@/components/providers`, `@/components/auth/...`. Tests mock only
+   the canonical paths.
 7. **`reset-data` targets the wrong paths.** `app/api/reset-data/route.ts:30`
    reads a top-level `memory_photos` collection; photos actually live at
    `couples/{coupleId}/memory_photos`. It also misses `couples/*/messages`,

@@ -3,9 +3,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { unstable_cache } from "next/cache";
 import { streamText } from 'ai';
 import { createGoogleGenerativeAI } from '@ai-sdk/google';
-import { getUserId } from "@/lib/api-auth";
-import { validateHistoryBody } from "@/lib/input-validation";
-import { checkRateLimit } from "@/lib/ratelimit";
+import { getUserId } from "@/lib/server/api-auth";
+import { validateHistoryBody } from "@/lib/shared/input-validation";
+import { checkRateLimit } from "@/lib/server/ratelimit";
+import { challengeModelId } from "@/lib/server/ai-model";
 
 export const maxDuration = 60;
 export const dynamic = "force-dynamic";
@@ -42,7 +43,7 @@ Based on their past quiz answers, vibe, and quirks, craft a single, creative "Co
 Return only the challenge text, max 3 short paragraphs.`;
 
     const response = await ai.models.generateContent({
-      model: "gemini-3-flash-preview",
+      model: challengeModelId(),
       contents: prompt,
       config: {
         responseMimeType: "application/json",
@@ -117,7 +118,7 @@ export async function GET(req: NextRequest) {
     const google = createGoogleGenerativeAI({ apiKey: process.env.GEMINI_API_KEY });
 
     const result = streamText({
-      model: google('gemini-3-flash-preview'),
+      model: google(challengeModelId()),
       prompt: `You are a warm, playful Desi relationship coach for couples.
 Based on their past quiz answers, vibe, and quirks, craft a single, creative "Couple's Challenge" for today. Sprinkle in Desi warmth — chai evenings, monsoon drives, samosa runs, Bollywood song dedications, Delhi metro adventures — while keeping it fun and easy to act on.
 Return only the challenge text, max 3 short paragraphs.`,

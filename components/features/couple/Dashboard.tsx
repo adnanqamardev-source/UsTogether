@@ -4,10 +4,9 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/components/providers';
 import { motion } from 'motion/react';
-import { Heart, Users, ArrowRight, Copy, Check } from 'lucide-react';
-import { doc } from '@/lib/firestore';
-import { db } from '@/lib/firebase/client';
-import { createPairingCode, getPairingCode, batchWrite } from '@/lib/firebase/client';
+import { Heart, Users, ArrowRight, Copy, Check, LogOut } from 'lucide-react';
+import { createPairingCode } from '@/lib/firebase/client';
+import { pairWithCode, PairingError } from '@/lib/shared/couple-pairing';
 import CoupleDashboard from './CoupleDashboard';
 import type { UserProfile } from '@/types';
 import { Button } from "@/components/ui/button";
@@ -49,45 +48,24 @@ export default function Dashboard() {
     e.preventDefault();
     setErrorMsg('');
     if (!partnerCode || !user.uid) return;
-    const codeStr = partnerCode.trim().toUpperCase();
-    if (codeStr === myCode) {
-      setErrorMsg("You can't pair with yourself!");
-      return;
-    }
 
     setLoading(true);
     try {
-        const codeDoc = await getPairingCode(codeStr);
-        if (!codeDoc) {
-            throw new Error('Invalid or expired pairing code.');
-        }
-        const partnerId = codeDoc.userId;
-
-        const coupleId = [user.uid, partnerId].sort().join('_');
-
-        const userRef = doc(db, 'users', user.uid);
-        const partnerRef = doc(db, 'users', partnerId);
-        const coupleRef = doc(db, 'couples', coupleId);
-        const codeRef = doc(db, 'pairingCodes', codeStr);
-        const now = Date.now();
-
-        await batchWrite([
-          { type: 'set', ref: coupleRef, data: {
-            user1Id: user.uid < partnerId ? user.uid : partnerId,
-            user2Id: user.uid > partnerId ? user.uid : partnerId,
-            status: 'active',
-            totalScore: 0,
-            createdAt: now,
-            updatedAt: now,
-          }},
-          { type: 'update', ref: userRef, data: { pairedCoupleId: coupleId, updatedAt: now } },
-          { type: 'update', ref: partnerRef, data: { pairedCoupleId: coupleId, updatedAt: now } },
-          { type: 'delete', ref: codeRef },
-        ]);
+        await pairWithCode(user.uid, partnerCode, myCode);
+        // Success: the AuthProvider profile subscription picks up the new
+        // pairedCoupleId and swaps to the paired view. Clear the field so a
+        // double-submit can't retry the now-consumed single-use code.
+        setPartnerCode('');
 
         router.refresh();
     } catch (err: any) {
-        setErrorMsg(err.message || 'Error occurred');
+        if (err instanceof PairingError && err.code === 'self') {
+            setErrorMsg("You can't pair with yourself!");
+        } else if (err instanceof PairingError && err.code === 'invalid-code') {
+            setErrorMsg('Invalid or expired pairing code.');
+        } else {
+            setErrorMsg(err.message || 'Error occurred');
+        }
     } finally {
         setLoading(false);
     }
@@ -112,6 +90,14 @@ export default function Dashboard() {
         </div>
         <div className="flex items-center gap-4">
           <span className="text-xs text-[#bcabae] font-bold uppercase tracking-widest hidden sm:inline">{user?.displayName || user?.email?.split('@')[0]}</span>
+          <button
+            onClick={() => logOut()}
+            className="flex items-center gap-2 text-xs text-[#bcabae]/70 hover:text-white font-bold uppercase tracking-widest transition-colors"
+            aria-label="Log out"
+          >
+            <LogOut className="w-4 h-4" />
+            <span className="hidden sm:inline">Logout</span>
+          </button>
         </div>
       </nav>
 

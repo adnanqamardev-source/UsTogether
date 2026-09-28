@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { getUserProfile, batchWrite } from '@/lib/firestore-helpers';
+import { getUserProfile, batchWrite } from '@/lib/shared/firestore-helpers';
 
 vi.mock('@/lib/firestore', () => ({
   getDoc: vi.fn(),
@@ -13,8 +13,6 @@ vi.mock('@/lib/firestore', () => ({
   })),
   getFirestore: vi.fn(),
 }));
-
-vi.mock('@/lib/firebase', () => ({ db: {} }));
 
 // Mock the underlying client module so the real Firebase client.ts is never
 // evaluated in the jsdom test environment (which would trigger getAuth/getStorage

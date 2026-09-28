@@ -3,7 +3,7 @@
 import { useCallback } from 'react';
 import dynamic from 'next/dynamic';
 import { useAuth } from '@/components/providers';
-import LandingSections from '@/components/LandingSections';
+import LandingSections from '@/components/shared/LandingSections';
 
 const DashboardDynamic = dynamic(
   () => import('@/components/features/couple/Dashboard').then((mod) => mod.default),

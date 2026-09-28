@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getFirestore } from 'firebase-admin/firestore';
-import { getAdminApp } from '@/lib/admin';
+import { getAdminApp } from '@/lib/server/admin';
+import { deleteCoupleTree, listCoupleIds } from '@/lib/server/couple-tree';
 
 const BATCH_SIZE = 500;
 
@@ -22,12 +23,21 @@ export async function POST(request: NextRequest) {
     const app = getAdminApp();
     const db = getFirestore(app);
 
-    // Get all collections
+    // Delete couple-owned subcollections first so no orphans remain.
+    const coupleIds = await listCoupleIds(db);
+    const subCounts: Record<string, number> = {};
+    for (const coupleId of coupleIds) {
+      const counts = await deleteCoupleTree(db, coupleId);
+      for (const [sub, n] of Object.entries(counts)) {
+        subCounts[sub] = (subCounts[sub] ?? 0) + n;
+      }
+    }
+
+    // Get all collections (memory_photos lives under couples/{id}, handled above)
     const usersSnapshot = await db.collection('users').get();
     const coupleSnapshot = await db.collection('couples').get();
     const pairingCodesSnapshot = await db.collection('pairingCodes').get();
     const quizzesSnapshot = await db.collection('quizzes').get();
-    const memoryPhotosSnapshot = await db.collection('memory_photos').get();
 
     // Delete achievements subcollections for each user
     const userPaths: string[] = [];
@@ -44,7 +54,6 @@ export async function POST(request: NextRequest) {
       ...coupleSnapshot.docs,
       ...pairingCodesSnapshot.docs,
       ...quizzesSnapshot.docs,
-      ...memoryPhotosSnapshot.docs,
     ].map((d) => d.ref);
 
     for (const path of userPaths) {
@@ -59,9 +68,13 @@ export async function POST(request: NextRequest) {
       await batch.commit();
     }
 
+    const subSummary = Object.entries(subCounts)
+      .map(([sub, n]) => `${n} ${sub}`)
+      .join(', ');
+
     return NextResponse.json({ 
       success: true, 
-      message: `Deleted ${usersSnapshot.size} users, ${coupleSnapshot.size} couples, ${pairingCodesSnapshot.size} codes, ${quizzesSnapshot.size} quizzes, ${memoryPhotosSnapshot.size} photos` 
+      message: `Deleted ${usersSnapshot.size} users, ${coupleSnapshot.size} couples, ${pairingCodesSnapshot.size} codes, ${quizzesSnapshot.size} quizzes; couple subcollections: ${subSummary}` 
     });
   } catch (error) {
     console.error('Reset data failed', error);

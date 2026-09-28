@@ -4,12 +4,13 @@ import { useState, useEffect, useRef } from "react";
 import { useAuth } from '@/components/providers';
 import { motion, AnimatePresence } from 'motion/react';
 import { Heart, CheckCircle2 } from 'lucide-react';
-import { handleFirestoreError, OperationType } from '@/lib/firestore-errors';
+import { handleFirestoreError, OperationType } from '@/lib/shared/firestore-errors';
 import { useFirestoreDocument, batchWrite } from '@/lib/firebase/client';
-import { checkAndAwardAchievements } from '@/lib/achievements';
+import { finishSessionWithScore } from '@/lib/shared/scoring';
 import type { Session, Quiz, Couple } from '@/types';
 import { doc, runTransaction } from '@/lib/firestore';
 import { db } from '@/lib/firebase/client';
+import { partnerIdOf } from '@/lib/shared/couple-pairing';
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -37,12 +38,19 @@ export default function ActiveSession({ coupleId, sessionId, couple }: { coupleI
   const isFinished = currentQIndex >= quiz.questions.length;
 
   const myAnswer = session.state.answers?.[currentQIndex]?.[user.uid];
-  const partnerId =
-    couple && user
+  const partnerId = (() => {
+    try {
+      if (couple && user) return partnerIdOf(couple, user.uid);
+    } catch {
+      // Fall through to the inline derivation when the module rejects
+      // (e.g. the viewer is not a member of this Couple).
+    }
+    return couple && user
       ? couple.user1Id === user.uid
         ? couple.user2Id
         : couple.user1Id
       : '';
+  })();
   const partnerAnswer = partnerId ? session.state.answers?.[currentQIndex]?.[partnerId] : undefined;
 
   const bothAnswered = myAnswer !== undefined && partnerAnswer !== undefined;
@@ -82,11 +90,8 @@ export default function ActiveSession({ coupleId, sessionId, couple }: { coupleI
   const nextQuestion = async () => {
     try {
       if (currentQIndex + 1 >= quiz.questions.length) {
-        await batchWrite([
-          { type: 'update', ref: sessionRef, data: { status: 'finished', updatedAt: Date.now() } },
-        ]);
         if (user) {
-          await checkAndAwardAchievements(user.uid, { sessionsFinished: 1 });
+          await finishSessionWithScore(coupleId, sessionId, user.uid);
         }
       } else {
         await batchWrite([
@@ -101,11 +106,8 @@ export default function ActiveSession({ coupleId, sessionId, couple }: { coupleI
   const endSessionEarly = async () => {
     if (!window.confirm('Are you sure you want to end this quiz early?')) return;
     try {
-      await batchWrite([
-        { type: 'update', ref: sessionRef, data: { status: 'finished', updatedAt: Date.now() } },
-      ]);
       if (user) {
-        await checkAndAwardAchievements(user.uid, { sessionsFinished: 1 });
+        await finishSessionWithScore(coupleId, sessionId, user.uid);
       }
     } catch (e) {
       handleFirestoreError(e, OperationType.UPDATE, `couples/${coupleId}/sessions/${sessionId}`);

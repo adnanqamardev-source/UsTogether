@@ -1,7 +1,7 @@
 "use client";
 
-import AuthWrapper from '@/components/AuthWrapper';
-import Dashboard from '@/components/Dashboard';
+import AuthWrapper from '@/components/auth/AuthWrapper';
+import Dashboard from '@/components/features/couple/Dashboard';
 
 export default function DashboardPage() {
   return (

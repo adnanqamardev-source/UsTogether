@@ -13,73 +13,30 @@ import { isDemo } from "./firebase/client";
 import * as demo from "./firebase/demo";
 import * as firebase from "firebase/firestore";
 
-// In demo mode, delegate to the mock implementations.
-// In production, re-export the real Firebase functions.
-// Each function is wrapped to preserve proper typing in both modes.
+// Single adapter-selection seam: pick the backing implementation once.
+// Every export below is a plain typed delegation off this one object —
+// no per-export ternaries and no any-typed rest-parameter wrappers.
+const adapter: typeof firebase =
+  (isDemo ? demo : firebase) as unknown as typeof firebase;
 
-export const doc: typeof firebase.doc = isDemo
-  ? (...args: any[]) => (demo as any).doc(...args)
-  : firebase.doc;
-
-export const collection: typeof firebase.collection = isDemo
-  ? (...args: any[]) => (demo as any).collection(...args)
-  : firebase.collection;
-
-export const getDoc: typeof firebase.getDoc = isDemo
-  ? (...args: any[]) => (demo as any).getDoc(...args)
-  : firebase.getDoc;
-
-export const setDoc: typeof firebase.setDoc = isDemo
-  ? (...args: any[]) => (demo as any).setDoc(...args)
-  : firebase.setDoc;
-
-export const updateDoc: typeof firebase.updateDoc = isDemo
-  ? (...args: any[]) => (demo as any).updateDoc(...args)
-  : firebase.updateDoc;
-
-export const deleteDoc: typeof firebase.deleteDoc = isDemo
-  ? (...args: any[]) => (demo as any).deleteDoc(...args)
-  : firebase.deleteDoc;
-
-export const addDoc: typeof firebase.addDoc = isDemo
-  ? (...args: any[]) => (demo as any).addDoc(...args)
-  : firebase.addDoc;
-
-export const getDocs: typeof firebase.getDocs = isDemo
-  ? (...args: any[]) => (demo as any).getDocs(...args)
-  : firebase.getDocs;
-
-export const query: typeof firebase.query = isDemo
-  ? (...args: any[]) => (demo as any).query(...args)
-  : firebase.query;
-
-export const where: typeof firebase.where = isDemo
-  ? (...args: any[]) => (demo as any).where(...args)
-  : firebase.where;
-
-export const orderBy: typeof firebase.orderBy = isDemo
-  ? (...args: any[]) => (demo as any).orderBy(...args)
-  : firebase.orderBy;
-
-export const limit: typeof firebase.limit = isDemo
-  ? (...args: any[]) => (demo as any).limit(...args)
-  : firebase.limit;
-
-export const writeBatch: typeof firebase.writeBatch = isDemo
-  ? (...args: any[]) => (demo as any).writeBatch(...args)
-  : firebase.writeBatch;
-
-export const runTransaction: typeof firebase.runTransaction = isDemo
-  ? (...args: any[]) => (demo as any).runTransaction(...args)
-  : firebase.runTransaction;
-
-export const serverTimestamp: typeof firebase.serverTimestamp = isDemo
-  ? (...args: any[]) => (demo as any).serverTimestamp(...args)
-  : firebase.serverTimestamp;
-
-export const onSnapshot: typeof firebase.onSnapshot = isDemo
-  ? (...args: any[]) => (demo as any).onSnapshot(...args)
-  : firebase.onSnapshot;
+export const doc: typeof firebase.doc = adapter.doc;
+export const collection: typeof firebase.collection = adapter.collection;
+export const getDoc: typeof firebase.getDoc = adapter.getDoc;
+export const setDoc: typeof firebase.setDoc = adapter.setDoc;
+export const updateDoc: typeof firebase.updateDoc = adapter.updateDoc;
+export const deleteDoc: typeof firebase.deleteDoc = adapter.deleteDoc;
+export const addDoc: typeof firebase.addDoc = adapter.addDoc;
+export const getDocs: typeof firebase.getDocs = adapter.getDocs;
+export const query: typeof firebase.query = adapter.query;
+export const where: typeof firebase.where = adapter.where;
+export const orderBy: typeof firebase.orderBy = adapter.orderBy;
+export const limit: typeof firebase.limit = adapter.limit;
+export const writeBatch: typeof firebase.writeBatch = adapter.writeBatch;
+export const runTransaction: typeof firebase.runTransaction =
+  adapter.runTransaction;
+export const serverTimestamp: typeof firebase.serverTimestamp =
+  adapter.serverTimestamp;
+export const onSnapshot: typeof firebase.onSnapshot = adapter.onSnapshot;
 
 export const FirestoreError = firebase.FirestoreError;
 export type DocumentData = firebase.DocumentData;

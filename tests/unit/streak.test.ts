@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { updateStreak } from '@/lib/streak';
+import { updateStreak } from '@/lib/shared/streak';
 
 // Mock @/lib/firestore (the demo-aware wrapper) and db before imports
 vi.mock('@/lib/firestore', async () => {
@@ -10,14 +10,6 @@ vi.mock('@/lib/firestore', async () => {
     setDoc: vi.fn(),
     doc: vi.fn(),
     serverTimestamp: vi.fn(() => ({ _methodName: 'serverTimestamp' })),
-  };
-});
-
-vi.mock('@/lib/firebase', async () => {
-  const actual = await vi.importActual<typeof import('@/lib/firebase')>('@/lib/firebase');
-  return {
-    ...actual,
-    db: {},
   };
 });
 

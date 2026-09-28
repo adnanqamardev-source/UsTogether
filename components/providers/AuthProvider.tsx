@@ -2,9 +2,9 @@
 
 import { createContext, useContext, useEffect, useState } from 'react';
 import { User, GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/auth';
-import { doc, getDoc, FirestoreError } from '@/lib/firestore';
+import { doc, getDoc, onSnapshot, FirestoreError } from '@/lib/firestore';
 import { auth, db, isDemo } from '@/lib/firebase/client';
-import { createUserProfile } from '@/lib/firestore-helpers';
+import { createUserProfile } from '@/lib/shared/firestore-helpers';
 import type { UserProfile } from '@/types';
 
 interface AuthContextType {
@@ -64,7 +64,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Live subscription to the profile doc. Pairing and Disconnect write
+    // pairedCoupleId from either member's device (or the pairing module's
+    // batch), so a one-time fetch goes stale: the pairing page would keep
+    // showing "enter code" after a successful pair, and a retry would then
+    // fail with "invalid code" because the single-use code is already
+    // consumed. The subscription keeps dbUser current everywhere.
+    let profileUnsub: (() => void) | null = null;
     const unsubscribe = auth.onAuthStateChanged(async (u: User | null) => {
+      profileUnsub?.();
+      profileUnsub = null;
       setUser(u);
       
       if (u) {
@@ -89,6 +98,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               setDbUser(newResult.data);
             }
           }
+          profileUnsub = onSnapshot(
+            userRef,
+            (snap) => {
+              if (snap.exists()) {
+                setDbUser(snap.data() as UserProfile);
+              }
+            },
+            (err) => {
+              console.error('Profile subscription error:', err);
+            }
+          );
         } catch (error) {
             // Catch the demo-mode dummy DB crash and force populate the user anyway.
             if (isDemo) {
@@ -105,7 +125,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setLoading(false);
     });
 
-    return () => unsubscribe();
+    return () => {
+      profileUnsub?.();
+      unsubscribe();
+    };
   }, []);
 
   const signIn = async () => {

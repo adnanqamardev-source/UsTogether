@@ -244,7 +244,9 @@ function matches(data: any, constraints: any[]): boolean {
   return constraints.every((c) => {
     if (!c || !c.__demoWhere) return true;
     const actual = data?.[c.field];
-    switch (c.op) {
+    // Accept both `op` (canonical) and `opStr` (legacy alias).
+    const op = c.op ?? c.opStr;
+    switch (op) {
       case '==': return actual === c.value;
       case '!=': return actual !== c.value;
       case '>': return actual > c.value;
@@ -252,7 +254,9 @@ function matches(data: any, constraints: any[]): boolean {
       case '<': return actual < c.value;
       case '<=': return actual <= c.value;
       case 'array-contains': return Array.isArray(actual) && actual.includes(c.value);
+      case 'array-contains-any': return Array.isArray(actual) && Array.isArray(c.value) && c.value.some((v: any) => actual.includes(v));
       case 'in': return Array.isArray(c.value) && c.value.includes(actual);
+      case 'not-in': return Array.isArray(c.value) && !c.value.includes(actual);
       default: return true;
     }
   });
@@ -329,7 +333,11 @@ export function query(...args: any[]): any {
 }
 
 export function where(field: string, opStr: string, value: any): any {
-  return { __demoWhere: true, field, opStr, value };
+  // NOTE: both `op` (canonical) and `opStr` (legacy alias) are stored so
+  // `matches()` filtering works regardless of which key callers inspect.
+  // Previously only `opStr` was stored while `matches()` read `c.op`,
+  // which meant where() constraints silently never filtered.
+  return { __demoWhere: true, field, op: opStr, opStr, value };
 }
 
 export function orderBy(field: string, directionStr?: 'asc' | 'desc'): any {

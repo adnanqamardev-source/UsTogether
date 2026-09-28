@@ -4,9 +4,9 @@ import { useAuth } from '@/components/providers';
 import { collection, query, where, getDocs, addDoc, serverTimestamp, deleteDoc } from '@/lib/firestore';
 import { db } from '@/lib/firebase/client';
 import { Calendar, Sparkles, Loader, Upload, Trash2, Image as ImageIcon, Milestone as MilestoneIcon } from 'lucide-react';
-import { handleFirestoreError, OperationType } from '@/lib/firestore-errors';
+import { handleFirestoreError, OperationType } from '@/lib/shared/firestore-errors';
 import Markdown from 'react-markdown';
-import { uploadWithProgress, deletePhoto } from '@/lib/storage';
+import { uploadWithProgress, deletePhoto } from '@/lib/shared/storage';
 import type { MemoryPhoto, Milestone } from '@/types';
 import { doc } from '@/lib/firestore';
 import { Button } from "@/components/ui/button";
@@ -229,27 +229,32 @@ export default function MemoryBoard({ coupleId }: { coupleId: string }) {
 
       <AnimatePresence mode="wait">
         {tab === 'memories' && (
+          finishedSessions.length === 0 ? (
+            <motion.div
+              key="memories-empty"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 10 }}
+            >
+              <EmptyState
+                icon={Calendar}
+                title="No chai-sipped quizzes yet"
+                description="Start one and make some memories."
+              />
+            </motion.div>
+          ) : (
           <motion.div
             key="memories"
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 10 }}
-            className="columns-2 md:columns-3 gap-6 space-y-6"
+            className="columns-2 md:columns-3 gap-6"
           >
-            {finishedSessions.length === 0 ? (
-              <div className="col-span-full">
-                <EmptyState
-                  icon={Calendar}
-                  title="No chai-sipped quizzes yet"
-                  description="Start one and make some memories."
-                />
-              </div>
-            ) : (
-              finishedSessions.map(s => (
+            {finishedSessions.map(s => (
                 <motion.div
                   key={s.id}
                   whileHover={{ scale: 1.03, y: -4 }}
-                  className="group relative bg-white/5 p-6 rounded-[2rem] border border-white/10 shadow-lg flex flex-col items-center overflow-hidden"
+                  className="group relative bg-white/5 p-6 rounded-[2rem] border border-white/10 shadow-lg flex flex-col items-center overflow-hidden break-inside-avoid mb-6"
                 >
                   <div className="absolute inset-0 bg-gradient-to-br from-[#2d2e2e]/0 via-[#2d2e2e]/0 to-[#bcabae]/0 group-hover:from-[#2d2e2e]/10 group-hover:to-[#bcabae]/10 transition-all duration-500 pointer-events-none" />
                   <Calendar className="w-8 h-8 text-[#bcabae] mb-4 relative z-10" />
@@ -259,10 +264,9 @@ export default function MemoryBoard({ coupleId }: { coupleId: string }) {
                     View
                   </button>
                 </motion.div>
-              ))
-            )}
+              ))}
           </motion.div>
-        )}
+          ))}
         {tab === 'photos' && (
           <motion.div
             key="photos"
@@ -289,12 +293,12 @@ export default function MemoryBoard({ coupleId }: { coupleId: string }) {
                 description="Upload your first memory."
               />
             ) : (
-              <div className="columns-2 md:columns-3 gap-6 space-y-6">
+              <div className="columns-2 md:columns-3 gap-6">
                 {photos.map(p => (
                   <motion.div
                     key={p.id}
                     whileHover={{ scale: 1.03, y: -4 }}
-                    className="group relative bg-white/5 border border-white/10 rounded-[2rem] overflow-hidden shadow-lg"
+                    className="group relative bg-white/5 border border-white/10 rounded-[2rem] overflow-hidden shadow-lg break-inside-avoid mb-6"
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={p.url} alt="memory" className="w-full object-cover rounded-[2rem]" loading="lazy" />

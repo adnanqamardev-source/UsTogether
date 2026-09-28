@@ -3,14 +3,14 @@ import { collection, query, where, onSnapshot, addDoc, doc, setDoc, deleteDoc, l
 import { db, isDemo } from "@/lib/firebase/client";
 import { useAuth } from '@/components/providers';
 import { Sparkles, Trash2, Flame } from "lucide-react";
-import { handleFirestoreError, OperationType } from "@/lib/firestore-errors";
+import { handleFirestoreError, OperationType } from "@/lib/shared/firestore-errors";
 import QuizCardSkeleton from "./QuizCardSkeleton";
 import QuizCard from "./QuizCard";
 import {
   getRandomQuestions,
   toFirestoreQuizBatch,
   generateFallbackQuizMetadata,
-} from "@/lib/quiz-data";
+} from "@/lib/shared/quiz-data";
 import { SectionHeader } from "@/components/layout";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";

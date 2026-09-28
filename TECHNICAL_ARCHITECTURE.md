@@ -28,13 +28,13 @@
 - `components/features/achievements/AchievementsPanel.tsx` — Achievement grid
 - `components/shared/` — `BottomNav`, `ErrorBoundary`, `LandingSections`, `Skeletons` (no ChatFAB — removed, chat lives in BottomNav)
 - `components/ui/` + `components/layout/` — Shared primitives (`button`, `card`, `input`, `badge`, `empty-state`, `section-header`)
-- `components/*.tsx` — One-line re-export shims for backwards compatibility
+- One import path per module: `@/components/features/...`, `@/components/shared/...`, `@/components/providers`, `@/components/auth/...` (no root re-export shims)
 - `lib/firebase/client.ts` — Firebase client init + `isDemo` flag (hard-off in production)
 - `lib/firebase/demo.ts` + `demo-seed.ts` — In-memory demo store (dev/CI only)
 - `lib/firebase/index.ts` — Client re-export barrel
 - `lib/shared/*` — `firestore-helpers`, `streak`, `achievements`, `quiz-data`, `storage`, `input-validation`, `firestore-errors`
 - `lib/server/*` — `admin`, `api-auth`, `ratelimit` (API-only)
-- `lib/*.ts` — Backwards-compat re-exports of the above
+- One import path per module: `@/lib/shared/*` (shared), `@/lib/server/*` (server-only), `@/lib/firebase/client`, `@/lib/firestore` (demo-aware seam)
 - `firestore.rules` — Row-level security (canonical for access policy)
 - `global.d.ts` — Type definitions (imported as `@/types`)
 

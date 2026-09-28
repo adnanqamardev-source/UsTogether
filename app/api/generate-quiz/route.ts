@@ -1,8 +1,9 @@
 import { GoogleGenAI } from "@google/genai";
 import { NextRequest, NextResponse } from "next/server";
-import { getUserId } from "@/lib/api-auth";
-import { validateQuizBody } from "@/lib/input-validation";
-import { checkRateLimit } from "@/lib/ratelimit";
+import { getUserId } from "@/lib/server/api-auth";
+import { validateQuizBody } from "@/lib/shared/input-validation";
+import { checkRateLimit } from "@/lib/server/ratelimit";
+import { quizModelId } from "@/lib/server/ai-model";
 
 export const maxDuration = 60;
 export const dynamic = "force-dynamic";
@@ -81,7 +82,7 @@ Output format MUST be valid JSON matching this schema:
 Make sure exactly one JSON object is returned, with no markdown code blocks around it if possible, just the raw JSON or wrapped in \`\`\`json.`;
 
     const response = await ai.models.generateContent({
-        model: "gemini-1.5-flash",
+        model: quizModelId(),
         contents: prompt,
         config: {
           temperature: 0.8,

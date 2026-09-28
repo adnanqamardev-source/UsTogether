@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { doc, onSnapshot, DocumentData } from '@/lib/firestore';
 import { db } from '@/lib/firebase/client';
-import { handleFirestoreError, OperationType } from '@/lib/firestore-errors';
+import { handleFirestoreError, OperationType } from '@/lib/shared/firestore-errors';
 
 // SHORT-CIRCUIT: normalize the path. If it's missing, empty, or contains an
 // "undefined"/"null" segment, treat it as an empty path so we never fire a

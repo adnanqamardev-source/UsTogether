@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { checkAndAwardAchievements, getEligibleAchievements } from '@/lib/achievements';
+import { checkAndAwardAchievements, getEligibleAchievements } from '@/lib/shared/achievements';
 
 class MockQuery {
   where = vi.fn(function (this: MockQuery) { return this; });
@@ -17,9 +17,6 @@ vi.mock('@/lib/firestore', () => ({
   serverTimestamp: vi.fn(() => ({ _methodName: 'serverTimestamp' })),
   getFirestore: vi.fn(),
 }));
-
-// Mock db without triggering real Firebase init
-vi.mock('@/lib/firebase', () => ({ db: {}, auth: {} }));
 
 // Mock the underlying client module so the real Firebase client.ts is never
 // evaluated in the jsdom test environment (which would trigger getAuth/getStorage

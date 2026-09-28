@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { collection, onSnapshot, query, QueryConstraint, DocumentData } from '@/lib/firestore';
-import { db, isDemo } from '@/lib/firebase/client';
-import { handleFirestoreError, OperationType } from '@/lib/firestore-errors';
+import { db } from '@/lib/firebase/client';
+import { handleFirestoreError, OperationType } from '@/lib/shared/firestore-errors';
 
 function defaultTransform<T>(id: string, data: DocumentData): T {
   return data as T;
@@ -36,23 +36,10 @@ export function useFirestoreCollection<T>(
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
-    // Demo Mode bypass
-    if (isDemo && safeSegments.length) {
-      const fetchDemoData = async () => {
-        const seedData = await import('@/lib/firebase/demo-seed').then(m => m.seed);
-        let mockData: T[] = [];
-        if (pathKey.includes('sessions')) mockData = Object.values((seedData as any)['couples/demo-couple-1/sessions']).map((d: any) => transform(d.quizId || Math.random().toString(), d)) as T[];
-        else if (pathKey.includes('quizzes')) mockData = Object.values((seedData as any).quizzes).map((d: any, i: number) => transform('q' + (i+1), d)) as T[];
-        else if (pathKey.includes('messages')) mockData = Object.values((seedData as any)['couples/demo-couple-1/messages']).map((d: any, i: number) => transform('msg' + (i+1), d)) as T[];
-        else if (pathKey.includes('achievements')) mockData = Object.values((seedData as any)['achievements/demo-user-1/items']).map((d: any) => transform(d.id, d)) as T[];
-        
-        setData(mockData);
-        setLoading(false);
-      };
-      fetchDemoData();
-      return () => {};
-    }
-
+    // All reads (demo and production) flow through collection/query/onSnapshot.
+    // In demo mode those already hit the in-memory adapter selected in
+    // lib/firestore.ts, so no hook-level bypass is needed here — and query
+    // constraints would be silently dropped by any such bypass.
     if (!safeSegments.length) {
       setLoading(false);
       return;

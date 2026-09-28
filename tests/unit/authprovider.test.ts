@@ -3,26 +3,19 @@ import React from 'react';
 import { renderHook, act } from '@testing-library/react';
 
 // Mock @/lib/firestore. The current AuthProvider uses getDoc (wrapped in
-// retryGetDoc with exponential backoff), not onSnapshot.
+// retryGetDoc with exponential backoff) for the initial read, then keeps the
+// profile live with onSnapshot so pairing transitions propagate.
 vi.mock('@/lib/firestore', () => ({
   getFirestore: vi.fn(() => ({})),
   getDoc: vi.fn(),
   doc: vi.fn(),
+  onSnapshot: vi.fn(() => () => {}),
   serverTimestamp: vi.fn(() => ({ _methodName: 'serverTimestamp' })),
   FirestoreError: class FirestoreError extends Error {},
 }));
 
-// Mock @/lib/firestore-helpers (AuthProvider imports createUserProfile from here).
-vi.mock('@/lib/firestore-helpers', () => ({
-  createUserProfile: vi.fn(),
-}));
-
-// Mock @/lib/firebase
-vi.mock('@/lib/firebase', () => ({
-  auth: {
-    onAuthStateChanged: vi.fn(),
-  },
-  db: {},
+// Mock @/lib/shared/firestore-helpers (AuthProvider imports createUserProfile from here).
+vi.mock('@/lib/shared/firestore-helpers', () => ({
   createUserProfile: vi.fn(),
 }));
 
@@ -46,10 +39,10 @@ vi.mock('firebase/auth', () => ({
   GoogleAuthProvider: vi.fn(),
 }));
 
-import { getDoc, doc } from '@/lib/firestore';
+import { getDoc, doc, onSnapshot } from '@/lib/firestore';
 import { AuthProvider, useAuth } from '@/components/providers';
 import { auth } from '@/lib/firebase/client';
-import { createUserProfile } from '@/lib/firestore-helpers';
+import { createUserProfile } from '@/lib/shared/firestore-helpers';
 
 const mockGetDoc = vi.mocked(getDoc);
 
@@ -239,5 +232,48 @@ describe('AuthProvider', () => {
 
     expect(typeof result.current.signIn).toBe('function');
     expect(typeof result.current.logOut).toBe('function');
+  });
+
+  it('should keep dbUser live via subscription so pairing transitions propagate', async () => {
+    const mockUser = makeUser();
+    const initialProfile = {
+      email: 'test@example.com',
+      displayName: 'Test User',
+      points: 0,
+      pairedCoupleId: '',
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+    };
+
+    vi.mocked(auth.onAuthStateChanged).mockImplementation((callback: any) => {
+      setTimeout(() => callback(mockUser), 0);
+      return () => {};
+    });
+    vi.mocked(doc).mockReturnValue({ id: 'user_123' } as any);
+    mockGetDocResolved(makeSnapshot(initialProfile));
+
+    let snapshotCallback: ((snap: any) => void) | null = null;
+    vi.mocked(onSnapshot).mockImplementation(((...args: any[]) => {
+      snapshotCallback = args[1];
+      return () => {};
+    }) as any);
+
+    const { result } = renderHook(() => useAuth(), {
+      wrapper: AuthProvider,
+    });
+
+    await act(async () => {
+      await new Promise(resolve => setTimeout(resolve, 20));
+    });
+
+    expect(result.current.dbUser?.pairedCoupleId).toBe('');
+    expect(onSnapshot).toHaveBeenCalled();
+
+    // Partner pairs from another device: profile doc gains pairedCoupleId.
+    await act(async () => {
+      snapshotCallback?.(makeSnapshot({ ...initialProfile, pairedCoupleId: 'a_b' }));
+    });
+
+    expect(result.current.dbUser?.pairedCoupleId).toBe('a_b');
   });
 });
