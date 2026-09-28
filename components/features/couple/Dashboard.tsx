@@ -131,7 +131,7 @@ export default function Dashboard() {
           </p>
 
           <div className="bg-black/20 p-6 sm:p-8 rounded-3xl mb-10 border border-white/5 hover:scale-105 hover:bg-black/30 hover:border-white/10 hover:shadow-[0_0_20px_rgba(99,102,241,0.2)] transition-all duration-300 cursor-pointer group">
-            <p className="text-xs text-#716969 mb-4 uppercase tracking-[0.2em] font-bold">Your Code</p>
+            <p className="text-xs text-[#716969] mb-4 uppercase tracking-[0.2em] font-bold">Your Code</p>
             <div className="bg-black/30 rounded-xl p-4 mb-4 min-h-[80px] sm:min-h-[100px] flex items-center justify-center overflow-hidden">
               <p className="font-mono text-4xl sm:text-5xl md:text-6xl tracking-widest text-white font-light select-all word-break break-all text-center">{myCode || '........'}</p>
             </div>

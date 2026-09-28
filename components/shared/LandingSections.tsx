@@ -83,7 +83,7 @@ export default function LandingSections({ onGetStarted }: { onGetStarted?: () =>
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.25 }}
-            className="text-xl md:text-2xl text-#bcabae max-w-3xl mx-auto font-light leading-relaxed text-balance"
+            className="text-xl md:text-2xl text-[#bcabae] max-w-3xl mx-auto font-light leading-relaxed text-balance"
           >
             Turn your shared history into a playful daily ritual. Compete in personalized quizzes, build memory timelines, and celebrate what makes you Us.
           </motion.p>
@@ -96,13 +96,13 @@ export default function LandingSections({ onGetStarted }: { onGetStarted?: () =>
           >
             <button 
               onClick={onGetStarted}
-              className="group relative inline-flex items-center justify-center gap-3 px-8 py-4 bg-white text-#0f0f0f rounded-full font-bold text-lg overflow-hidden transition-transform active:scale-95 hover:scale-105"
+              className="group relative inline-flex items-center justify-center gap-3 px-8 py-4 bg-white text-[#0f0f0f] rounded-full font-bold text-lg overflow-hidden transition-transform active:scale-95 hover:scale-105"
             >
               <div className="absolute inset-0 bg-gradient-to-r from-[#bcabae]/20 to-[#bcabae]/20 opacity-0 group-hover:opacity-100 transition-opacity" />
               <span className="relative">Start Your Journey — Free</span>
               <ArrowRight className="relative w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </button>
-            <p className="text-sm text-#716969 mt-2 sm:mt-0 font-mono tracking-tight">No credit card required</p>
+            <p className="text-sm text-[#716969] mt-2 sm:mt-0 font-mono tracking-tight">No credit card required</p>
           </motion.div>
         </section>
 
@@ -154,7 +154,7 @@ export default function LandingSections({ onGetStarted }: { onGetStarted?: () =>
                           : "border-white/10 bg-white/5"
                       )}
                     >
-                      <span className="text-#bcabae font-medium">{opt}</span>
+                      <span className="text-[#bcabae] font-medium">{opt}</span>
                       
                       {/* Partner cursor indicator */}
                       <AnimatePresence>
@@ -196,8 +196,8 @@ export default function LandingSections({ onGetStarted }: { onGetStarted?: () =>
                 <stat.icon className="w-6 h-6" />
               </div>
               <div className="text-left">
-                <p className="font-mono text-xs text-#716969 uppercase tracking-widest">{stat.label}</p>
-                <p className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-#716969 mt-1">{stat.value}</p>
+                <p className="font-mono text-xs text-[#716969] uppercase tracking-widest">{stat.label}</p>
+                <p className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-[#716969] mt-1">{stat.value}</p>
               </div>
             </motion.div>
           ))}
@@ -207,7 +207,7 @@ export default function LandingSections({ onGetStarted }: { onGetStarted?: () =>
         <section className="space-y-16">
           <div className="text-center max-w-2xl mx-auto space-y-4">
             <h2 className="text-4xl md:text-5xl font-bold tracking-tight">More than just questions.</h2>
-            <p className="text-lg text-#716969">Everything you need to spark conversation, reminisce, and grow closer every day.</p>
+            <p className="text-lg text-[#716969]">Everything you need to spark conversation, reminisce, and grow closer every day.</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -221,7 +221,7 @@ export default function LandingSections({ onGetStarted }: { onGetStarted?: () =>
               <div className="absolute inset-0 bg-gradient-to-b from-[#2d2e2e]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
               <Zap className="w-10 h-10 text-[#bcabae] mb-6" />
               <h3 className="text-2xl font-bold text-white mb-3">Live Battles</h3>
-              <p className="text-#716969 leading-relaxed">
+              <p className="text-[#716969] leading-relaxed">
                 Connect in real-time. See your partner typing, guessing, and reacting synchronously, no matter the distance between you.
               </p>
             </motion.div>
@@ -237,7 +237,7 @@ export default function LandingSections({ onGetStarted }: { onGetStarted?: () =>
               <div className="absolute inset-0 bg-gradient-to-b from-[#bcabae]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
               <CalendarDays className="w-10 h-10 text-[#bcabae] mb-6" />
               <h3 className="text-2xl font-bold text-white mb-3">Memory Timeline</h3>
-              <p className="text-#716969 leading-relaxed">
+              <p className="text-[#716969] leading-relaxed">
                 Your relationship, documented dynamically. Every answer becomes a stepping stone in a secure, private timeline of your journey.
               </p>
             </motion.div>
@@ -253,7 +253,7 @@ export default function LandingSections({ onGetStarted }: { onGetStarted?: () =>
               <div className="absolute inset-0 bg-gradient-to-b from-[#bcabae]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
               <Target className="w-10 h-10 text-[#bcabae] mb-6" />
               <h3 className="text-2xl font-bold text-white mb-3">Streaks & Rewards</h3>
-              <p className="text-#716969 leading-relaxed">
+              <p className="text-[#716969] leading-relaxed">
                 Build healthy communication habits. Earn achievements, unlock new quiz categories, and celebrate milestones together.
               </p>
             </motion.div>
@@ -274,7 +274,7 @@ export default function LandingSections({ onGetStarted }: { onGetStarted?: () =>
             <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-white mb-6">
               Ready to grow <span className="italic font-serif text-[#bcabae]">closer?</span>
             </h2>
-            <p className="text-xl text-#bcabae font-light mb-10">
+            <p className="text-xl text-[#bcabae] font-light mb-10">
               Join thousands of couples intentionally investing in their relationship daily. It takes less than 5 minutes a day.
             </p>
             <button 
@@ -285,10 +285,10 @@ export default function LandingSections({ onGetStarted }: { onGetStarted?: () =>
               <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
             </button>
             <div className="flex items-center justify-center gap-6 mt-8">
-              <div className="flex items-center gap-2 text-sm text-#716969">
+              <div className="flex items-center gap-2 text-sm text-[#716969]">
                 <Lock className="w-4 h-4" /> Secure & Private
               </div>
-              <div className="flex items-center gap-2 text-sm text-#716969">
+              <div className="flex items-center gap-2 text-sm text-[#716969]">
                 <Gift className="w-4 h-4" /> Always Free Core
               </div>
             </div>

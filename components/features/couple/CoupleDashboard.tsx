@@ -20,7 +20,6 @@ import StreakCounter from './StreakCounter';
 import AchievementsPanel from '@/components/features/achievements/AchievementsPanel';
 import ErrorBoundary from '@/components/shared/ErrorBoundary';
 import BottomNav from '@/components/shared/BottomNav';
-import ChatFAB from '@/components/shared/ChatFAB';
 import { DashboardSkeleton, AchievementsPanelSkeleton, ChatPanelSkeleton } from '@/components/shared/Skeletons';
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/layout";
@@ -270,7 +269,6 @@ export default function CoupleDashboard({ coupleId }: { coupleId: string }) {
       {/* Main Content */}
       <main className="flex-1 relative z-10 w-full p-5 sm:p-10 pb-28">
         <BottomNav onChatClick={() => setIsChatOpen(true)} />
-        <ChatFAB onClick={() => setIsChatOpen(true)} />
         {isLoading ? (
           <DashboardSkeleton />
         ) : isStats ? (

@@ -70,7 +70,7 @@ export default function StatsPage() {
   if (!coupleId) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <p className="text-#716969">Pair with your partner to view stats.</p>
+        <p className="text-[#716969]">Pair with your partner to view stats.</p>
       </div>
     );
   }
@@ -80,7 +80,7 @@ export default function StatsPage() {
       <div className="flex items-center justify-between mb-10">
         <div>
           <h1 className="text-4xl md:text-5xl font-serif italic text-white mb-2">Your Journey</h1>
-          <p className="text-#716969">Track your connection, growth, and milestones together.</p>
+          <p className="text-[#716969]">Track your connection, growth, and milestones together.</p>
         </div>
         <Button
           variant="secondary"
@@ -96,22 +96,22 @@ export default function StatsPage() {
         <Card variant="standard" padding="md" className="text-center">
           <Trophy className="w-8 h-8 text-[#bcabae] mx-auto mb-2" />
           <div className="text-3xl font-bold text-white">{totalPoints}</div>
-          <div className="text-xs text-#716969 uppercase tracking-widest mt-1">Total Points</div>
+          <div className="text-xs text-[#716969] uppercase tracking-widest mt-1">Total Points</div>
         </Card>
         <Card variant="standard" padding="md" className="text-center">
           <Flame className="w-8 h-8 text-[#bcabae] mx-auto mb-2" />
           <div className="text-3xl font-bold text-white">{currentStreak}</div>
-          <div className="text-xs text-#716969 uppercase tracking-widest mt-1">Day Streak</div>
+          <div className="text-xs text-[#716969] uppercase tracking-widest mt-1">Day Streak</div>
         </Card>
         <Card variant="standard" padding="md" className="text-center">
           <BarChart3 className="w-8 h-8 text-[#bcabae] mx-auto mb-2" />
           <div className="text-3xl font-bold text-white">{totalSessions}</div>
-          <div className="text-xs text-#716969 uppercase tracking-widest mt-1">Quizzes Done</div>
+          <div className="text-xs text-[#716969] uppercase tracking-widest mt-1">Quizzes Done</div>
         </Card>
         <Card variant="standard" padding="md" className="text-center">
           <Calendar className="w-8 h-8 text-emerald-400 mx-auto mb-2" />
           <div className="text-3xl font-bold text-white">{totalAchievements}</div>
-          <div className="text-xs text-#716969 uppercase tracking-widest mt-1">Achievements</div>
+          <div className="text-xs text-[#716969] uppercase tracking-widest mt-1">Achievements</div>
         </Card>
       </div>
 
@@ -131,7 +131,7 @@ export default function StatsPage() {
                   className={`w-8 h-8 rounded-lg ${intensity === 0 ? 'bg-white/5' : `bg-[#2d2e2e]/${intensity * 20}`}`}
                   style={{ opacity: intensity === 0 ? 0.3 : 0.3 + intensity * 0.15 }}
                 />
-                <span className="text-[10px] text-#716969 mt-1">{new Date(date).getDate()}</span>
+                <span className="text-[10px] text-[#716969] mt-1">{new Date(date).getDate()}</span>
               </div>
             );
           })}
@@ -146,7 +146,7 @@ export default function StatsPage() {
               <div key={a.id} className="bg-white/5 border border-white/10 rounded-xl p-4 text-center">
                 <div className="text-4xl mb-2">🏆</div>
                 <div className="text-sm font-medium text-white">{a.title}</div>
-                <div className="text-[10px] text-#716969 mt-1">
+                <div className="text-[10px] text-[#716969] mt-1">
                   {a.unlockedAt ? new Date(a.unlockedAt).toLocaleDateString() : ''}
                 </div>
               </div>

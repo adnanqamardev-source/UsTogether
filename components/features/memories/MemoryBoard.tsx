@@ -271,7 +271,7 @@ export default function MemoryBoard({ coupleId }: { coupleId: string }) {
             exit={{ opacity: 0, y: 10 }}
           >
             <div className="mb-6 flex items-center justify-between">
-              <div className="text-sm text-#716969">Shared photo memories</div>
+              <div className="text-sm text-[#716969]">Shared photo memories</div>
               <Button
                 variant="primary"
                 size="sm"
@@ -299,7 +299,7 @@ export default function MemoryBoard({ coupleId }: { coupleId: string }) {
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={p.url} alt="memory" className="w-full object-cover rounded-[2rem]" loading="lazy" />
                     <div className="p-4 flex items-center justify-between">
-                      <div className="text-xs text-#716969">{new Date(p.uploadedAt).toLocaleDateString()}</div>
+                      <div className="text-xs text-[#716969]">{new Date(p.uploadedAt).toLocaleDateString()}</div>
                       <button onClick={() => removePhoto(p.id)} className="text-white/60 hover:text-[#bcabae] transition-colors">
                         <Trash2 className="w-4 h-4" />
                       </button>
