@@ -10,10 +10,11 @@ vi.mock('@/lib/firebase/client', () => ({ db: {} }));
 vi.mock('@/lib/shared/firestore-helpers', () => ({
   getPairingCode: vi.fn(),
   batchWrite: vi.fn(),
+  deletePairingCode: vi.fn(),
 }));
 
 import { getDoc } from '@/lib/firestore';
-import { getPairingCode, batchWrite } from '@/lib/shared/firestore-helpers';
+import { getPairingCode, batchWrite, deletePairingCode } from '@/lib/shared/firestore-helpers';
 import {
   deriveCoupleId,
   isMember,
@@ -83,6 +84,11 @@ describe('couple-pairing (Unit)', () => {
   });
 
   describe('pairWithCode', () => {
+    beforeEach(() => {
+      // Default: no Couple doc yet (first-time pairing).
+      vi.mocked(getDoc).mockResolvedValue({ exists: () => false } as never);
+    });
+
     it('throws invalid-code for empty input without reading stored codes', async () => {
       await expectPairingCode(pairWithCode('u1', '   '), 'invalid-code');
       expect(getPairingCode).not.toHaveBeenCalled();
@@ -128,6 +134,38 @@ describe('couple-pairing (Unit)', () => {
       expect(setData.user2Id).toBe('u2');
       expect(setData.status).toBe('active');
       expect(setData.totalScore).toBe(0);
+    });
+
+    it('returns success without rewriting when the Couple already exists and caller is a member', async () => {
+      vi.mocked(getPairingCode).mockResolvedValue({ userId: 'u1', createdAt: 1 });
+      vi.mocked(getDoc).mockResolvedValue({
+        exists: () => true,
+        data: () => ({ user1Id: 'u1', user2Id: 'u2' }),
+      } as never);
+      vi.mocked(deletePairingCode).mockResolvedValue(undefined);
+
+      const result = await pairWithCode('u2', 'ABC123');
+      expect(result).toEqual({ coupleId: 'u1_u2' });
+
+      // No full-doc re-set (the rules would deny it as an update), but the
+      // single-use code is still consumed best-effort.
+      expect(batchWrite).not.toHaveBeenCalled();
+      expect(deletePairingCode).toHaveBeenCalledWith('ABC123');
+    });
+
+    it('proceeds to write when the Couple exists but the caller is not a member', async () => {
+      vi.mocked(getPairingCode).mockResolvedValue({ userId: 'u1', createdAt: 1 });
+      vi.mocked(getDoc).mockResolvedValue({
+        exists: () => true,
+        data: () => ({ user1Id: 'u9', user2Id: 'u8' }),
+      } as never);
+      vi.mocked(batchWrite).mockResolvedValue(undefined);
+
+      // Couple id derives from (caller, code owner), so this falls through
+      // to the normal write path (which the rules will judge).
+      await pairWithCode('u2', 'ABC123');
+      expect(batchWrite).toHaveBeenCalledTimes(1);
+      expect(deletePairingCode).not.toHaveBeenCalled();
     });
   });
 

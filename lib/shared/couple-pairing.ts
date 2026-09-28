@@ -1,6 +1,6 @@
 import { doc, getDoc } from '@/lib/firestore';
 import { db } from '@/lib/firebase/client';
-import { batchWrite, getPairingCode } from './firestore-helpers';
+import { batchWrite, deletePairingCode, getPairingCode } from './firestore-helpers';
 
 // Couple pairing module: one deep module owning Pairing, Disconnect, and
 // Membership behind a small interface.
@@ -119,6 +119,24 @@ export async function pairWithCode(
     const coupleId = deriveCoupleId(currentUid, partnerId);
     const [user1Id, user2Id] = [currentUid, partnerId].sort();
     const now = Date.now();
+
+    // Idempotency: the Couple doc may already exist when the caller retries
+    // from a stale pairing view (e.g. success on one device, retry from the
+    // other before its profile subscription catches up) or when both members
+    // redeem concurrently. Re-setting the full doc would be evaluated as an
+    // *update* by the rules and denied (user1Id/user2Id/createdAt are
+    // immutable), surfacing a permission-denied for a pairing that already
+    // holds. When the caller is already a member, the outcome holds —
+    // best-effort consume the single-use code and report success so the
+    // caller transitions instead of erroring.
+    const coupleSnap = await getDoc(doc(db, 'couples', coupleId));
+    const existingCouple = coupleSnap.exists()
+      ? (coupleSnap.data() as CoupleMembership)
+      : null;
+    if (existingCouple && isMember(existingCouple, currentUid)) {
+      await deletePairingCode(code);
+      return { coupleId };
+    }
 
     await batchWrite([
       {

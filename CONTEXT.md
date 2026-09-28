@@ -98,6 +98,12 @@ Recorded so a future reader doesn't mistake them for intent.
     `isMember`/`partnerIdOf` (Membership), `pairWithCode` (4-write Pairing),
     `disconnectCouple` (3-write Disconnect). Callers own UI only — no inline
     id derivation or write composition. → **Deepening target #1 done.**
+    `pairWithCode` is idempotent: if the Couple doc already exists and the
+    caller is a member (stale-view retry, concurrent redeem), it consumes the
+    code best-effort and returns success instead of re-setting the doc —
+    a full re-set would be evaluated as an *update* by `firestore.rules`
+    (identity fields immutable) and denied. The profile subscription in
+    `AuthProvider` keeps `dbUser` live so success transitions immediately.
 4. **Overlapping demo mechanisms remain in part:** `next.config.js` is now the single
    config (the dead `next.config.ts` was deleted) and all raw env reads route through
    `isDemo` (`lib/firebase/client.ts`, hard-off on real Vercel production via a
