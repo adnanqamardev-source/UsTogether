@@ -8,17 +8,20 @@ import path from 'path';
  * fake data.
  */
 const demoRequested = process.env.NEXT_PUBLIC_DEMO_MODE === 'true';
-const isProduction =
-  process.env.VERCEL_ENV === 'production' || process.env.NODE_ENV === 'production';
+// Only a real Vercel production deployment is fenced off. `next build`
+// always runs with NODE_ENV=production — including the CI E2E job, which
+// intentionally builds with the demo flag — so NODE_ENV must NOT be part of
+// this check or CI breaks.
+const isVercelProduction = process.env.VERCEL_ENV === 'production';
 
-if (demoRequested && isProduction) {
+if (demoRequested && isVercelProduction) {
   throw new Error(
     'NEXT_PUBLIC_DEMO_MODE=true is not allowed in a production build. ' +
       'Remove it from the environment; the app requires real Firebase config.',
   );
 }
 
-const isDemo = demoRequested && !isProduction;
+const isDemo = demoRequested && !isVercelProduction;
 const demoModule = './lib/firebase/demo.ts';
 const demoModulePath = path.join(process.cwd(), demoModule);
 

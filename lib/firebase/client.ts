@@ -72,11 +72,13 @@ function ensureDb(): Firestore {
 // an in-memory Firestore/Auth/Storage so the whole app renders without
 // backend credentials — used by local development and the E2E suite only.
 //
-// It is hard-disabled in production builds so mock data can never be served
-// to real users, even if the variable is accidentally present in the
-// environment. `next.config.ts` fails the build outright if that happens.
+// It is hard-disabled on real Vercel production deployments: `next.config.js`
+// fails that build outright, so mock data can never be served to real users,
+// even if the variable is accidentally present in the environment. (The
+// build-time check keys off VERCEL_ENV, not NODE_ENV, because `next build`
+// always sets NODE_ENV=production — including the CI E2E job, which
+// intentionally builds with the demo flag.)
 export const isDemo =
-  process.env.NODE_ENV !== "production" &&
   isBrowser &&
   process.env.NEXT_PUBLIC_DEMO_MODE === "true";
 
