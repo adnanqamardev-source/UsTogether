@@ -1,7 +1,7 @@
 # UsTogether — Consolidated Product Specs
 
-**Version:** 1.1  
-**Date:** 2026-07-04  
+**Version:** 1.2
+**Date:** 2026-09-28
 **Status:** Active — Post-Audit
 
 This repo keeps one set of canonical product docs:
@@ -10,12 +10,15 @@ This repo keeps one set of canonical product docs:
 - Security & Access: `SECURITY_AND_ACCESS.md`
 - Frontend Spec: `FRONTEND_SPEC.md`
 - Implementation Tickets: `FEATURE_TICKETS.md`
+- Domain Model & Invariants: `CONTEXT.md`
 
-Obsolete/duplicate docs below were consolidated there and can be removed:
-- `CODEBASE_AUDIT.md`
-- `Goals & Roadmap.md`
-- `implementation_plan.md`
-- `security_spec.md`
+Removed as obsolete/duplicated or completed one-shot plans (2026-09-28):
+- `DESIGN.md` (unrelated BMW-motorsport spec; `FRONTEND_SPEC.md` is the design doc)
+- `implementation_plan.md` (shipped Firestore fix, in git history)
+- `refactor_plan.md` (restructure done; shims in place)
+- `TYPESCRIPTUPDATE.md` (stale checklist; `tsc` is clean)
+- `Playbook.md` (agent cycle log; root-cause fixes preserved in `CONTEXT.md` invariants)
+- `CODEBASE_AUDIT.md`, `Goals & Roadmap.md`, `security_spec.md` (consolidated earlier)
 
 These 5 features are scoped for immediate development and have clear dependencies, acceptance criteria, and technical requirements. They range from high-impact performance improvements to user-facing enhancements.
 
@@ -26,7 +29,7 @@ These 5 features are scoped for immediate development and have clear dependencie
 **Impact:** Critical  
 **Effort:** Medium (4–6 hours)  
 **Dependencies:** None (can run in parallel)  
-**Status:** ⏳ Not Started
+**Status:** ✅ Complete (verified 2026-09-28: Server Component page, dynamic Dashboard/ChatDrawer/MemoryBoard/ActiveSession imports, `tsc` clean)
 
 ### Description
 Refactor `app/page.tsx` from a fully client-side component into a Next.js Server Component with isolated authentication logic. Implement dynamic imports for Firebase and the Dashboard component to defer loading until the user is authenticated, reducing Time to First Byte (TTFB) and improving Core Web Vitals.
@@ -64,7 +67,7 @@ Refactor `app/page.tsx` from a fully client-side component into a Next.js Server
 **Impact:** Critical  
 **Effort:** Medium–High (6–8 hours)  
 **Dependencies:** Feature 1 (optional)  
-**Status:** ⏳ Not Started
+**Status:** ✅ Complete (verified 2026-09-28: transaction-based answers, dotted-path session advance, quiz E2E specs green)
 
 ### Description
 Debug and fix state synchronization failures in `ActiveSession.tsx` where quiz questions and scores don't sync between partners during live quiz sessions. Ensure Firestore listeners are consolidated, deduped, and properly batched to eliminate state drift.
@@ -76,12 +79,12 @@ Debug and fix state synchronization failures in `ActiveSession.tsx` where quiz q
 - Multiple Firestore listeners across components may cause re-render storms ❌
 
 ### Acceptance Criteria
-- ❌ Quiz question appears on both screens simultaneously
-- ❌ Score updates propagate instantly (< 500ms latency)
-- ❌ No duplicate Firestore writes or listeners
-- ❌ Firestore document watchers only fire once per update (no re-renders on same data)
-- ❌ E2E test `quiz-flow.spec.ts` passes with two simulated partners
-- ❌ No console errors or memory leaks
+- ✅ Quiz question appears on both screens simultaneously
+- ✅ Score updates propagate instantly (< 500ms latency)
+- ✅ No duplicate Firestore writes or listeners
+- ✅ Firestore document watchers only fire once per update (no re-renders on same data)
+- ✅ E2E tests pass with two simulated partners
+- ✅ No console errors or memory leaks
 
 ### Why It Matters
 - Quiz is a core revenue/engagement driver
@@ -150,7 +153,7 @@ Build the foundational Memory Board component to display shared couple photos an
 **Status:** ✅ Complete
 
 ### Description
-Refine the Chat Drawer UI to match the "UsTogether" dark aesthetic (slate-950 background, purple/pink accents). Implement message bubbles, typing indicators, read receipts, and emoji support for a more polished conversational experience.
+Refine the Chat Drawer UI to match the UsTogether dark aesthetic (onyx background, lilac-ash accents). Implement message bubbles, typing indicators, read receipts, and emoji support for a more polished conversational experience.
 
 ### Current State
 - ChatDrawer component exists with dark theme, slide-in animation ✅

@@ -1,7 +1,7 @@
 # Security & Access Document — UsTogether
 
-**Version:** 1.1  
-**Date:** 2026-07-04  
+**Version:** 1.2
+**Date:** 2026-09-28
 **Status:** Active
 
 ---
@@ -38,6 +38,9 @@ Every `/api/*` route must verify the Firebase ID token before processing:
 ```typescript
 import { auth } from '@/lib/firebase';
 import { NextRequest } from 'next/server';
+
+// NOTE: illustrative only — production code uses getUserId() from
+// '@/lib/server/api-auth' (Firebase Admin SDK verifyIdToken).
 
 export async function getUserId(req: NextRequest): Promise<string | null> {
   const authHeader = req.headers.get('authorization');
@@ -107,6 +110,14 @@ export async function POST(req: NextRequest) {
 Firestore security rules enforce data isolation at the database level. Even if a client-side bug exists, these rules prevent unauthorized access.
 
 ### 3.1 Full Security Rules
+
+> `firestore.rules` at the repo root is canonical. The listing below is
+> illustrative — key structural facts it must keep: sessions, messages,
+> typing, `memory_photos`, and `milestones` are **subcollections of
+> `couples/{coupleId}`** (membership derived from the coupleId string);
+> messages are immutable (`update/delete: false`); `points` is excluded from
+> client updates; session updates freeze when `status == 'finished'` and must
+> not restrict `state.*` dotted-path keys via `hasOnly()`.
 
 ```javascript
 rules_version = '2';
@@ -269,7 +280,7 @@ return NextResponse.json(
 In React components, use error boundaries and user-friendly messages:
 
 ```tsx
-// Example: ChatPanel.tsx
+// Example: ChatDrawer.tsx (components/features/chat/ChatDrawer.tsx)
 try {
   const messagesRef = collection(db, `couples/${coupleId}/messages`);
   const q = query(messagesRef, orderBy('createdAt', 'asc'));

@@ -1,7 +1,7 @@
 # Product Requirements Document — UsTogether
 
-**Version:** 1.1  
-**Date:** 2026-07-04  
+**Version:** 1.2
+**Date:** 2026-09-28
 **Status:** Active — Post-Audit
 
 ---
@@ -78,7 +78,7 @@ We're not building another chat app. We're building a **relationship OS** that c
 | **Real-Time Chat** | Live messaging between partners with optimistic UI, typing indicators, auto-scroll | Must-Have | ✅ Live |
 | **AI-Powered Quizzes** | Google Gemini 2.5 Flash generates personalized relationship questions on-demand | Must-Have | ✅ Live |
 | **Quiz Sessions** | Real-time synchronized quiz gameplay between both partners | Must-Have | ✅ Live |
-| **Points System** | Couples earn points for completing quizzes together | Must-Have | ✅ Live |
+| **Points System** | Couples earn points for completing quizzes together | Must-Have | ⚠️ Partial — totals initialise to 0 and no scoring write path exists yet (see `CONTEXT.md` divergence #1) |
 | **User Profiles** | Basic profile with display name, email, points, streak, and status | Must-Have | ✅ Live |
 | **Responsive Design** | Works on mobile, tablet, and desktop | Must-Have | ✅ Live |
 
@@ -231,7 +231,7 @@ We're not building another chat app. We're building a **relationship OS** that c
 - Memory board (quiz history + AI challenges)
 - Stats page with activity heatmap
 - Responsive web design (mobile + desktop)
-- Dark theme (brand standard)
+- Dark theme, lilac-ash/onyx/graphite palette (`app/globals.css` is canonical)
 
 **MVP Excludes (Still Not Implemented):**
 

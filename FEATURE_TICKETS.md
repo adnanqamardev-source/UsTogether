@@ -1,9 +1,13 @@
 # Feature Ticket List — UsTogether
 
-**Version:** 1.1  
-**Date:** 2026-07-04  
-**Status:** Active — Post-Audit  
+**Version:** 1.2
+**Date:** 2026-09-28
+**Status:** Active — Post-Audit
 **Source:** derived from PRD.md, TECHNICAL_ARCHITECTURE.md, codebase audit
+
+> Canonical component paths are `components/features/*`, `components/shared/*`,
+> `components/ui/*`, `lib/firebase/*`, `lib/shared/*`, `lib/server/*`
+> (`components/*.tsx` / `lib/*.ts` shims remain for compatibility).
 
 ---
 
@@ -44,7 +48,7 @@ Tickets marked with ✅ are fully implemented. Tickets marked with ⏳ have part
 
 **Acceptance Criteria:**
 - ✅ Firebase project created with Firestore and Google Auth enabled — ✅ Done
-- ✅ `lib/firebase.ts` reads config from `NEXT_PUBLIC_FIREBASE_*` env vars — ✅ Done
+- ✅ `lib/firebase/client.ts` reads config from `NEXT_PUBLIC_FIREBASE_*` env vars — ✅ Done
 - ✅ App can connect to Firestore without errors — ✅ Done
 - ✅ `.env.example` file documents all required env vars — ✅ Done
 
@@ -81,7 +85,7 @@ Tickets marked with ✅ are fully implemented. Tickets marked with ⏳ have part
 **Description:** Create a React context provider that listens to Firebase auth state changes and exposes the current user and loading state to the entire app.
 
 **Acceptance Criteria:**
-- ✅ `components/AuthProvider.tsx` wraps the app in `app/providers.tsx` — ✅ Done
+- ✅ `components/providers/AuthProvider.tsx` wraps the app in `app/providers.tsx` — ✅ Done
 - ✅ `useAuth()` hook returns `{ user, loading, error }` — ✅ Done
 - ✅ On auth state change, provider re-renders with updated user — ✅ Done
 - ✅ Loading state is true until Firebase confirms auth state — ✅ Done
@@ -295,7 +299,7 @@ Tickets marked with ✅ are fully implemented. Tickets marked with ⏳ have part
 
 **Acceptance Criteria:**
 - ✅ Accepts POST with `{ prompt?: string }` — ✅ Done
-- ✅ Calls Gemini 1.5 Flash with system prompt to generate quiz JSON — ✅ Done (uses Gemini 2.5 Flash)
+- ✅ Calls Gemini with system prompt to generate quiz JSON — ✅ Done (generate-quiz uses `gemini-1.5-flash`; generate-challenge/chat use `gemini-3-flash-preview` — drift tracked in `CONTEXT.md` divergence #5)
 - ✅ Validates response against Zod schema (title, description, questions[]) — ✅ Done
 - ✅ Returns generated quiz with id, title, description, questions — ✅ Done
 - ✅ Rate limits to 3 requests per 5 minutes per user — ✅ Done (12 req/min)
@@ -482,7 +486,7 @@ Tickets marked with ✅ are fully implemented. Tickets marked with ⏳ have part
 
 ### Ticket 8.3: Optimize Performance and Bundle Size
 
-**Status:** ⏳ Partial — Some optimizations done, more needed
+**Status:** ⏳ Partial — E2E 91/91 green (2026-09-28), but load-time/streaming items below still open
 
 **Description:** Implement code splitting, dynamic imports, and Firestore listener optimizations to improve load times and reduce costs.
 

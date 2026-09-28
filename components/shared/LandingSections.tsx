@@ -267,7 +267,7 @@ export default function LandingSections({ onGetStarted }: { onGetStarted?: () =>
           viewport={{ once: true }}
           className="relative rounded-[3rem] overflow-hidden p-12 md:p-20 text-center border border-white/10"
         >
-          <div className="absolute inset-0 bg-gradient-to-br from-indigo-900/40 via-[#0d0a1c] to-rose-900/30" />
+          <div className="absolute inset-0 bg-gradient-to-br from-[#2d2e2e]/40 via-[#0f0f0f] to-[#716969]/30" />
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#2d2e2e]/20 via-transparent to-transparent" />
           
           <div className="relative z-10 space-y-8 max-w-2xl mx-auto">
@@ -279,7 +279,7 @@ export default function LandingSections({ onGetStarted }: { onGetStarted?: () =>
             </p>
             <button 
               onClick={onGetStarted}
-              className="group inline-flex items-center justify-center gap-3 px-10 py-5 bg-gradient-to-r bg-lilac-ash text-white rounded-full font-bold text-xl shadow-[0_0_40px_rgba(99,102,241,0.4)] hover:shadow-[0_0_60px_rgba(188,171,174,)] transition-all hover:-translate-y-1 active:translate-y-0"
+              className="group inline-flex items-center justify-center gap-3 px-10 py-5 bg-gradient-to-r bg-lilac-ash text-white rounded-full font-bold text-xl shadow-[0_0_40px_rgba(188,171,174,0.4)] hover:shadow-[0_0_60px_rgba(188,171,174,0.6)] transition-all hover:-translate-y-1 active:translate-y-0"
             >
               <span>Get Started Now</span>
               <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />

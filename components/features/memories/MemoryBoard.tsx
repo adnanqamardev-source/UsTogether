@@ -197,7 +197,7 @@ export default function MemoryBoard({ coupleId }: { coupleId: string }) {
           <h2 className="text-2xl font-serif italic text-[#bcabae] mb-4 flex items-center gap-3">
             <Sparkles className="w-6 h-6" /> Your Custom Prompt
           </h2>
-          <div className="prose prose-invert prose-indigo">
+          <div className="prose prose-invert">
             <Markdown>{challenge}</Markdown>
           </div>
         </div>

@@ -18,19 +18,33 @@
 
 ## 🛠️ Tech Stack
 
-* **Frontend:** Next.js (App Router), React, Tailwind CSS, Motion (Framer Motion successor)
+* **Frontend:** Next.js (App Router), React, Tailwind CSS v4 (`@theme` tokens in `app/globals.css`), Motion (Framer Motion successor)
 * **Backend:** Firebase (Firestore, Auth, Storage), Serverless API Routes
-* **AI Integration:** Google GenAI SDK (Gemini 2.5 Flash)
-* **Testing:** Playwright (End-to-End Testing), Vitest (Unit Testing)
+* **AI Integration:** Google GenAI SDK (Gemini 2.5 Flash for quizzes)
+* **Testing:** Playwright (End-to-End Testing, 91 specs), Vitest (Unit Testing)
+
+## 🎨 Design System
+
+Palette lives in `app/globals.css` via Tailwind v4 `@theme` — that file is canonical, not any doc:
+
+| Token | Hex | Usage |
+|-------|-----|-------|
+| `lilac-ash` | `#bcabae` | Primary accent, active states, CTAs |
+| `onyx` | `#0f0f0f` | Page background |
+| `graphite` | `#2d2e2e` | Cards, elevated surfaces |
+| `dim-grey` | `#716969` | Muted text, placeholders |
+| `white` | `#fbfbfb` | Primary text (overrides Tailwind `white`) |
+
+Shared primitives live in `components/ui/` (`button`, `card`, `input`, `badge`, `empty-state`); layout in `components/layout/`; features in `components/features/` (thin re-export shims remain at `components/*.tsx` for compatibility).
 
 ## 🏗️ Architecture & State Management
 
-This project utilizes custom, strictly-typed React hooks (`useFirestoreCollection`, `useFirestoreDocument`) to manage real-time data streams efficiently. Database operations are optimized to prevent memory leaks and minimize read costs, utilizing atomic batched writes for complex state changes.
+This project utilizes custom, strictly-typed React hooks (`useFirestoreCollection`, `useFirestoreDocument`) to manage real-time data streams efficiently. Database operations are optimized to prevent memory leaks and minimize read costs, utilizing atomic batched writes for complex state changes. Canonical paths: `components/features/*` (UI), `components/ui/` (primitives), `lib/firebase/client.ts` (client init), `lib/shared/*` (domain logic), `lib/server/*` (API-only). In demo mode (`NEXT_PUBLIC_DEMO_MODE=true`, local/CI only) Firebase SDKs are aliased to an in-memory store in `lib/firebase/demo.ts` seeded from `lib/firebase/demo-seed.ts`.
 
 ## 🚀 Getting Started
 
 ### Prerequisites
-* Node.js (v18 or higher)
+* Node.js (v20 or higher)
 * A Firebase Project (with Firestore and Authentication enabled)
 * A Google Gemini API Key
 
@@ -38,8 +52,8 @@ This project utilizes custom, strictly-typed React hooks (`useFirestoreCollectio
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/yourusername/ustogether.git
-   cd ustogether
+   git clone https://github.com/adnanqamardev-source/UsTogether.git
+   cd UsTogether
    ```
 
 2. **Install dependencies:**
@@ -59,6 +73,13 @@ This project utilizes custom, strictly-typed React hooks (`useFirestoreCollectio
    GEMINI_API_KEY=your_gemini_api_key
    ```
 
+   For local dev and E2E only (never production — `next.config.js` fails a
+   production build that sets it):
+
+   ```bash
+   NEXT_PUBLIC_DEMO_MODE=true
+   ```
+
 4. **Run the development server:**
    ```bash
    npm run dev
@@ -72,8 +93,9 @@ This project utilizes custom, strictly-typed React hooks (`useFirestoreCollectio
 * `npm run dev` - Start development server
 * `npm run build` - Build for production
 * `npm run start` - Start production server
+* `npm run lint` - Run ESLint
 * `npm run test:unit` - Run unit tests with Vitest
-* `npm run test:e2e` - Run end-to-end tests with Playwright
+* `npm run test:e2e` - Run end-to-end tests with Playwright (requires `NEXT_PUBLIC_DEMO_MODE=true`)
 
 ## 📚 Documentation
 
@@ -82,6 +104,8 @@ This project utilizes custom, strictly-typed React hooks (`useFirestoreCollectio
 * **[FRONTEND_SPEC.md](FRONTEND_SPEC.md)** - UI/UX specifications and component guidelines
 * **[FEATURE_TICKETS.md](FEATURE_TICKETS.md)** - Development tickets and implementation plan
 * **[FEATURE_SCOPE.md](FEATURE_SCOPE.md)** - Feature prioritization and roadmap
+* **[CONTEXT.md](CONTEXT.md)** - Domain model, load-bearing invariants, and known divergences (bugs)
+* **[SECURITY_AND_ACCESS.md](SECURITY_AND_ACCESS.md)** - Auth, Firestore rules policy, rate limiting
 
 ## 🔐 Security
 

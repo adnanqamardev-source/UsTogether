@@ -1,33 +1,42 @@
 # Technical Architecture — UsTogether
 
-**Version:** 3.0  
-**Date:** 2026-07-04  
+**Version:** 4.0
+**Date:** 2026-09-28
 **Status:** Active
 
 ## 1. Tech Stack
 
 - Next.js 16.2 + React 18.2 + TypeScript 6.0+
 - Firebase v11: Firestore, Auth, Storage
-- Tailwind CSS 4.1
-- Motion (Framer Motion successor)
+- Tailwind CSS 4.1 (`@theme` tokens in `app/globals.css`, no config file)
+- Motion (Framer Motion successor, `motion/react`)
 - Firebase Admin SDK for server-side auth
-- Playwright + Vitest for testing
+- Playwright (91 E2E specs, chromium) + Vitest (33 unit tests) for testing
 
 ## 2. File & Folder Structure
 
 - `app/page.tsx` — Root landing page, uses AuthWrapper
-- `components/CouplesDashboard.tsx` — Couple-aware dashboard with chat, sessions, achievements
-- `components/ChatDrawer.tsx` — Chat with read receipts, date grouping, emoji picker
-- `components/ActiveSession.tsx` — Quiz session with transaction-based answer submission
-- `components/MemoryBoard.tsx` — Photo upload + milestone timeline tabs
-- `components/Skeletons.tsx` — Reusable loaders
-- `lib/firebase.ts` — Firebase client init + storage export
-- `lib/firestore-helpers.ts` — Core Firestore ops
-- `lib/storage.ts` — Firebase Storage helpers with progress
-- `lib/admin.ts` — Firebase Admin SDK init + verifyIdToken
-- `lib/api-auth.ts` — Server-side token verification using Admin SDK
-- `firestore.rules` — Row-level security for couples, photos, milestones
-- `global.d.ts` — Type definitions for new entities
+- `app/stats/page.tsx` — Stats page (heatmap, metrics)
+- `app/api/generate-quiz|generate-challenge|chat|reset-data/` — Server routes (Admin SDK, rate-limited)
+- `components/features/couple/CoupleDashboard.tsx` — Couple-aware dashboard shell
+- `components/features/couple/Dashboard.tsx` — Pre-pairing (pairing code in/out)
+- `components/features/couple/StreakCounter.tsx` — Streak display
+- `components/features/chat/ChatDrawer.tsx` — Chat with read receipts, date grouping, emoji picker
+- `components/features/session/ActiveSession.tsx` — Quiz session, transaction-based answers
+- `components/features/quiz/QuizList.tsx` + `QuizCard.tsx` — Quiz library + AI generation trigger
+- `components/features/memories/MemoryBoard.tsx` — Photo upload + milestone timeline tabs
+- `components/features/achievements/AchievementsPanel.tsx` — Achievement grid
+- `components/shared/` — `BottomNav`, `ErrorBoundary`, `LandingSections`, `Skeletons` (no ChatFAB — removed, chat lives in BottomNav)
+- `components/ui/` + `components/layout/` — Shared primitives (`button`, `card`, `input`, `badge`, `empty-state`, `section-header`)
+- `components/*.tsx` — One-line re-export shims for backwards compatibility
+- `lib/firebase/client.ts` — Firebase client init + `isDemo` flag (hard-off in production)
+- `lib/firebase/demo.ts` + `demo-seed.ts` — In-memory demo store (dev/CI only)
+- `lib/firebase/index.ts` — Client re-export barrel
+- `lib/shared/*` — `firestore-helpers`, `streak`, `achievements`, `quiz-data`, `storage`, `input-validation`, `firestore-errors`
+- `lib/server/*` — `admin`, `api-auth`, `ratelimit` (API-only)
+- `lib/*.ts` — Backwards-compat re-exports of the above
+- `firestore.rules` — Row-level security (canonical for access policy)
+- `global.d.ts` — Type definitions (imported as `@/types`)
 
 ## 3. Database Schema
 
@@ -44,7 +53,7 @@
 ## 4. Firestore Data Flow
 
 - Client app uses Firestore SDK through hooks
-- Server API routes use Admin SDK via lib/admin.ts
+- Server API routes use Admin SDK via lib/server/admin.ts
 - Chat messages updated with read receipts
 - Sessions written via runTransaction to prevent drift
 
@@ -52,11 +61,17 @@
 
 - `.env.local` for NEXT_PUBLIC_FIREBASE_* client keys
 - Server env FIREBASE_ADMIN_CREDENTIALS or applicationDefault
-- getStorage exposed from lib/firebase.ts
+- `NEXT_PUBLIC_DEMO_MODE=true` — local dev + CI E2E only. `next.config.js`
+  aliases `firebase/firestore|auth|storage` to the in-memory demo store and
+  throws on a real Vercel production build (`VERCEL_ENV=production`) that sets
+  it, so mock data can never reach real users. The check keys off VERCEL_ENV,
+  not NODE_ENV, because `next build` always sets NODE_ENV=production (CI E2E
+  intentionally builds with the demo flag).
+- getStorage exposed from lib/firebase/client.ts
 
 ## 6. API & Integration Spec
 
-- API auth now uses Admin SDK
+- API auth now uses Admin SDK (`lib/server/api-auth.ts`)
 - Chat, sessions, photos interact client-side
 
 ## 7. Authentication & Authorization
@@ -82,6 +97,13 @@
 
 ## 11. Rate Limiting
 
-- Serverless-compatible rate limiting via `lib/ratelimit.ts`
+- Serverless-compatible rate limiting via `lib/server/ratelimit.ts`
 - Supports Redis/REDIS_URL for persistent backend in production
 - Falls back to in-memory store for development
+
+## 12. Deploy-Staleness Recovery
+
+Quiz views load via `next/dynamic`. After a redeploy, a cached tab's HTML can
+reference deleted chunk hashes (`ChunkLoadError`). `ErrorBoundary` reloads
+once (sessionStorage-guarded against loops) to fetch fresh HTML; otherwise it
+shows Try Again + Reload Page.

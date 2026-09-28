@@ -246,7 +246,7 @@ export default function ActiveSession({ coupleId, sessionId, couple }: { coupleI
                   >
                     <span className={iSelected ? 'tracking-normal' : ''}><span className="font-bold opacity-50 mr-2">{letter}.</span> {opt}</span>
                     <div className="flex items-center gap-2">
-                      {pSelected && bothAnswered && <span className="text-[10px] font-bold text-indigo-900 bg-[#bcabae] px-2 py-1 rounded-full uppercase tracking-widest shadow-lg">Partner</span>}
+                      {pSelected && bothAnswered && <span className="text-[10px] font-bold text-[#0f0f0f] bg-[#bcabae] px-2 py-1 rounded-full uppercase tracking-widest shadow-lg">Partner</span>}
                       {iSelected ? <span>✓</span> : <span className="opacity-0 group-hover:opacity-100 transition-opacity">✨</span>}
                     </div>
                   </button>
@@ -298,7 +298,7 @@ export default function ActiveSession({ coupleId, sessionId, couple }: { coupleI
                 initial={{ scaleX: 0 }}
                 animate={{ scaleX: 1 }}
                 transition={{ duration: 0.4, delay: idx * 0.05 }}
-                className={`h-1.5 rounded-full transition-all origin-left ${idx < currentQIndex ? 'bg-[#2d2e2e] w-8 shadow-[0_0_6px_rgba(99,102,241,0.4)]' : idx === currentQIndex ? 'bg-[#bcabae] w-12 shadow-[0_0_12px_rgba(188,171,174,)]' : 'bg-white/20 w-8'}`}
+                className={`h-1.5 rounded-full transition-all origin-left ${idx < currentQIndex ? 'bg-[#2d2e2e] w-8 shadow-[0_0_6px_rgba(188,171,174,0.4)]' : idx === currentQIndex ? 'bg-[#bcabae] w-12 shadow-[0_0_12px_rgba(188,171,174,0.6)]' : 'bg-white/20 w-8'}`}
               ></motion.div>
             ))}
           </div>

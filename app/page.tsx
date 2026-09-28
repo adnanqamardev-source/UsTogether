@@ -9,8 +9,8 @@ const DashboardDynamic = dynamic(
   () => import('@/components/features/couple/Dashboard').then((mod) => mod.default),
   {
     loading: () => (
-      <div className="min-h-screen flex items-center justify-center bg-[#f7f3ee]">
-        <div className="h-12 w-12 animate-pulse rounded-xl bg-gradient-to-br from-rose-500 to-indigo-600 shadow-lg shadow-rose-500/20" />
+      <div className="min-h-screen flex items-center justify-center bg-onyx">
+        <div className="h-12 w-12 animate-pulse rounded-xl bg-gradient-to-br from-[#bcabae] to-[#716969] shadow-lg shadow-[#bcabae]/30" />
       </div>
     ),
     ssr: false,
@@ -31,8 +31,8 @@ export default function Page() {
 
   if (authLoading || (user && !dbUser)) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#f7f3ee]">
-        <div className="h-12 w-12 animate-pulse rounded-xl bg-gradient-to-br from-rose-500 to-indigo-600 shadow-lg shadow-rose-500/20" />
+      <div className="min-h-screen flex items-center justify-center bg-onyx">
+        <div className="h-12 w-12 animate-pulse rounded-xl bg-gradient-to-br from-[#bcabae] to-[#716969] shadow-lg shadow-[#bcabae]/30" />
       </div>
     );
   }

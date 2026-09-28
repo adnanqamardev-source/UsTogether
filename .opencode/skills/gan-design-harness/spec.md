@@ -4,7 +4,7 @@
 Redesign the landing page of UsTogether to increase user engagement, improve conversion rate (sign-ups), and better communicate the product's value proposition.
 
 ## Constraints
-- Must maintain the existing brand colors (rose-500, indigo-500, and neutral background) and font pairings (Inter and JetBrains Mono) as defined in DESIGN.md.
+- Must maintain the existing brand colors (lilac-ash `#bcabae`, onyx `#0f0f0f`, graphite `#2d2e2e`, dim-grey `#716969`, white `#fbfbfb`) and font pairings (Inter and JetBrains Mono) as defined in FRONTEND_SPEC.md (`app/globals.css` is canonical).
 - Must be responsive and work on mobile, tablet, and desktop.
 - Must not break existing functionality (navigation, sign-in button, etc.).
 - Must be implementable with the existing tech stack (Next.js, React, Tailwind CSS, Framer Motion).

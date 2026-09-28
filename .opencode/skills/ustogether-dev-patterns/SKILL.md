@@ -26,7 +26,7 @@ export const auth = isDemo
 ### Pattern 2: Demo Mode Module Resolution
 - **Problem**: E2E tests, design evaluation, or staging without Firebase credentials need full app functionality.
 - **Solution**: `NEXT_PUBLIC_DEMO_MODE=true` environment flag combined with Turbopack / Webpack alias redirection pointing `firebase/auth` and `firebase/firestore` to in-memory mock handlers (`lib/firebase/demo.ts`).
-- **Implementation** (`next.config.ts`):
+- **Implementation** (`next.config.js`):
 ```typescript
 turbopack: {
   resolveAlias: {

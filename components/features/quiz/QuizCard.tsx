@@ -31,7 +31,7 @@ export default function QuizCard({ quiz, onStart, onDelete, userId }: QuizCardPr
       }
     >
       {/* Animated gradient border on hover */}
-      <div className={`absolute inset-0 rounded-[2rem] opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none`} style={{ background: 'linear-gradient(135deg, rgba(188,171,174,), rgba(99,102,241,0.3))', padding: '1px', WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)', WebkitMaskComposite: 'xor', maskComposite: 'exclude' }} />
+      <div className={`absolute inset-0 rounded-[2rem] opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none`} style={{ background: 'linear-gradient(135deg, rgba(188,171,174,0.5), rgba(113,105,105,0.3))', padding: '1px', WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)', WebkitMaskComposite: 'xor', maskComposite: 'exclude' }} />
       {quiz.creatorId === userId && (
         <div className="absolute right-4 top-4 z-10">
           <button

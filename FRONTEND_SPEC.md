@@ -1,8 +1,11 @@
 # Frontend Specification Document — UsTogether
 
-**Version:** 2.0  
-**Date:** 2026-07-04  
+**Version:** 3.0
+**Date:** 2026-09-28
 **Status:** Active
+
+> Canonical source for colors is `app/globals.css` (`@theme`). If this doc
+> and `globals.css` disagree, `globals.css` wins.
 
 ---
 
@@ -10,25 +13,13 @@
 
 ### Primary Colors
 
-| Name | Hex Code | Usage |
-|------|----------|-------|
-| **Indigo-500** | `#6366f1` | Primary buttons, links, active states, CTAs |
-| **Indigo-600** | `#4f46e5` | Button hover states, primary borders |
-| **Indigo-400** | `#818cf8` | Secondary accents, highlights |
-| **Rose-500** | `#f43f5e` | Logo gradient, notifications, errors |
-| **Rose-400** | `#fb7185` | Secondary rose accents |
-
-### Neutral / Background
-
-| Name | Hex Code | Usage |
-|------|----------|-------|
-| **Slate-950** | `#020617` | Main background (deepest dark) |
-| **Slate-900** | `#0f172a` | Card backgrounds, elevated surfaces |
-| **Slate-800** | `#1e293b` | Input fields, borders, dividers |
-| **Slate-700** | `#334155` | Disabled states, secondary text |
-| **Slate-400** | `#94a3b8` | Muted text, placeholders |
-| **Slate-200** | `#e2e8f0` | Primary text on dark backgrounds |
-| **White** | `#ffffff` | Logo text, highest contrast text |
+| Name | Hex Code | Token | Usage |
+|------|----------|-------|-------|
+| **Lilac Ash** | `#bcabae` | `lilac-ash` | Primary accent, active states, CTAs, focus rings |
+| **Onyx** | `#0f0f0f` | `onyx` / `canvas` | Page background |
+| **Graphite** | `#2d2e2e` | `graphite` / `surface` | Card backgrounds, elevated surfaces |
+| **Dim Grey** | `#716969` | `dim-grey` / `ink-muted` | Muted text, placeholders |
+| **White** | `#fbfbfb` | `white` / `ink` | Primary text (overrides Tailwind `white`) |
 
 ### Semantic Colors
 
@@ -43,9 +34,14 @@
 
 | Gradient | Colors | Usage |
 |----------|--------|-------|
-| **Brand Gradient** | `from-rose-500 to-indigo-600` | Logo background, hero accents, primary CTAs |
-| **Card Hover** | `from-slate-800 to-slate-700` | Card hover states (subtle) |
+| **Brand Gradient** | `from-[#bcabae] to-white` | Logo accents, hero highlights |
+| **Card Hover** | `border-[#bcabae]/50` glow | Card hover states (subtle) |
 | **Success Glow** | `from-emerald-500 to-teal-600` | Achievement unlock, quiz completion |
+
+> Opacity modifiers on custom v4 colors need arbitrary-value syntax:
+> `bg-[#bcabae]/30`, `text-[#716969]`. Utilities like `bg-lilac-ash/30` do
+> not resolve. Never define a named `--spacing-*` scale in `@theme` — it
+> silently redefines `max-w-sm/md/lg/xl/xs` to a few pixels.
 
 ---
 
@@ -87,11 +83,11 @@
 
 | Purpose | Class | Hex |
 |---------|-------|-----|
-| Primary text | `text-slate-200` | `#e2e8f0` |
-| Secondary text | `text-slate-400` | `#94a3b8` |
-| Muted text | `text-slate-500` | `#64748b` |
-| Heading text | `text-white` | `#ffffff` |
-| Accent text | `text-indigo-400` | `#818cf8` |
+| Primary text | `text-white` | `#fbfbfb` |
+| Secondary text | `text-[#bcabae]` | `#bcabae` |
+| Muted text | `text-[#716969]` | `#716969` |
+| Heading text | `text-white` | `#fbfbfb` |
+| Accent text | `text-lilac-ash` | `#bcabae` |
 | Error text | `text-rose-400` | `#fb7185` |
 | Success text | `text-emerald-400` | `#34d399` |
 
@@ -104,7 +100,7 @@
 **Primary Button (CTA):**
 
 ```tsx
-className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-indigo-500 hover:bg-indigo-600 text-white font-medium rounded-xl shadow-lg shadow-indigo-500/20 transition-all duration-200 hover:scale-105 active:scale-95"
+className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-lilac-ash hover:bg-[#d4c8ca] text-white font-medium rounded-xl shadow-lg shadow-[#bcabae]/30 transition-all duration-200 hover:scale-105 active:scale-95"
 ```
 
 - **States:** Default, hover (darker bg + scale), active (pressed), disabled (opacity-50, cursor-not-allowed)
@@ -115,7 +111,7 @@ className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-indigo-500
 **Secondary Button:**
 
 ```tsx
-className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium rounded-xl border border-slate-700 transition-colors"
+className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-graphite hover:bg-[#3a3b3b] text-white font-medium rounded-xl border border-white/10 transition-colors"
 ```
 
 **Destructive Button:**
@@ -127,7 +123,7 @@ className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-rose-500/1
 **Icon Button:**
 
 ```tsx
-className="inline-flex items-center justify-center w-10 h-10 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition-colors"
+className="inline-flex items-center justify-center w-10 h-10 rounded-lg bg-graphite hover:bg-[#3a3b3b] text-[#716969] hover:text-white transition-colors"
 ```
 
 ### 3.2 Input Fields
@@ -135,13 +131,13 @@ className="inline-flex items-center justify-center w-10 h-10 rounded-lg bg-slate
 **Text Input:**
 
 ```tsx
-className="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl text-slate-200 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+className="w-full px-4 py-3 bg-graphite border border-white/10 rounded-xl text-white placeholder:text-[#716969] focus:outline-none focus:ring-2 focus:ring-[#bcabae] focus:border-transparent transition-all"
 ```
 
-- **Background:** `bg-slate-800` (recessed look)
-- **Border:** `border-slate-700` (subtle)
-- **Focus Ring:** `focus:ring-2 focus:ring-indigo-500`
-- **Placeholder:** `placeholder:text-slate-500`
+- **Background:** `bg-graphite` (recessed look)
+- **Border:** `border-white/10` (subtle)
+- **Focus Ring:** `focus:ring-2 focus:ring-[#bcabae]`
+- **Placeholder:** `placeholder:text-[#716969]`
 - **Padding:** `px-4 py-3`
 - **Border Radius:** `rounded-xl`
 
@@ -153,7 +149,7 @@ Same as input, but with `resize-y` and `min-h-[120px]`.
 
 ```tsx
 <div className="space-y-2">
-  <label className="block text-sm font-medium text-slate-400">Label</label>
+  <label className="block text-sm font-medium text-[#716969]">Label</label>
   <input className="..." />
 </div>
 ```
@@ -170,13 +166,13 @@ Same as input, but with `resize-y` and `min-h-[120px]`.
 **Standard Card:**
 
 ```tsx
-<div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
+<div className="bg-graphite border border-white/10 rounded-2xl p-6 shadow-xl">
   {/* Content */}
 </div>
 ```
 
-- **Background:** `bg-slate-900`
-- **Border:** `border-slate-800` (1px)
+- **Background:** `bg-graphite`
+- **Border:** `border-white/10` (1px)
 - **Border Radius:** `rounded-2xl`
 - **Padding:** `p-6`
 - **Shadow:** `shadow-xl` (elevation)
@@ -184,7 +180,7 @@ Same as input, but with `resize-y` and `min-h-[120px]`.
 **Interactive Card (Hover):**
 
 ```tsx
-<div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl hover:border-indigo-500/50 hover:shadow-indigo-500/10 transition-all duration-300 cursor-pointer">
+<div className="bg-graphite border border-white/10 rounded-2xl p-6 shadow-xl hover:border-[#bcabae]/50 hover:shadow-[#bcabae]/10 transition-all duration-300 cursor-pointer">
   {/* Content */}
 </div>
 ```
@@ -195,7 +191,7 @@ Same as input, but with `resize-y` and `min-h-[120px]`.
 **Glass Card (Chat Drawer):**
 
 ```tsx
-<div className="bg-[#1a1a2e]/90 backdrop-blur-xl border border-white/10 rounded-3xl shadow-2xl">
+<div className="bg-graphite/90 backdrop-blur-xl border border-white/10 rounded-3xl shadow-2xl">
   {/* Content */}
 </div>
 ```
@@ -217,7 +213,7 @@ Same as input, but with `resize-y` and `min-h-[120px]`.
 **Modal Container:**
 
 ```tsx
-<div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 max-w-md w-full shadow-2xl">
+<div className="bg-graphite border border-white/10 rounded-2xl p-6 max-w-md w-full shadow-2xl">
   {/* Content */}
 </div>
 ```
@@ -227,7 +223,7 @@ Same as input, but with `resize-y` and `min-h-[120px]`.
 ```tsx
 <div className="flex items-center justify-between mb-4">
   <h3 className="text-xl font-semibold text-white">Modal Title</h3>
-  <button className="text-slate-400 hover:text-white">
+  <button className="text-[#716969] hover:text-white">
     <X className="w-5 h-5" />
   </button>
 </div>
@@ -241,7 +237,7 @@ Same as input, but with `resize-y` and `min-h-[120px]`.
 <nav className="flex justify-between items-center mb-12 relative z-10 gap-4 mt-6">
   {/* Logo */}
   <div className="flex items-center space-x-3">
-    <div className="w-10 h-10 bg-gradient-to-br from-rose-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-rose-500/20">
+    <div className="w-10 h-10 bg-gradient-to-br from-[#bcabae] to-[#716969] rounded-xl flex items-center justify-center shadow-lg shadow-[#bcabae]/30">
       <span className="font-bold text-xl text-white">U</span>
     </div>
     <span className="text-2xl font-light tracking-tight">Us<span className="font-bold">Together</span></span>
@@ -249,8 +245,8 @@ Same as input, but with `resize-y` and `min-h-[120px]`.
 
   {/* Nav Links */}
   <div className="flex items-center gap-4">
-    <button className="text-slate-400 hover:text-white transition-colors">Features</button>
-    <button className="px-4 py-2 bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg transition-colors">
+    <button className="text-[#716969] hover:text-white transition-colors">Features</button>
+    <button className="px-4 py-2 bg-lilac-ash hover:bg-[#d4c8ca] text-white rounded-lg transition-colors">
       Sign In
     </button>
   </div>
@@ -260,9 +256,9 @@ Same as input, but with `resize-y` and `min-h-[120px]`.
 **Bottom Navigation (Mobile):**
 
 ```tsx
-<nav className="fixed bottom-0 left-0 right-0 bg-slate-900/90 backdrop-blur-lg border-t border-slate-800 z-40">
+<nav className="fixed bottom-0 left-0 right-0 bg-graphite/90 backdrop-blur-lg border-t border-white/10 z-40">
   <div className="flex justify-around items-center max-w-lg mx-auto">
-    <button className="flex flex-col items-center gap-1 p-3 text-indigo-400">
+    <button className="flex flex-col items-center gap-1 p-3 text-[#bcabae]">
       <Home className="w-5 h-5" />
       <span className="text-xs">Home</span>
     </button>
@@ -277,7 +273,7 @@ Same as input, but with `resize-y` and `min-h-[120px]`.
 
 ```tsx
 <div className="flex items-center justify-center">
-  <div className="w-8 h-8 border-4 border-slate-700 border-t-indigo-500 rounded-full animate-spin"></div>
+  <div className="w-8 h-8 border-4 border-white/10 border-t-[#bcabae] rounded-full animate-spin"></div>
 </div>
 ```
 
@@ -285,18 +281,18 @@ Same as input, but with `resize-y` and `min-h-[120px]`.
 
 ```tsx
 <div className="animate-pulse space-y-3">
-  <div className="h-4 bg-slate-800 rounded w-3/4"></div>
-  <div className="h-4 bg-slate-800 rounded w-1/2"></div>
+  <div className="h-4 bg-graphite rounded w-3/4"></div>
+  <div className="h-4 bg-graphite rounded w-1/2"></div>
 </div>
 ```
 
 **Card Skeleton:**
 
 ```tsx
-<div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 animate-pulse">
-  <div className="h-48 bg-slate-800 rounded-xl mb-4"></div>
-  <div className="h-6 bg-slate-800 rounded w-3/4 mb-2"></div>
-  <div className="h-4 bg-slate-800 rounded w-1/2"></div>
+<div className="bg-graphite border border-white/10 rounded-2xl p-6 animate-pulse">
+  <div className="h-48 bg-graphite rounded-xl mb-4"></div>
+  <div className="h-6 bg-graphite rounded w-3/4 mb-2"></div>
+  <div className="h-4 bg-graphite rounded w-1/2"></div>
 </div>
 ```
 
@@ -313,7 +309,7 @@ Same as input, but with `resize-y` and `min-h-[120px]`.
 **Achievement Badge:**
 
 ```tsx
-<div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-indigo-500/10 text-indigo-400 rounded-lg border border-indigo-500/20">
+<div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#bcabae]/10 text-[#bcabae] rounded-lg border border-[#bcabae]/20">
   <Trophy className="w-4 h-4" />
   <span className="text-sm font-medium">First Quiz</span>
 </div>
@@ -685,40 +681,46 @@ UsTogether uses a custom component layer on top of Tailwind. All components are 
 
 | Component | Path | Purpose | Status |
 |-----------|------|---------|--------|
-| **AuthProvider** | `components/AuthProvider.tsx` | Firebase auth context with real-time user profile sync | ✅ Live |
-| **AuthWrapper** | `components/AuthWrapper.tsx` | Auth guard with dynamic Dashboard import, sign-in/sign-out UI | ✅ Live |
-| **ErrorBoundary** | `components/ErrorBoundary.tsx` | Catches React errors with "Try Again" button | ✅ Live |
-| **LandingSections** | `components/LandingSections.tsx` | Landing page content sections | ✅ Live |
-| **Button** | (inline, no separate file) | Use Tailwind classes directly | ✅ Live |
-| **Input** | (inline) | Use Tailwind classes directly | ✅ Live |
-| **Card** | (inline) | Use Tailwind classes directly | ✅ Live |
+| **AuthProvider** | `components/providers/AuthProvider.tsx` | Firebase auth context with real-time user profile sync | ✅ Live |
+| **AuthWrapper** | `components/auth/AuthWrapper.tsx` | Auth guard with dynamic Dashboard import, sign-in/sign-out UI | ✅ Live |
+| **ErrorBoundary** | `components/shared/ErrorBoundary.tsx` | Catches React errors; auto-reloads once on `ChunkLoadError` (stale deploy chunks), otherwise "Try Again" + "Reload Page" | ✅ Live |
+| **LandingSections** | `components/shared/LandingSections.tsx` | Landing page content sections | ✅ Live |
+| **Button** | `components/ui/button.tsx` | `primary` / `secondary` / `destructive` variants (cva) | ✅ Live |
+| **Input** | `components/ui/input.tsx` | Shared text input | ✅ Live |
+| **Card** | `components/ui/card.tsx` | Standard card + hover variant | ✅ Live |
+| **Badge** | `components/ui/badge.tsx` | Status badges | ✅ Live |
+| **EmptyState** | `components/ui/empty-state.tsx` | Empty states | ✅ Live |
+| **SectionHeader** | `components/layout/section-header.tsx` | Section headings | ✅ Live |
 
 ### 6.2 Feature Components
 
 | Component | Path | Purpose | Status |
 |-----------|------|---------|--------|
-| **Dashboard** | `components/Dashboard.tsx` | Pre-pairing dashboard with pairing code display and partner code input | ✅ Live |
-| **CoupleDashboard** | `components/CoupleDashboard.tsx` | Main dashboard shell with navigation, widgets, mobile menu | ✅ Live |
-| **ChatDrawer** | `components/ChatDrawer.tsx` | Slide-in chat panel with typing indicators, read receipts, emoji picker, date grouping, sender avatars | ✅ Live |
-| **QuizList** | `components/QuizList.tsx` | Quiz selection screen with AI generation trigger, live session display | ✅ Live |
-| **ActiveSession** | `components/ActiveSession.tsx` | Real-time multiplayer quiz session with transaction-based answer sync and debounce | ✅ Live |
-| **QuizCard** | `components/QuizCard.tsx` | Single quiz card with hover effects, delete, start actions | ✅ Live |
-| **StreakCounter** | `components/StreakCounter.tsx` | Streak display with animated flame icon and progress bar | ✅ Live |
-| **AchievementsPanel** | `components/AchievementsPanel.tsx` | Achievement grid with expand/collapse | ✅ Live |
-| **MemoryBoard** | `components/MemoryBoard.tsx` | Quiz history display with AI-generated couple challenges | ✅ Live |
+| **Dashboard** | `components/features/couple/Dashboard.tsx` | Pre-pairing dashboard with pairing code display and partner code input | ✅ Live |
+| **CoupleDashboard** | `components/features/couple/CoupleDashboard.tsx` | Main dashboard shell with navigation, widgets, mobile menu | ✅ Live |
+| **ChatDrawer** | `components/features/chat/ChatDrawer.tsx` | Slide-in chat panel with typing indicators, read receipts, emoji picker, date grouping, sender avatars | ✅ Live |
+| **QuizList** | `components/features/quiz/QuizList.tsx` | Quiz selection screen with AI generation trigger, live session display | ✅ Live |
+| **ActiveSession** | `components/features/session/ActiveSession.tsx` | Real-time multiplayer quiz session with transaction-based answer sync and debounce | ✅ Live |
+| **QuizCard** | `components/features/quiz/QuizCard.tsx` | Single quiz card with hover effects, delete, start actions | ✅ Live |
+| **StreakCounter** | `components/features/couple/StreakCounter.tsx` | Streak display with animated flame icon and progress bar | ✅ Live |
+| **AchievementsPanel** | `components/features/achievements/AchievementsPanel.tsx` | Achievement grid with expand/collapse | ✅ Live |
+| **MemoryBoard** | `components/features/memories/MemoryBoard.tsx` | Quiz history display with AI-generated couple challenges | ✅ Live |
 | **StatsPage** | `app/stats/page.tsx` | Dedicated stats page with activity heatmap and metrics | ✅ Live |
-| **BottomNav** | `components/BottomNav.tsx` | Mobile bottom nav with pill `layoutId` indicator | ✅ Live |
-| **ChatFAB** | `components/ChatFAB.tsx` | Floating chat action button above bottom nav | ✅ Live |
+| **BottomNav** | `components/shared/BottomNav.tsx` | Mobile bottom nav with pill `layoutId` indicator (chat lives here — no separate FAB) | ✅ Live |
+
+> `components/*.tsx` one-line re-exports point at the paths above for
+> backwards compatibility. `ChatFAB` was removed (it duplicated BottomNav chat
+> on mobile).
 
 ### 6.3 Skeleton Components
 
 | Component | Path | Purpose | Status |
 |-----------|------|---------|--------|
-| **QuizCardSkeleton** | `components/QuizCardSkeleton.tsx` | Loading state for quiz card | ✅ Live |
-| **Skeletons** | `components/Skeletons.tsx` | Shared skeleton components (ChatPanelSkeleton, DashboardSkeleton, AchievementsPanelSkeleton) | ✅ Live |
-| **ChatPanelSkeleton** | `components/Skeletons.tsx` | Loading state for chat | ✅ Live |
-| **DashboardSkeleton** | `components/Skeletons.tsx` | Loading state for dashboard | ✅ Live |
-| **AchievementsPanelSkeleton** | `components/Skeletons.tsx` | Loading state for achievements | ✅ Live |
+| **QuizCardSkeleton** | `components/features/quiz/QuizCardSkeleton.tsx` | Loading state for quiz card | ✅ Live |
+| **Skeletons** | `components/shared/Skeletons.tsx` | Shared skeleton components (ChatPanelSkeleton, DashboardSkeleton, AchievementsPanelSkeleton) | ✅ Live |
+| **ChatPanelSkeleton** | `components/shared/Skeletons.tsx` | Loading state for chat | ✅ Live |
+| **DashboardSkeleton** | `components/shared/Skeletons.tsx` | Loading state for dashboard | ✅ Live |
+| **AchievementsPanelSkeleton** | `components/shared/Skeletons.tsx` | Loading state for achievements | ✅ Live |
 
 ---
 
@@ -728,12 +730,12 @@ UsTogether uses a custom component layer on top of Tailwind. All components are 
 
 - **WCAG AA minimum:** 4.5:1 for normal text, 3:1 for large text
 - Current palette meets WCAG AAA for most text (7:1+ contrast)
-- Use `text-slate-200` on `bg-slate-950` (14:1 contrast ratio)
+- Use `text-white` on `bg-onyx` (14:1 contrast ratio)
 
 ### 7.2 Keyboard Navigation
 
 - All interactive elements must be focusable with `Tab` key
-- Focus states visible: `focus:ring-2 focus:ring-indigo-500 focus:outline-none`
+- Focus states visible: `focus:ring-2 focus:ring-[#bcabae] focus:outline-none`
 - Modals trap focus (use `focus-trap` library if needed)
 - Escape key closes modals and drawers
 
@@ -826,45 +828,31 @@ UsTogether uses a custom component layer on top of Tailwind. All components are 
 
 ---
 
-## 9. Design Tokens (Tailwind Config)
+## 9. Design Tokens (Tailwind v4 `@theme`)
 
-### 9.1 Custom Colors
+There is no `tailwind.config.ts`. Tokens live in `app/globals.css`:
 
-In `tailwind.config.ts`, extend the theme:
+```css
+@theme {
+  --color-lilac-ash: #bcabae;
+  --color-onyx: #0f0f0f;
+  --color-graphite: #2d2e2e;
+  --color-dim-grey: #716969;
+  --color-white: #fbfbfb;
 
-```typescript
-import type { Config } from 'tailwindcss';
-
-const config: Config = {
-  theme: {
-    extend: {
-      colors: {
-        brand: {
-          50: '#f5f3ff',
-          100: '#ede9fe',
-          500: '#6366f1', // indigo-500
-          600: '#4f46e5', // indigo-600
-        },
-        rose: {
-          500: '#f43f5e',
-          400: '#fb7185',
-        },
-        dark: {
-          950: '#020617',
-          900: '#0f172a',
-          800: '#1e293b',
-          700: '#334155',
-        },
-      },
-      fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
-      },
-    },
-  },
-};
-
-export default config;
+  --color-canvas: var(--color-onyx);
+  --color-surface: var(--color-graphite);
+  --color-ink: var(--color-white);
+  --color-ink-soft: var(--color-lilac-ash);
+  --color-ink-muted: var(--color-dim-grey);
+  --color-accent: var(--color-lilac-ash);
+}
 ```
+
+Rules: opacity modifiers on custom colors need arbitrary-value syntax
+(`bg-[#bcabae]/30`); never add a named `--spacing-*` scale (it collapses
+`max-w-sm/md/lg/xl/xs`). Font stack: Inter via `next/font`, `--font-sans`
+token.
 
 ### 9.2 Custom Animations
 
@@ -940,22 +928,22 @@ UsTogether is dark-only in the current version. Do not include light mode toggle
 **Background Hierarchy:**
 
 ```
-Page Background: slate-950
-  └── Cards/Panels: slate-900
-       └── Inputs/Surfaces: slate-800
-            └── Borders: slate-700
+Page Background: onyx (#0f0f0f)
+  └── Cards/Panels: graphite (#2d2e2e)
+       └── Inputs/Surfaces: graphite / #3a3b3b
+            └── Borders: white/10
 ```
 
 **Text Hierarchy:**
 
 ```
 Headings: white
-Body: slate-200
-Secondary: slate-400
-Muted: slate-500
+Body: white (#fbfbfb)
+Secondary: lilac-ash (#bcabae)
+Muted: dim-grey (#716969)
 ```
 
-All colors must be chosen from the Slate palette for backgrounds, Indigo for accents, Rose for errors/notifications.
+All colors must come from the §1 palette (onyx/graphite backgrounds, lilac-ash accents, dim-grey muted, white text) or the semantic set. `globals.css` is canonical.
 
 ---
 
@@ -1102,9 +1090,9 @@ When writing Tailwind classes, follow this order for consistency:
 <button className="
   flex items-center justify-center
   w-full px-6 py-3
-  bg-indigo-500 hover:bg-indigo-600
+  bg-lilac-ash hover:bg-[#d4c8ca]
   text-white font-medium rounded-xl
-  shadow-lg shadow-indigo-500/20
+  shadow-lg shadow-[#bcabae]/30
   transition-all duration-200
   hover:scale-105 active:scale-95
 ">
