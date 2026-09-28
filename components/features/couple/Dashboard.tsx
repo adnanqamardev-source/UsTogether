@@ -6,7 +6,7 @@ import { useAuth } from '@/components/providers';
 import { motion } from 'motion/react';
 import { Heart, Users, ArrowRight, Copy, Check } from 'lucide-react';
 import { doc } from '@/lib/firestore';
-import { db, isDemo } from '@/lib/firebase/client';
+import { db } from '@/lib/firebase/client';
 import { createPairingCode, getPairingCode, batchWrite } from '@/lib/firebase/client';
 import CoupleDashboard from './CoupleDashboard';
 import type { UserProfile } from '@/types';
@@ -25,13 +25,13 @@ export default function Dashboard() {
 
   useEffect(() => {
       if (user && !myCode && !dbUser?.pairedCoupleId) {
-        const code = user.uid.substring(0, 8).toUpperCase();
-        setMyCode(code);
-        if (!isDemo) {
-          createPairingCode(user.uid).catch((err) => {
-            console.error('Failed to create pairing code:', err);
-          });
-        }
+        let cancelled = false;
+        createPairingCode(user.uid).then((code) => {
+          if (!cancelled) setMyCode(code);
+        }).catch((err) => {
+          console.error('Failed to create pairing code:', err);
+        });
+        return () => { cancelled = true; };
       }
   }, [user, dbUser, myCode]);
 
@@ -156,7 +156,7 @@ export default function Dashboard() {
               value={partnerCode}
               onChange={e => setPartnerCode(e.target.value)}
               placeholder="ENTER PARTNER CODE"
-              maxLength={8}
+              maxLength={6}
               className="text-center font-mono tracking-widest uppercase text-lg"
               label="Partner Code"
             />
