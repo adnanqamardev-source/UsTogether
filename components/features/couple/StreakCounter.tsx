@@ -29,8 +29,8 @@ export default function StreakCounter({ streak = 0, label = "Day Streak" }: Stre
         className="absolute inset-0 rounded-[2rem] opacity-60 pointer-events-none"
         style={{
           background: ignite
-            ? "linear-gradient(135deg, rgba(244,63,94,0.4), rgba(251,146,60,0.3), rgba(168,85,247,0.25))"
-            : "linear-gradient(135deg, rgba(244,63,94,0.1), rgba(168,85,247,0.05))",
+            ? "linear-gradient(135deg, rgba(188,171,174,), rgba(251,146,60,0.3), rgba(168,85,247,0.25))"
+            : "linear-gradient(135deg, rgba(188,171,174,), rgba(168,85,247,0.05))",
           padding: "1px",
           WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
           WebkitMaskComposite: "xor",
@@ -44,7 +44,7 @@ export default function StreakCounter({ streak = 0, label = "Day Streak" }: Stre
           <motion.div
             animate={ignite ? { scale: [1, 1.15, 1], rotate: [-5, 5, 0] } : {}}
             transition={{ duration: 0.6, ease: "easeInOut" }}
-            className="flex h-10 w-10 items-center justify-center rounded-full bg-rose-500/20 text-rose-400"
+            className="flex h-10 w-10 items-center justify-center rounded-full bg-[#bcabae]/20 text-[#bcabae]"
           >
             <Flame className="h-5 w-5" />
           </motion.div>
@@ -60,8 +60,8 @@ export default function StreakCounter({ streak = 0, label = "Day Streak" }: Stre
           )}
         </div>
         <div>
-          <p className="text-[10px] uppercase tracking-[0.25em] text-indigo-300">{label}</p>
-          <p data-testid="streak-value" className="text-3xl font-bold text-[#F8FAFC]">{streak}</p>
+          <p className="text-[10px] uppercase tracking-[0.25em] text-[#bcabae]">{label}</p>
+          <p data-testid="streak-value" className="text-3xl font-bold text-white">{streak}</p>
         </div>
       </div>
 
@@ -71,7 +71,7 @@ export default function StreakCounter({ streak = 0, label = "Day Streak" }: Stre
           initial={{ scaleX: 0 }}
           animate={{ scaleX: 1 }}
           transition={{ duration: 0.8, delay: 0.4 }}
-          className="h-full rounded-full bg-gradient-to-r from-rose-500 via-orange-500 to-rose-500 origin-left"
+          className="h-full rounded-full bg-gradient-to-r bg-lilac-ash origin-left"
           style={{ width: `${Math.min((streak % 7) / 7 * 100, 100)}%` }}
         />
       </div>

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { collection, onSnapshot, query, QueryConstraint, DocumentData } from '@/lib/firestore';
-import { db } from '@/lib/firebase/client';
+import { db, isDemo } from '@/lib/firebase/client';
 import { handleFirestoreError, OperationType } from '@/lib/firestore-errors';
 
 function defaultTransform<T>(id: string, data: DocumentData): T {
@@ -37,7 +37,7 @@ export function useFirestoreCollection<T>(
 
   useEffect(() => {
     // Demo Mode bypass
-    if (process.env.NEXT_PUBLIC_DEMO_MODE === 'true' && safeSegments.length) {
+    if (isDemo && safeSegments.length) {
       const fetchDemoData = async () => {
         const seedData = await import('@/lib/firebase/demo-seed').then(m => m.seed);
         let mockData: T[] = [];

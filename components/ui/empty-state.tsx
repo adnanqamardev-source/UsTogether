@@ -30,11 +30,11 @@ export function EmptyState({
       )}
     >
       <div className="w-14 h-14 rounded-full border border-dashed border-white/20 flex items-center justify-center text-xl mb-4">
-        <Icon className="w-6 h-6 text-indigo-300" />
+        <Icon className="w-6 h-6 text-[#bcabae]" />
       </div>
       <h3 className="text-lg font-serif italic text-white mb-2">{title}</h3>
       {description && (
-        <p className="text-sm text-indigo-200/50 mb-6 max-w-sm">{description}</p>
+        <p className="text-sm text-[#bcabae]/60 mb-6 max-w-md w-full">{description}</p>
       )}
       {action && (
         <Button variant="secondary" size="sm" onClick={action.onClick}>

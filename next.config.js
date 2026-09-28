@@ -1,3 +1,27 @@
+import path from 'path';
+
+/**
+ * Demo mode (NEXT_PUBLIC_DEMO_MODE=true) swaps Firebase for in-memory mocks so
+ * the app and the E2E suite can run without backend credentials. It is a
+ * local-dev/test-only affordance: mock data must never reach real users, so a
+ * production build that requests it fails fast instead of silently serving
+ * fake data.
+ */
+const demoRequested = process.env.NEXT_PUBLIC_DEMO_MODE === 'true';
+const isProduction =
+  process.env.VERCEL_ENV === 'production' || process.env.NODE_ENV === 'production';
+
+if (demoRequested && isProduction) {
+  throw new Error(
+    'NEXT_PUBLIC_DEMO_MODE=true is not allowed in a production build. ' +
+      'Remove it from the environment; the app requires real Firebase config.',
+  );
+}
+
+const isDemo = demoRequested && !isProduction;
+const demoModule = './lib/firebase/demo.ts';
+const demoModulePath = path.join(process.cwd(), demoModule);
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
@@ -5,6 +29,29 @@ const nextConfig = {
     ignoreBuildErrors: false,
   },
   transpilePackages: ['motion'],
+  ...(isDemo
+    ? {
+        webpack(config) {
+          config.resolve.alias = {
+            ...config.resolve.alias,
+            'firebase/firestore': demoModulePath,
+            'firebase/auth': demoModulePath,
+            'firebase/storage': demoModulePath,
+            // Force a pure-JS shim so @firebase/auth ESM never loads at runtime
+            '@firebase/auth': demoModulePath,
+          };
+          return config;
+        },
+        turbopack: {
+          resolveAlias: {
+            'firebase/firestore': demoModule,
+            'firebase/auth': demoModule,
+            'firebase/storage': demoModule,
+            '@firebase/auth': demoModule,
+          },
+        },
+      }
+    : {}),
   async headers() {
     return [
       {
@@ -15,7 +62,7 @@ const nextConfig = {
             value: 'same-origin-allow-popups',
           },
           {
-            key: 'Cross-Origin-Window-Policy', 
+            key: 'Cross-Origin-Window-Policy',
             value: 'allow-popups',
           },
           {

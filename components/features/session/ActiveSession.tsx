@@ -117,11 +117,11 @@ export default function ActiveSession({ coupleId, sessionId, couple }: { coupleI
 
     return (
       <div className="flex flex-col items-center justify-center text-center mt-10 p-4 md:p-8 w-full max-w-4xl mx-auto">
-        <div className="w-20 h-20 bg-rose-500/20 rounded-full flex items-center justify-center mb-6 shadow-[0_0_50px_rgba(244,63,94,0.3)]">
-          <Heart className="w-10 h-10 text-rose-500 mx-auto" />
+        <div className="w-20 h-20 bg-[#bcabae]/20 rounded-full flex items-center justify-center mb-6 shadow-[0_0_50px_rgba(188,171,174,)]">
+          <Heart className="w-10 h-10 text-[#bcabae] mx-auto" />
         </div>
-        <h2 className="text-3xl md:text-5xl font-serif italic mb-2 text-[#F8FAFC]">Quiz Finished!</h2>
-        <p className="text-indigo-200/80 mb-8 max-w-md">You've completed "{quiz.title}". Let's see your shared answers.</p>
+        <h2 className="text-3xl md:text-5xl font-serif italic mb-2 text-white">Quiz Finished!</h2>
+        <p className="text-[#bcabae]/80 mb-8 max-w-md">You've completed "{quiz.title}". Let's see your shared answers.</p>
 
         <div className="w-full space-y-6 mb-10 text-left">
           {quiz.questions.map((q, i) => {
@@ -138,13 +138,13 @@ export default function ActiveSession({ coupleId, sessionId, couple }: { coupleI
               <Card key={i} variant="standard" padding="md">
                 <p className="font-serif italic text-xl text-white mb-4">{i + 1}. {q.q}</p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="bg-indigo-500/10 p-4 rounded-xl border border-indigo-500/20">
-                    <p className="text-[10px] uppercase tracking-widest text-indigo-300 font-bold mb-1">You</p>
-                    <p className="text-[#F8FAFC] flex content-start">{resolveAns(mAns)}</p>
+                  <div className="bg-[#2d2e2e]/10 p-4 rounded-xl border border-[#2d2e2e]/20">
+                    <p className="text-[10px] uppercase tracking-widest text-[#bcabae] font-bold mb-1">You</p>
+                    <p className="text-white flex content-start">{resolveAns(mAns)}</p>
                   </div>
-                  <div className="bg-rose-500/10 p-4 rounded-xl border border-rose-500/20">
-                    <p className="text-[10px] uppercase tracking-widest text-rose-300 font-bold mb-1">Partner</p>
-                    <p className="text-[#F8FAFC] flex content-start">{resolveAns(pAns)}</p>
+                  <div className="bg-[#bcabae]/10 p-4 rounded-xl border border-[#bcabae]/20">
+                    <p className="text-[10px] uppercase tracking-widest text-[#bcabae] font-bold mb-1">Partner</p>
+                    <p className="text-white flex content-start">{resolveAns(pAns)}</p>
                   </div>
                 </div>
               </Card>
@@ -162,9 +162,9 @@ export default function ActiveSession({ coupleId, sessionId, couple }: { coupleI
   return (
     <div className="max-w-3xl mx-auto py-8 md:py-12 flex flex-col h-full justify-center">
       <div className="flex flex-col md:flex-row md:items-center justify-between mb-12 gap-4">
-        <h2 className="font-bold text-indigo-300 uppercase tracking-[0.2em] text-xs flex items-center space-x-4">
+        <h2 className="font-bold text-[#bcabae] uppercase tracking-[0.2em] text-xs flex items-center space-x-4">
           <span>{quiz.title}</span>
-          <button onClick={endSessionEarly} className="text-white/30 hover:text-rose-400 font-normal underline underline-offset-4">End Session</button>
+          <button onClick={endSessionEarly} className="text-white/30 hover:text-[#bcabae] font-normal underline underline-offset-4">End Session</button>
         </h2>
         <Badge variant="secondary" size="sm">
           Question {currentQIndex + 1} of {quiz.questions.length}
@@ -207,20 +207,20 @@ export default function ActiveSession({ coupleId, sessionId, couple }: { coupleI
                   </div>
                 ) : (
                   <div className="space-y-4">
-                    <div className="p-6 bg-indigo-500/20 border border-indigo-500/30 rounded-3xl shadow-inner shadow-indigo-500/10">
-                      <p className="text-xs text-indigo-300 uppercase tracking-widest font-bold mb-3">Your Answer</p>
-                      <p className="text-[#F8FAFC] text-xl font-serif italic">{myAnswer}</p>
+                    <div className="p-6 bg-[#2d2e2e]/20 border border-[#2d2e2e]/30 rounded-3xl shadow-inner shadow-[#2d2e2e]/10">
+                      <p className="text-xs text-[#bcabae] uppercase tracking-widest font-bold mb-3">Your Answer</p>
+                      <p className="text-white text-xl font-serif italic">{myAnswer}</p>
                     </div>
                     {partnerAnswer !== undefined && bothAnswered && (
                       <motion.div
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ type: "spring", damping: 20, stiffness: 200 }}
-                        className="p-6 bg-rose-500/20 border border-rose-500/30 rounded-3xl shadow-inner shadow-rose-500/10 relative overflow-hidden"
+                        className="p-6 bg-[#bcabae]/20 border border-[#bcabae]/30 rounded-3xl shadow-inner shadow-[#bcabae]/10 relative overflow-hidden"
                       >
                         <div className="absolute top-0 right-0 p-4 text-2xl">✨</div>
-                        <p className="text-xs text-rose-300 uppercase tracking-widest font-bold mb-3">Partner's Answer</p>
-                        <p className="text-[#F8FAFC] text-xl font-serif italic">{partnerAnswer}</p>
+                        <p className="text-xs text-[#bcabae] uppercase tracking-widest font-bold mb-3">Partner's Answer</p>
+                        <p className="text-white text-xl font-serif italic">{partnerAnswer}</p>
                       </motion.div>
                     )}
                   </div>
@@ -239,14 +239,14 @@ export default function ActiveSession({ coupleId, sessionId, couple }: { coupleI
                     disabled={myAnswer !== undefined}
                     onClick={() => handleAnswer(i)}
                     className={`py-4 px-6 rounded-3xl text-base md:text-lg text-left flex justify-between items-center group transition-all
-                      ${iSelected ? 'bg-rose-500 text-white font-bold ring-2 ring-rose-500/50 ring-offset-2 ring-offset-[#0F0A1F] shadow-[0_0_20px_rgba(244,63,94,0.3)]'
-                      : 'bg-white/5 border border-white/10 hover:bg-rose-500/20 hover:border-rose-500/50 text-[#F8FAFC]'}
+                      ${iSelected ? 'bg-[#bcabae] text-white font-bold ring-2 ring-[#bcabae]/50 ring-offset-2 ring-offset-onyx shadow-[0_0_20px_rgba(188,171,174,)]'
+                      : 'bg-white/5 border border-white/10 hover:bg-[#bcabae]/20 hover:border-[#bcabae]/50 text-white'}
                       ${myAnswer !== undefined && !iSelected ? 'opacity-30' : ''}
                     `}
                   >
                     <span className={iSelected ? 'tracking-normal' : ''}><span className="font-bold opacity-50 mr-2">{letter}.</span> {opt}</span>
                     <div className="flex items-center gap-2">
-                      {pSelected && bothAnswered && <span className="text-[10px] font-bold text-indigo-900 bg-indigo-300 px-2 py-1 rounded-full uppercase tracking-widest shadow-lg">Partner</span>}
+                      {pSelected && bothAnswered && <span className="text-[10px] font-bold text-indigo-900 bg-[#bcabae] px-2 py-1 rounded-full uppercase tracking-widest shadow-lg">Partner</span>}
                       {iSelected ? <span>✓</span> : <span className="opacity-0 group-hover:opacity-100 transition-opacity">✨</span>}
                     </div>
                   </button>
@@ -258,18 +258,18 @@ export default function ActiveSession({ coupleId, sessionId, couple }: { coupleI
           <div className="mt-16 text-center h-16 flex items-center justify-center">
             {myAnswer === undefined ? (
               <div className="flex items-center space-x-2">
-                <div className="w-1.5 h-1.5 bg-rose-500 rounded-full animate-bounce"></div>
-                <div className="w-1.5 h-1.5 bg-rose-500 rounded-full animate-bounce" style={{ animationDelay: '100ms' }}></div>
-                <div className="w-1.5 h-1.5 bg-rose-500 rounded-full animate-bounce" style={{ animationDelay: '200ms' }}></div>
-                <p className="text-rose-400/80 text-sm italic ml-2">Waiting for your answer</p>
+                <div className="w-1.5 h-1.5 bg-[#bcabae] rounded-full animate-bounce"></div>
+                <div className="w-1.5 h-1.5 bg-[#bcabae] rounded-full animate-bounce" style={{ animationDelay: '100ms' }}></div>
+                <div className="w-1.5 h-1.5 bg-[#bcabae] rounded-full animate-bounce" style={{ animationDelay: '200ms' }}></div>
+                <p className="text-[#bcabae]/80 text-sm italic ml-2">Waiting for your answer</p>
               </div>
             ) : partnerAnswer === undefined ? (
               <div className="flex flex-col items-center space-y-4">
                 <div className="flex items-center space-x-2">
-                  <div className="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-bounce"></div>
-                  <div className="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-bounce" style={{ animationDelay: '100ms' }}></div>
-                  <div className="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-bounce" style={{ animationDelay: '200ms' }}></div>
-                  <p className="text-indigo-400 text-sm font-medium uppercase tracking-widest ml-2">Waiting for partner</p>
+                  <div className="w-1.5 h-1.5 bg-[#2d2e2e] rounded-full animate-bounce"></div>
+                  <div className="w-1.5 h-1.5 bg-[#2d2e2e] rounded-full animate-bounce" style={{ animationDelay: '100ms' }}></div>
+                  <div className="w-1.5 h-1.5 bg-[#2d2e2e] rounded-full animate-bounce" style={{ animationDelay: '200ms' }}></div>
+                  <p className="text-[#bcabae] text-sm font-medium uppercase tracking-widest ml-2">Waiting for partner</p>
                 </div>
                 {process.env.NODE_ENV !== 'production' && (
                   <button onClick={nextQuestion} className="text-[10px] text-white/20 hover:text-white/60 uppercase tracking-widest transition-colors">Force Next (Dev)</button>
@@ -298,7 +298,7 @@ export default function ActiveSession({ coupleId, sessionId, couple }: { coupleI
                 initial={{ scaleX: 0 }}
                 animate={{ scaleX: 1 }}
                 transition={{ duration: 0.4, delay: idx * 0.05 }}
-                className={`h-1.5 rounded-full transition-all origin-left ${idx < currentQIndex ? 'bg-indigo-500 w-8 shadow-[0_0_6px_rgba(99,102,241,0.4)]' : idx === currentQIndex ? 'bg-rose-500 w-12 shadow-[0_0_12px_rgba(244,63,94,0.7)]' : 'bg-white/20 w-8'}`}
+                className={`h-1.5 rounded-full transition-all origin-left ${idx < currentQIndex ? 'bg-[#2d2e2e] w-8 shadow-[0_0_6px_rgba(99,102,241,0.4)]' : idx === currentQIndex ? 'bg-[#bcabae] w-12 shadow-[0_0_12px_rgba(188,171,174,)]' : 'bg-white/20 w-8'}`}
               ></motion.div>
             ))}
           </div>

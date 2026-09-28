@@ -169,14 +169,14 @@ export default function MemoryBoard({ coupleId }: { coupleId: string }) {
     }
   };
 
-  if (loading) return <div className="text-indigo-200 text-center py-20 font-light animate-pulse">Loading memories...</div>;
+  if (loading) return <div className="text-[#bcabae]/60 text-center py-20 font-light animate-pulse">Loading memories...</div>;
 
   return (
     <div className="w-full pb-20">
       <header className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
-          <h1 className="text-4xl md:text-5xl font-serif italic mb-4 text-transparent bg-clip-text bg-gradient-to-r from-rose-400 to-indigo-400">Memory Board</h1>
-          <p className="text-indigo-200/60 font-light">Look back on your shared moments and answers.</p>
+          <h1 className="text-4xl md:text-5xl font-serif italic mb-4 text-transparent bg-clip-text bg-gradient-to-r from-[#bcabae] to-[#bcabae]">Memory Board</h1>
+          <p className="text-[#bcabae]/70 font-light">Look back on your shared moments and answers.</p>
         </div>
         <Button
           variant="primary"
@@ -190,11 +190,11 @@ export default function MemoryBoard({ coupleId }: { coupleId: string }) {
       </header>
 
       {challenge && (
-        <div className="mb-12 bg-indigo-500/10 border border-indigo-500/30 p-6 md:p-8 rounded-[2rem] shadow-xl relative overflow-hidden">
+        <div className="mb-12 bg-[#2d2e2e]/10 border border-[#2d2e2e]/30 p-6 md:p-8 rounded-[2rem] shadow-xl relative overflow-hidden">
           <div className="absolute top-0 right-0 p-6 opacity-20">
-            <Sparkles className="w-20 h-20 text-indigo-300" />
+            <Sparkles className="w-20 h-20 text-[#bcabae]" />
           </div>
-          <h2 className="text-2xl font-serif italic text-indigo-300 mb-4 flex items-center gap-3">
+          <h2 className="text-2xl font-serif italic text-[#bcabae] mb-4 flex items-center gap-3">
             <Sparkles className="w-6 h-6" /> Your Custom Prompt
           </h2>
           <div className="prose prose-invert prose-indigo">
@@ -251,11 +251,11 @@ export default function MemoryBoard({ coupleId }: { coupleId: string }) {
                   whileHover={{ scale: 1.03, y: -4 }}
                   className="group relative bg-white/5 p-6 rounded-[2rem] border border-white/10 shadow-lg flex flex-col items-center overflow-hidden"
                 >
-                  <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/0 via-indigo-500/0 to-rose-500/0 group-hover:from-indigo-500/10 group-hover:to-rose-500/10 transition-all duration-500 pointer-events-none" />
-                  <Calendar className="w-8 h-8 text-rose-400 mb-4 relative z-10" />
-                  <h3 className="font-serif italic text-xl mb-2 text-[#F8FAFC] relative z-10">{getQuizTitle(s)}</h3>
-                  <p className="text-xs text-indigo-300 uppercase tracking-widest relative z-10">{formatMemoryDate(s.updatedAt)}</p>
-                  <button onClick={() => window.location.hash = `#session/${s.id}`} className="mt-6 uppercase text-xs tracking-widest text-indigo-200 hover:text-white transition-colors bg-indigo-500/20 px-6 py-2 rounded-full border border-indigo-500/30 relative z-10 group-hover:bg-indigo-500/40 group-hover:border-indigo-400/50">
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#2d2e2e]/0 via-[#2d2e2e]/0 to-[#bcabae]/0 group-hover:from-[#2d2e2e]/10 group-hover:to-[#bcabae]/10 transition-all duration-500 pointer-events-none" />
+                  <Calendar className="w-8 h-8 text-[#bcabae] mb-4 relative z-10" />
+                  <h3 className="font-serif italic text-xl mb-2 text-white relative z-10">{getQuizTitle(s)}</h3>
+                  <p className="text-xs text-[#bcabae] uppercase tracking-widest relative z-10">{formatMemoryDate(s.updatedAt)}</p>
+                  <button onClick={() => window.location.hash = `#session/${s.id}`} className="mt-6 uppercase text-xs tracking-widest text-[#bcabae]/60 hover:text-white transition-colors bg-[#2d2e2e]/20 px-6 py-2 rounded-full border border-[#2d2e2e]/30 relative z-10 group-hover:bg-[#2d2e2e]/40 group-hover:border-[#bcabae]/50">
                     View
                   </button>
                 </motion.div>
@@ -271,7 +271,7 @@ export default function MemoryBoard({ coupleId }: { coupleId: string }) {
             exit={{ opacity: 0, y: 10 }}
           >
             <div className="mb-6 flex items-center justify-between">
-              <div className="text-sm text-slate-400">Shared photo memories</div>
+              <div className="text-sm text-#716969">Shared photo memories</div>
               <Button
                 variant="primary"
                 size="sm"
@@ -299,8 +299,8 @@ export default function MemoryBoard({ coupleId }: { coupleId: string }) {
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={p.url} alt="memory" className="w-full object-cover rounded-[2rem]" loading="lazy" />
                     <div className="p-4 flex items-center justify-between">
-                      <div className="text-xs text-slate-400">{new Date(p.uploadedAt).toLocaleDateString()}</div>
-                      <button onClick={() => removePhoto(p.id)} className="text-white/60 hover:text-rose-400 transition-colors">
+                      <div className="text-xs text-#716969">{new Date(p.uploadedAt).toLocaleDateString()}</div>
+                      <button onClick={() => removePhoto(p.id)} className="text-white/60 hover:text-[#bcabae] transition-colors">
                         <Trash2 className="w-4 h-4" />
                       </button>
                     </div>
@@ -334,8 +334,8 @@ export default function MemoryBoard({ coupleId }: { coupleId: string }) {
                   <div className="text-2xl">{m.icon || '🏆'}</div>
                   <div className="flex-1">
                     <p className="text-white font-semibold text-lg">{m.title}</p>
-                    {m.description && <p className="text-indigo-200/60 text-sm">{m.description}</p>}
-                    <p className="text-xs text-indigo-300 uppercase tracking-widest mt-2">{formatMemoryDate(m.date)}</p>
+                    {m.description && <p className="text-[#bcabae]/70 text-sm">{m.description}</p>}
+                    <p className="text-xs text-[#bcabae] uppercase tracking-widest mt-2">{formatMemoryDate(m.date)}</p>
                   </div>
                 </motion.div>
               ))

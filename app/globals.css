@@ -2,38 +2,33 @@
 
 /* ============================================================
    UsTogether Design System
-   Source: DESIGN.md (Figma marketing design analysis)
-   Monochrome editorial canvas + oversized pastel color blocks.
+   Palette: lilac-ash, onyx, graphite, dim-grey, white
    ============================================================ */
 
 @theme {
-  /* ---- Fonts (open-source substitutes for figmaSans/figmaMono) ---- */
+  /* ---- Fonts ---- */
   --font-sans: "Inter", "Inter Fallback", "SF Pro Display", system-ui, helvetica, sans-serif;
   --font-mono: "JetBrains Mono", "SF Mono", menlo, monospace;
 
-  /* ---- Colors: Core monochrome ---- */
-  --color-ink: #18131d;
-  --color-canvas: #f7f3ee;
-  --color-inverse-canvas: #0f0a1f;
-  --color-inverse-ink: #f8fafc;
-  --color-on-inverse-soft: #dfe7ff;
-  --color-hairline: #e9e1d7;
-  --color-hairline-soft: #f2eee7;
-  --color-surface-soft: #f3efe8;
+  /* ---- Colors: New palette ---- */
+  --color-lilac-ash: #bcabae;
+  --color-onyx: #0f0f0f;
+  --color-graphite: #2d2e2e;
+  --color-dim-grey: #716969;
+  --color-white: #fbfbfb;
 
-  /* ---- Colors: Pastel color blocks ---- */
-  --color-block-lime: #dceeb1;
-  --color-block-lilac: #c5b0f4;
-  --color-block-cream: #f4ecd6;
-  --color-block-pink: #efd4d4;
-  --color-block-mint: #c8e6cd;
-  --color-block-coral: #f3c9b6;
-  --color-block-navy: #1f1d3d;
-
-  /* ---- Colors: Accent & semantic ---- */
-  --color-accent-magenta: #ff3d8b;
-  --color-semantic-success: #1ea64a;
-  --color-overlay-scrim: rgba(15, 10, 31, 0.52);
+  /* ---- Semantic mappings ---- */
+  --color-canvas: var(--color-onyx);
+  --color-surface: var(--color-graphite);
+  --color-surface-soft: #3a3b3b;
+  --color-ink: var(--color-white);
+  --color-ink-soft: var(--color-lilac-ash);
+  --color-ink-muted: var(--color-dim-grey);
+  --color-hairline: #3a3b3b;
+  --color-hairline-soft: #2a2b2b;
+  --color-accent: var(--color-lilac-ash);
+  --color-accent-soft: #d4c8ca;
+  --color-overlay-scrim: rgba(15, 15, 15, 0.72);
 
   /* ---- Radius ---- */
   --radius-xs: 2px;
@@ -44,23 +39,27 @@
   --radius-pill: 50px;
   --radius-full: 9999px;
 
-  /* ---- Spacing ---- */
-  --spacing-hair: 1px;
-  --spacing-xxs: 4px;
-  --spacing-xs: 8px;
-  --spacing-sm: 12px;
-  --spacing-md: 16px;
-  --spacing-lg: 24px;
-  --spacing-xl: 32px;
-  --spacing-xxl: 48px;
-  --spacing-section: 96px;
+  /* NOTE: do not add a named `--spacing-*` scale here.
+     Tailwind v4 resolves `max-w-<name>` against the container scale
+     (`--container-*`) and falls back to `--spacing-<name>`. Defining
+     `--spacing-sm|md|lg|xl|xs` silently redefines max-w-sm|md|lg|xl|xs
+     to 12px/16px/24px/32px/8px and collapses those containers. */
 }
 
 @layer base {
   :root {
-    color-scheme: light;
-    background-color: var(--color-canvas);
-    color: var(--color-ink);
+    color-scheme: dark;
+    background-color: var(--color-onyx);
+    color: var(--color-white);
+  }
+
+  /* Decorative blurred glows and `animate-ping` rings are wider than the
+     viewport, which otherwise gives the whole page a sideways scroll on
+     phones. `clip` (not `hidden`) contains them without creating a scroll
+     container, so `position: sticky` keeps working. */
+  html,
+  body {
+    overflow-x: clip;
   }
 
   html {
@@ -68,18 +67,15 @@
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
     scroll-behavior: smooth;
-    background-color: var(--color-canvas);
-    color: var(--color-ink);
+    background-color: var(--color-onyx);
+    color: var(--color-white);
   }
 
   body {
     min-height: 100vh;
     margin: 0;
-    background:
-      radial-gradient(circle at top left, rgba(197, 176, 244, 0.22), transparent 26%),
-      radial-gradient(circle at top right, rgba(220, 238, 177, 0.25), transparent 30%),
-      linear-gradient(180deg, #f9f5f0 0%, #f4efe7 100%);
-    color: var(--color-ink);
+    background: var(--color-onyx);
+    color: var(--color-white);
     font-family: var(--font-sans);
     line-height: 1.6;
     letter-spacing: -0.01em;
@@ -110,8 +106,8 @@
   }
 
   ::selection {
-    background: rgba(255, 61, 139, 0.18);
-    color: var(--color-ink);
+    background: rgba(188, 171, 174, 0.3);
+    color: var(--color-white);
   }
 }
 
@@ -122,20 +118,20 @@
 
   .bg-editorial {
     background:
-      radial-gradient(circle at top left, rgba(255, 61, 139, 0.08), transparent 18%),
-      radial-gradient(circle at bottom right, rgba(99, 102, 241, 0.08), transparent 22%),
-      linear-gradient(180deg, rgba(255, 255, 255, 0.85), rgba(245, 240, 233, 0.8));
+      radial-gradient(circle at top left, rgba(188, 171, 174, 0.06), transparent 18%),
+      radial-gradient(circle at bottom right, rgba(113, 105, 105, 0.06), transparent 22%),
+      linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(45, 46, 46, 0.1));
   }
 
   .panel-soft {
-    background: rgba(255, 255, 255, 0.55);
-    border: 1px solid rgba(24, 19, 29, 0.08);
-    box-shadow: 0 18px 38px rgba(16, 12, 26, 0.05);
+    background: rgba(45, 46, 46, 0.55);
+    border: 1px solid rgba(188, 171, 174, 0.12);
+    box-shadow: 0 18px 38px rgba(0, 0, 0, 0.25);
     backdrop-filter: blur(10px);
   }
 
-  .text-gradient-rose-indigo {
-    background: linear-gradient(135deg, #ff4d88 0%, #7d7cf6 100%);
+  .text-gradient {
+    background: linear-gradient(135deg, var(--color-lilac-ash) 0%, var(--color-white) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -143,48 +139,48 @@
 
   .gradient-border {
     position: relative;
-    background: linear-gradient(#f7f3ee, #f7f3ee) padding-box,
-      linear-gradient(135deg, rgba(255, 61, 139, 0.5), rgba(99, 102, 241, 0.5)) border-box;
+    background: linear-gradient(var(--color-onyx), var(--color-onyx)) padding-box,
+      linear-gradient(135deg, rgba(188, 171, 174, 0.4), rgba(113, 105, 105, 0.4)) border-box;
     border: 1px solid transparent;
   }
 }
 
-/* Custom scrollbar for a premium feel */
+/* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 10px;
   height: 10px;
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(15, 10, 31, 0.06);
+  background: rgba(15, 15, 15, 0.6);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, rgba(255, 61, 139, 0.5), rgba(120, 119, 255, 0.55));
+  background: var(--color-dim-grey);
   border-radius: 9999px;
-  border: 2px solid rgba(255, 255, 255, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.08);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, rgba(255, 61, 139, 0.72), rgba(120, 119, 255, 0.75));
+  background: var(--color-lilac-ash);
 }
 
-/* Premium noise/gradient mesh background */
+/* Subtle noise/gradient mesh background */
 .noise-bg {
   background-image:
-    radial-gradient(at 0% 0%, rgba(255, 61, 139, 0.12) 0px, transparent 36%),
-    radial-gradient(at 100% 0%, rgba(99, 102, 241, 0.12) 0px, transparent 42%),
-    radial-gradient(at 100% 100%, rgba(168, 85, 247, 0.1) 0px, transparent 38%),
-    radial-gradient(at 0% 100%, rgba(244, 186, 82, 0.12) 0px, transparent 40%);
+    radial-gradient(at 0% 0%, rgba(188, 171, 174, 0.08) 0px, transparent 36%),
+    radial-gradient(at 100% 0%, rgba(113, 105, 105, 0.06) 0px, transparent 42%),
+    radial-gradient(at 100% 100%, rgba(188, 171, 174, 0.04) 0px, transparent 38%),
+    radial-gradient(at 0% 100%, rgba(45, 46, 46, 0.1) 0px, transparent 40%);
 }
 
 /* Enhanced focus states */
 :focus-visible {
-  outline: 2px solid rgba(255, 61, 139, 0.72);
+  outline: 2px solid rgba(188, 171, 174, 0.7);
   outline-offset: 2px;
 }
 
-/* Bounce-in animation for elements appearing on screen */
+/* Bounce-in animation */
 @keyframes bounce-in {
   0% {
     opacity: 0;
@@ -204,7 +200,7 @@
   animation: bounce-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
-/* Float animation for decorative orbs */
+/* Float animation */
 @keyframes float {
   0%,
   100% {
@@ -227,14 +223,14 @@
   animation-delay: 2s;
 }
 
-/* Pulse glow effect for interactive elements */
+/* Pulse glow */
 @keyframes pulse-glow {
   0%,
   100% {
-    box-shadow: 0 0 12px rgba(255, 61, 139, 0.18);
+    box-shadow: 0 0 12px rgba(188, 171, 174, 0.15);
   }
   50% {
-    box-shadow: 0 0 24px rgba(255, 61, 139, 0.39);
+    box-shadow: 0 0 24px rgba(188, 171, 174, 0.3);
   }
 }
 

@@ -28,11 +28,11 @@ export default function AchievementsPanel({ achievements = [] }: AchievementsPan
       className="overflow-hidden"
     >
       {/* trophy glow */}
-      <div className="absolute -top-10 -right-10 w-32 h-32 bg-indigo-500/20 blur-[60px] rounded-full pointer-events-none" />
+      <div className="absolute -top-10 -right-10 w-32 h-32 bg-[#2d2e2e]/20 blur-[60px] rounded-full pointer-events-none" />
 
       <div className="flex items-center gap-3 relative z-10">
         <div className="relative">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-500/20 text-indigo-300">
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#2d2e2e]/20 text-[#bcabae]">
             <Trophy className="h-5 w-5" />
           </div>
           {achievements.length > 0 && (
@@ -47,13 +47,13 @@ export default function AchievementsPanel({ achievements = [] }: AchievementsPan
           )}
         </div>
         <div>
-          <p className="text-[10px] uppercase tracking-[0.25em] text-indigo-300">Achievements</p>
-          <p className="text-3xl font-bold text-[#F8FAFC]">{achievements.length}</p>
+          <p className="text-[10px] uppercase tracking-[0.25em] text-[#bcabae]">Achievements</p>
+          <p className="text-3xl font-bold text-white">{achievements.length}</p>
         </div>
       </div>
 
       {achievements.length === 0 ? (
-        <p className="text-sm text-indigo-200/60 mt-4 relative z-10">No achievements yet. Keep playing to unlock!</p>
+        <p className="text-sm text-[#bcabae]/70 mt-4 relative z-10">No achievements yet. Keep playing to unlock!</p>
       ) : (
         <>
           <ul className="mt-5 space-y-3 relative z-10">
@@ -66,12 +66,12 @@ export default function AchievementsPanel({ achievements = [] }: AchievementsPan
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
                   transition={{ duration: 0.3 }}
-                  className="flex items-start gap-3 rounded-2xl border border-white/5 bg-white/5 p-3 hover:border-indigo-500/30 transition-colors"
+                  className="flex items-start gap-3 rounded-2xl border border-white/5 bg-white/5 p-3 hover:border-[#2d2e2e]/30 transition-colors"
                 >
                   <span className="mt-0.5 text-lg">🏆</span>
                   <div>
-                    <p className="text-sm font-semibold text-[#F8FAFC]">{a.title}</p>
-                    <p className="text-xs text-indigo-200/60">{a.description}</p>
+                    <p className="text-sm font-semibold text-white">{a.title}</p>
+                    <p className="text-xs text-[#bcabae]/70">{a.description}</p>
                   </div>
                 </motion.li>
               ))}

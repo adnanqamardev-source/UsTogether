@@ -11,7 +11,7 @@ const DashboardDynamic = dynamic(
   {
     loading: () => (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="w-12 h-12 bg-gradient-to-br from-rose-500 to-indigo-600 rounded-xl shadow-lg shadow-rose-500/20 animate-pulse" />
+        <div className="w-12 h-12 bg-gradient-to-br bg-lilac-ash rounded-xl shadow-lg shadow-[#bcabae]/20 animate-pulse" />
       </div>
     ),
     ssr: false, // Don't SSR since it requires auth
@@ -55,7 +55,7 @@ export default function AuthWrapper({ children }: { children: React.ReactNode })
   if (wrapperLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="w-12 h-12 bg-gradient-to-br from-rose-500 to-indigo-600 rounded-xl shadow-lg shadow-rose-500/20 animate-pulse" />
+        <div className="w-12 h-12 bg-gradient-to-br bg-lilac-ash rounded-xl shadow-lg shadow-[#bcabae]/20 animate-pulse" />
       </div>
     );
   }

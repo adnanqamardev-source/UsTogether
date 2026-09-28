@@ -13,7 +13,7 @@ export interface SectionHeaderProps extends HTMLAttributes<HTMLDivElement> {
 }
 
 const SectionHeader = forwardRef<HTMLDivElement, SectionHeaderProps>(
-  ({ className, title, badge, icon: Icon, accent = "text-indigo-300", action, ...props }, ref) => {
+  ({ className, title, badge, icon: Icon, accent = "text-[#bcabae]", action, ...props }, ref) => {
     return (
       <div
         ref={ref}

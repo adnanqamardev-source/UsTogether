@@ -27,15 +27,15 @@ import { Container } from "@/components/layout";
 
 const ChatDrawer = dynamic(() => import('../chat/ChatDrawer'), {
   ssr: false,
-  loading: () => <div className="fixed bottom-6 right-6 w-80 h-96 bg-slate-900 border border-white/10 rounded-2xl shadow-2xl flex items-center justify-center z-50"><Loader className="w-6 h-6 text-white animate-spin" /></div>
+  loading: () => <div className="fixed bottom-6 right-6 w-80 h-96 bg-graphite border border-white/10 rounded-2xl shadow-2xl flex items-center justify-center z-50"><Loader className="w-6 h-6 text-white animate-spin" /></div>
 });
 const MemoryBoard = dynamic(() => import('../memories/MemoryBoard'), {
   ssr: false,
-  loading: () => <div className="flex items-center justify-center h-full"><Loader className="w-8 h-8 text-indigo-400 animate-spin" /></div>
+  loading: () => <div className="flex items-center justify-center h-full"><Loader className="w-8 h-8 text-lilac-ash animate-spin" /></div>
 });
 const ActiveSession = dynamic(() => import('../session/ActiveSession'), {
   ssr: false,
-  loading: () => <div className="flex items-center justify-center h-full"><Loader className="w-8 h-8 text-indigo-400 animate-spin" /></div>
+  loading: () => <div className="flex items-center justify-center h-full"><Loader className="w-8 h-8 text-lilac-ash animate-spin" /></div>
 });
 
 type MobileMenuProps = {
@@ -64,20 +64,19 @@ const MobileMenu = ({ isOpen, onClose, sessionId, isMemories, isStats, onUnpair,
           initial={{ opacity: 0, y: -20, scale: 0.95 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: -20, scale: 0.95 }}
-          className="md:hidden fixed inset-4 top-20 bg-slate-900/95 backdrop-blur-xl z-50 rounded-2xl border border-white/10 shadow-2xl p-6 overflow-y-auto"
+          className="md:hidden fixed inset-4 top-20 bg-graphite/95 backdrop-blur-xl z-50 rounded-2xl border border-white/10 shadow-2xl p-6 overflow-y-auto"
         >
           <div className="flex flex-col gap-6 text-sm uppercase tracking-widest font-bold">
-            <a href="#" onClick={() => { window.location.hash = ''; onClose(); }} className={`${!sessionId && !isMemories && !isStats ? 'text-rose-400' : 'text-slate-300'}`}>Quizzes</a>
-            <a href="#memories" onClick={onClose} className={`${isMemories ? 'text-rose-400' : 'text-slate-300'}`}>Memories</a>
-            <a href="#stats" onClick={onClose} className={`${isStats ? 'text-rose-400' : 'text-slate-300'}`}>Stats</a>
-            <button onClick={() => { onOpenChat(); onClose(); }} className="text-left text-slate-300 flex items-center gap-3">
+            <a href="#" onClick={() => { window.location.hash = ''; onClose(); }} className={`${!sessionId && !isMemories && !isStats ? 'text-lilac-ash' : 'text-lilac-ash/60'}`}>Quizzes</a>
+            <a href="#memories" onClick={onClose} className={`${isMemories ? 'text-lilac-ash' : 'text-lilac-ash/60'}`}>Memories</a>
+            <a href="#stats" onClick={onClose} className={`${isStats ? 'text-lilac-ash' : 'text-lilac-ash/60'}`}>Stats</a>
+            <button onClick={() => { onOpenChat(); onClose(); }} className="text-left text-lilac-ash/60 flex items-center gap-3">
               <MessageCircle size={18} /> Chat
             </button>
             <hr className="border-white/10 my-2" />
-            <button onClick={() => { onUnpair(); onClose(); }} className="text-left text-rose-400 flex items-center gap-3">
+            <button onClick={() => { onUnpair(); onClose(); }} className="text-left text-lilac-ash/60 flex items-center gap-3">
               <UserMinus size={18} /> Disconnect
             </button>
-            {/* Log Out hidden in Demo mode */}
           </div>
         </motion.div>
       </>
@@ -146,7 +145,6 @@ export default function CoupleDashboard({ coupleId }: { coupleId: string }) {
     }
     
     try {
-      // Ensure auth token is valid before attempting write
       const token = await user.getIdToken(true);
       if (!token) {
         alert('Authentication expired. Please sign in again.');
@@ -164,11 +162,9 @@ export default function CoupleDashboard({ coupleId }: { coupleId: string }) {
         { type: 'delete', ref: coupleRef },
       ]);
        
-      // Force page refresh to reset auth state
       window.location.reload();
     } catch (e: any) {
       console.error('Unpair failed', e);
-      // Handle permission denied specifically
       if (e?.message?.includes('Missing or insufficient permissions') || e?.code === 'permission-denied') {
         alert('Cannot disconnect: Authentication issue. Please disable ad blockers and try again.');
       } else {
@@ -197,10 +193,12 @@ export default function CoupleDashboard({ coupleId }: { coupleId: string }) {
   const isLoading = coupleLoading || userLoading;
 
   return (
-    <div className="flex-1 flex flex-col font-sans relative w-full min-h-screen max-w-6xl mx-auto text-[#F8FAFC]">
-      {/* Background Ambient Glows */}
-      <div className="fixed top-0 left-1/4 -translate-y-1/2 w-[600px] h-[600px] bg-rose-900/15 blur-[120px] rounded-full pointer-events-none" />
-      <div className="fixed bottom-0 right-0 translate-x-1/3 translate-y-1/3 w-[500px] h-[500px] bg-indigo-900/15 blur-[120px] rounded-full pointer-events-none" />
+    <div className="flex-1 flex flex-col font-sans relative w-full min-h-screen max-w-6xl mx-auto text-white">
+      {/* Background Ambient Glows — clipped so they never widen the page on mobile */}
+      <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none" aria-hidden="true">
+        <div className="absolute top-0 left-1/4 -translate-y-1/2 w-[600px] h-[600px] bg-dim-grey/15 blur-[120px] rounded-full" />
+        <div className="absolute bottom-0 right-0 translate-x-1/3 translate-y-1/3 w-[500px] h-[500px] bg-graphite/30 blur-[120px] rounded-full" />
+      </div>
 
       {/* Chat Overlay */}
       {isChatOpen && (
@@ -211,17 +209,16 @@ export default function CoupleDashboard({ coupleId }: { coupleId: string }) {
       <nav className="flex justify-between items-center mb-6 relative z-10 pt-6 px-5 sm:px-10">
         {/* Logo Section */}
         <div className="flex items-center space-x-3 cursor-pointer shrink-0" onClick={() => window.location.hash = ''}>
-          <div className="w-10 h-10 bg-gradient-to-br from-rose-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/20">
-            <span className="font-bold text-xl text-white">U</span>
+          <div className="w-10 h-10 bg-lilac-ash rounded-xl flex items-center justify-center shadow-lg">
+            <span className="font-bold text-xl text-onyx">U</span>
           </div>
           <span className="text-xl font-medium tracking-tight hidden sm:block">Us<span className="font-bold">Together</span></span>
-          <span className="text-[10px] px-2 py-1 bg-rose-500/20 text-rose-300 font-mono tracking-widest rounded border border-rose-500/30 ml-2 hidden sm:block">DEMO MODE</span>
         </div>
 
         {/* Desktop Center Links */}
-        <div className="hidden md:flex items-center space-x-10 text-xs uppercase tracking-[0.15em] font-bold text-slate-400">
-          <a href="#" onClick={() => window.location.hash = ''} className={`transition-all pb-2 border-b-2 ${!sessionId && !isMemories ? 'text-rose-400 border-rose-400' : 'border-transparent hover:text-white'}`}>Quizzes</a>
-          <a href="#memories" className={`transition-all pb-2 border-b-2 ${isMemories ? 'text-rose-400 border-rose-400' : 'border-transparent hover:text-white'}`}>Memories</a>
+        <div className="hidden lg:flex items-center space-x-6 text-xs uppercase tracking-[0.15em] font-bold text-dim-grey">
+          <a href="#" onClick={() => window.location.hash = ''} className={`transition-all pb-2 border-b-2 ${!sessionId && !isMemories ? 'text-lilac-ash border-lilac-ash' : 'border-transparent hover:text-white'}`}>Quizzes</a>
+          <a href="#memories" className={`transition-all pb-2 border-b-2 ${isMemories ? 'text-lilac-ash border-lilac-ash' : 'border-transparent hover:text-white'}`}>Memories</a>
           <a href="#stats" className={`hover:text-white transition-colors flex items-center gap-2 pb-2 border-b-2 border-transparent`}>Stats</a>
           <button onClick={() => setIsChatOpen(true)} className={`hover:text-white transition-colors flex items-center gap-2 pb-2 border-b-2 border-transparent`}>
             <MessageCircle className="w-4 h-4" /> Chat
@@ -229,12 +226,12 @@ export default function CoupleDashboard({ coupleId }: { coupleId: string }) {
         </div>
 
         {/* Desktop Actions */}
-        <div className="hidden md:flex items-center space-x-6 text-xs uppercase tracking-widest font-semibold text-slate-400">
-          <button onClick={handleUnpair} className={`hover:text-rose-400 transition-colors flex items-center gap-2`}>
+        <div className="hidden lg:flex items-center space-x-6 text-xs uppercase tracking-widest font-semibold text-dim-grey">
+          <button onClick={handleUnpair} className={`hover:text-lilac-ash transition-colors flex items-center gap-2`}>
             <UserMinus className="w-4 h-4" /> Disconnect
           </button>
-           
-          <div className="w-10 h-10 rounded-full bg-indigo-500 flex items-center justify-center text-sm font-bold text-white shadow-md">
+            
+          <div className="w-10 h-10 rounded-full bg-graphite flex items-center justify-center text-sm font-bold text-white shadow-md">
             {user?.displayName?.[0].toUpperCase() || user?.email?.[0].toUpperCase() || 'U'}
           </div>
         </div>
@@ -242,7 +239,7 @@ export default function CoupleDashboard({ coupleId }: { coupleId: string }) {
         {/* Mobile Hamburger Toggle */}
         <button
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="md:hidden p-2 text-slate-300 hover:text-white transition-colors"
+          className="lg:hidden p-2 text-dim-grey hover:text-white transition-colors"
           aria-label="Toggle menu"
         >
           {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -279,7 +276,7 @@ export default function CoupleDashboard({ coupleId }: { coupleId: string }) {
         ) : isStats ? (
           <div className="py-8 md:py-12 w-full max-w-4xl mx-auto">
             <h1 className="text-4xl md:text-5xl font-serif italic mb-6 text-white">Stats</h1>
-            <p className="text-slate-400">Analytics coming soon. This page will show your couple's progress, streak, and achievements.</p>
+            <p className="text-dim-grey">Analytics coming soon. This page will show your couple's progress, streak, and achievements.</p>
           </div>
         ) : isMemories ? (
           <MemoryBoard coupleId={coupleId} />
@@ -289,22 +286,27 @@ export default function CoupleDashboard({ coupleId }: { coupleId: string }) {
               <h1 className="text-4xl md:text-5xl font-serif italic mb-3 text-white">
                 {isLoading ? 'Loading...' : `Hi, ${userProfile?.displayName || user?.email?.split('@')[0]} ☁️`}
               </h1>
-              <p className="text-slate-400 text-sm md:text-base">Pick a quiz or game to challenge your partner.</p>
+              <p className="text-dim-grey text-sm md:text-base">Pick a quiz or game to challenge your partner.</p>
             </header>
 
-            {/* Asymmetrical Widgets: Hero card + 2-up grid */}
-            <div className="space-y-4 mb-12">
+            {/* Quiz section at top */}
+            <div className="mb-12">
+              <QuizList coupleId={coupleId} />
+            </div>
+
+            {/* Asymmetrical Widgets: Hero card + widgets grid */}
+            <div className="space-y-4">
               {/* Hero card: active session / unread messages */}
               <motion.div
                 whileHover={{ scale: 1.01 }}
                 className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-white/5 p-6 shadow-xl"
               >
-                <div className="absolute -top-10 -right-10 w-40 h-40 bg-rose-500/20 blur-[60px] rounded-full pointer-events-none" />
+                <div className="absolute -top-10 -right-10 w-40 h-40 bg-lilac-ash/10 blur-[60px] rounded-full pointer-events-none" />
                 <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   <div>
-                    <p className="text-[10px] uppercase tracking-[0.25em] text-indigo-300 mb-1">Connection Status</p>
+                    <p className="text-[10px] uppercase tracking-[0.25em] text-lilac-ash mb-1">Connection Status</p>
                     <h3 className="text-2xl font-serif italic text-white">You & Partner are paired ✨</h3>
-                    <p className="text-indigo-200/60 text-sm mt-1">Complete a quiz together to keep the streak alive.</p>
+                    <p className="text-dim-grey text-sm mt-1">Complete a quiz together to keep the streak alive.</p>
                   </div>
                   <Button
                     variant="primary"
@@ -317,8 +319,8 @@ export default function CoupleDashboard({ coupleId }: { coupleId: string }) {
                 </div>
               </motion.div>
 
-              {/* 2-up grid for secondary widgets */}
-               <div className="grid grid-cols-2 gap-4">
+              {/* Widgets grid: full-width on mobile, 2-up on larger screens */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
                 <StreakCounter streak={userProfile?.streak || 0} />
                 {achievements ? (
                   <AchievementsPanel achievements={achievements} />
@@ -327,8 +329,6 @@ export default function CoupleDashboard({ coupleId }: { coupleId: string }) {
                 )}
               </div>
             </div>
-
-            <QuizList coupleId={coupleId} />
           </>
         ) : (
           <ErrorBoundary>

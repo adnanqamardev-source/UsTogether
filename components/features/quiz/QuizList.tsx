@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { collection, query, where, onSnapshot, addDoc, doc, setDoc, deleteDoc, limit } from '@/lib/firestore';
-import { db } from "@/lib/firebase/client";
+import { db, isDemo } from "@/lib/firebase/client";
 import { useAuth } from '@/components/providers';
 import { Sparkles, Trash2, Flame } from "lucide-react";
 import { handleFirestoreError, OperationType } from "@/lib/firestore-errors";
@@ -19,7 +19,7 @@ function SectionHeaderWrapper({
   title,
   badge,
   icon: Icon,
-  accent = "text-indigo-300",
+  accent = "text-[#bcabae]",
 }: {
   title: string;
   badge?: number;
@@ -93,26 +93,58 @@ export default function QuizList({ coupleId }: { coupleId: string }) {
 
   const [generatingQuiz, setGeneratingQuiz] = useState(false);
 
+  /** Builds a quiz from the local question bank. Always available. */
+  const createFromQuestionBank = async () => {
+    const staticQs = getRandomQuestions(10, recentQuestionIds.slice(-50));
+    if (staticQs.length === 0) return false;
+    const meta = generateFallbackQuizMetadata(staticQs);
+    const quizData = toFirestoreQuizBatch(staticQs, meta.title, meta.description, user!.uid);
+    await addDoc(collection(db, "quizzes"), {
+      ...quizData,
+      createdAt: Date.now(),
+    });
+    setRecentQuestionIds((prev) => [...prev, ...staticQs.map((q) => q.id)]);
+    return true;
+  };
+
   const fetchNewQuiz = async () => {
     if (!user) return;
     setGeneratingQuiz(true);
     try {
-      const token = await user.getIdToken();
-      const res = await fetch("/api/generate-quiz", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          recentTopics: recentQuestionIds.slice(-20),
-          preferredCategory: undefined,
-        }),
-      });
-      const data = await res.json();
+      // In demo mode there is no AI backend to call: the API would reject the
+      // placeholder token after a multi-second admin-SDK round trip. Go
+      // straight to the local question bank instead.
+      if (isDemo) {
+        await createFromQuestionBank();
+        return;
+      }
 
-      if (data.title && data.questions && data.questions.length > 0) {
-        const quizRef = await addDoc(collection(db, "quizzes"), {
+      // Never let a stalled request wedge the button in a permanent spinner.
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 15000);
+      let data: any = null;
+      try {
+        const token = await user.getIdToken();
+        const res = await fetch("/api/generate-quiz", {
+          method: "POST",
+          signal: controller.signal,
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            recentTopics: recentQuestionIds.slice(-20),
+            preferredCategory: undefined,
+          }),
+        });
+        if (!res.ok) throw new Error(`generate-quiz failed: ${res.status}`);
+        data = await res.json();
+      } finally {
+        clearTimeout(timeout);
+      }
+
+      if (data?.title && data?.questions?.length > 0) {
+        await addDoc(collection(db, "quizzes"), {
           creatorId: user.uid,
           title: data.title,
           description: data.description || "A brand new AI generated quiz.",
@@ -120,50 +152,17 @@ export default function QuizList({ coupleId }: { coupleId: string }) {
           questions: data.questions,
           createdAt: Date.now(),
         });
-        if (data.questionIds && Array.isArray(data.questionIds)) {
+        if (Array.isArray(data.questionIds)) {
           setRecentQuestionIds((prev) => [...prev, ...data.questionIds]);
         }
-      } else {
-        const staticQs = getRandomQuestions(10, recentQuestionIds.slice(-50));
-        if (staticQs.length > 0 && user) {
-          const meta = generateFallbackQuizMetadata(staticQs);
-          const quizData = toFirestoreQuizBatch(
-            staticQs,
-            meta.title,
-            meta.description,
-            user.uid,
-          );
-          await addDoc(collection(db, "quizzes"), {
-            ...quizData,
-            createdAt: Date.now(),
-          });
-          setRecentQuestionIds((prev) => [
-            ...prev,
-            ...staticQs.map((q) => q.id),
-          ]);
-        }
+        return;
       }
+
+      await createFromQuestionBank();
     } catch (e) {
       console.error("Failed to fetch new quiz", e);
       try {
-        const staticQs = getRandomQuestions(10, recentQuestionIds.slice(-50));
-        if (staticQs.length > 0 && user) {
-          const meta = generateFallbackQuizMetadata(staticQs);
-          const quizData = toFirestoreQuizBatch(
-            staticQs,
-            meta.title,
-            meta.description,
-            user.uid,
-          );
-          await addDoc(collection(db, "quizzes"), {
-            ...quizData,
-            createdAt: Date.now(),
-          });
-          setRecentQuestionIds((prev) => [
-            ...prev,
-            ...staticQs.map((q) => q.id),
-          ]);
-        }
+        await createFromQuestionBank();
       } catch (fallbackErr) {
         console.error("Fallback also failed", fallbackErr);
       }
@@ -280,7 +279,7 @@ export default function QuizList({ coupleId }: { coupleId: string }) {
     <div className="space-y-12">
       {activeSessions.length > 0 && (
         <section>
-          <div className="sticky top-0 z-20 bg-[#0F0A1F]/80 backdrop-blur-md border-b border-white/5 -mx-5 sm:-mx-10 px-5 sm:px-10 py-3 mb-6">
+          <div className="sticky top-0 z-20 bg-onyx/80 backdrop-blur-md border-b border-white/5 -mx-5 sm:-mx-10 px-5 sm:px-10 py-3 mb-6">
             <SectionHeaderWrapper
               title="Live Sessions"
               badge={activeSessions.length}
@@ -293,23 +292,23 @@ export default function QuizList({ coupleId }: { coupleId: string }) {
               <div
                 key={s.id}
                 onClick={() => (window.location.hash = `#session/${s.id}`)}
-                className="relative bg-rose-500/10 border border-rose-500/30 p-5 rounded-3xl cursor-pointer hover:bg-rose-500/20 hover:scale-[1.02] transition-all duration-300 shadow-[0_0_15px_rgba(244,63,94,0.1)] hover:shadow-[0_0_25px_rgba(244,63,94,0.3)] group"
+                className="relative bg-[#bcabae]/10 border border-[#bcabae]/30 p-5 rounded-3xl cursor-pointer hover:bg-[#bcabae]/20 hover:scale-[1.02] transition-all duration-300 group"
               >
                 <div className="absolute top-4 right-4 z-10 transition-opacity">
                   <button
                     onClick={(e) => deleteSession(e, s.id)}
-                    className="p-2 text-white/30 hover:text-rose-400 focus:outline-none transition-colors"
+                    className="p-2 text-white/30 hover:text-[#bcabae] focus:outline-none transition-colors"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
                 </div>
-                <h3 className="font-bold text-rose-300 mb-1 flex items-center justify-between pr-8">
+                <h3 className="font-bold text-[#bcabae] mb-1 flex items-center justify-between pr-8">
                   Game in Progress
                   <span className="opacity-0 group-hover:opacity-100 transition-opacity">
                     →
                   </span>
                 </h3>
-                <p className="text-xs text-rose-200/60 uppercase tracking-widest">
+                <p className="text-xs text-[#bcabae]/60 uppercase tracking-widest">
                   Tap to rejoin your partner
                 </p>
               </div>
@@ -319,7 +318,7 @@ export default function QuizList({ coupleId }: { coupleId: string }) {
       )}
 
       <section>
-        <div className="sticky top-0 z-20 bg-[#0F0A1F]/80 backdrop-blur-md border-b border-white/5 -mx-5 sm:-mx-10 px-5 sm:px-10 py-3 mb-6">
+        <div className="sticky top-0 z-20 bg-onyx/80 backdrop-blur-md border-b border-white/5 -mx-5 sm:-mx-10 px-5 sm:px-10 py-3 mb-6">
           <SectionHeaderWrapper title="Featured Quizzes" />
         </div>
         <div className="flex items-center justify-end mb-2">

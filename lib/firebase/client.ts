@@ -70,8 +70,13 @@ function ensureDb(): Firestore {
 //
 // Demo mode (NEXT_PUBLIC_DEMO_MODE=true with no real Firebase keys) swaps in
 // an in-memory Firestore/Auth/Storage so the whole app renders without
-// backend credentials — used by the design harness evaluator.
+// backend credentials — used by local development and the E2E suite only.
+//
+// It is hard-disabled in production builds so mock data can never be served
+// to real users, even if the variable is accidentally present in the
+// environment. `next.config.ts` fails the build outright if that happens.
 export const isDemo =
+  process.env.NODE_ENV !== "production" &&
   isBrowser &&
   process.env.NEXT_PUBLIC_DEMO_MODE === "true";
 

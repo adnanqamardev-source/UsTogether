@@ -3,7 +3,7 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { User, GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/auth';
 import { doc, getDoc, FirestoreError } from '@/lib/firestore';
-import { auth, db } from '@/lib/firebase/client';
+import { auth, db, isDemo } from '@/lib/firebase/client';
 import { createUserProfile } from '@/lib/firestore-helpers';
 import type { UserProfile } from '@/types';
 
@@ -91,7 +91,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           }
         } catch (error) {
             // Catch the demo-mode dummy DB crash and force populate the user anyway.
-            if (process.env.NEXT_PUBLIC_DEMO_MODE === 'true') {
+            if (isDemo) {
               const seedData = await import('@/lib/firebase/demo-seed').then(m => m.seed);
               setDbUser(seedData.users['demo-user-1'] as any);
             } else {

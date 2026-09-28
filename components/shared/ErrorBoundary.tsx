@@ -41,7 +41,7 @@ export default class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBo
         <div className="flex flex-col items-center justify-center min-h-[400px] p-8 text-center">
           <div className="text-6xl mb-4">😢</div>
           <h2 className="text-2xl font-bold text-white mb-2">Something went wrong</h2>
-          <p className="text-slate-400 mb-6 max-w-md">
+          <p className="text-#716969 mb-6 max-w-md">
             We encountered an unexpected error. This has been logged and we'll look into it.
           </p>
           <Button variant="primary" size="md" onClick={this.handleReset}>

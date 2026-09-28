@@ -18,7 +18,7 @@ function getAvatarUrl(name?: string | null, email?: string | null): string {
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&apos;');
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64"><rect width="64" height="64" fill="#6366f1"/><text x="32" y="38" font-size="28" fill="white" text-anchor="middle" font-family="sans-serif">${initial}</text></svg>`;
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64"><rect width="64" height="64" fill="#bcabae"/><text x="32" y="38" font-size="28" fill="white" text-anchor="middle" font-family="sans-serif">${initial}</text></svg>`;
   return `data:image/svg+xml;base64,${btoa(svg)}`;
 }
 
@@ -145,14 +145,14 @@ export default function ChatDrawer({ coupleId, onClose }: { coupleId: string; on
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: 40 }}
       transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-      className="h-full w-full max-w-sm bg-slate-950 border-l border-white/10 shadow-2xl flex flex-col overflow-hidden"
+      className="h-full w-full max-w-sm bg-#0f0f0f border-l border-white/10 shadow-2xl flex flex-col overflow-hidden"
     >
       <div className="p-4 border-b border-white/10 flex items-center justify-between pb-3">
         <div>
-          <h3 className="font-semibold text-lg text-white">Partner Chat {unreadCount > 0 && <span className="text-xs text-rose-300">({unreadCount})</span>}</h3>
-          <p className="text-[11px] text-indigo-300 tracking-wide">Real-time messages</p>
+          <h3 className="font-semibold text-lg text-white">Partner Chat {unreadCount > 0 && <span className="text-xs text-[#bcabae]">({unreadCount})</span>}</h3>
+          <p className="text-[11px] text-[#bcabae] tracking-wide">Real-time messages</p>
         </div>
-        <Button variant="ghost" size="icon" onClick={onClose} aria-label="Close chat">
+        <Button variant="ghost" size="xs" onClick={onClose} aria-label="Close chat">
           <X className="w-5 h-5" />
         </Button>
       </div>
@@ -164,7 +164,7 @@ export default function ChatDrawer({ coupleId, onClose }: { coupleId: string; on
         {groupMessagesByDate(messages).size === 0 && messages.length === 0 && <div />}
         {Array.from(groupMessagesByDate(messages).entries()).map(([dateLabel, group], groupIdx) => (
           <div key={dateLabel}>
-            <div className="text-center text-[10px] text-indigo-200/50 mb-3">{dateLabel}</div>
+            <div className="text-center text-[10px] text-[#bcabae]/50 mb-3">{dateLabel}</div>
             <div className="space-y-3">
               <AnimatePresence>
                 {group.map((m, idx) => {
@@ -189,7 +189,7 @@ export default function ChatDrawer({ coupleId, onClose }: { coupleId: string; on
                         <div
                           className={`rounded-2xl px-4 py-2.5 shadow-md ${
                             isMe
-                              ? 'bg-gradient-to-br from-indigo-600 to-rose-600 text-white rounded-br-none'
+                              ? 'bg-gradient-to-br from-[#2d2e2e] to-[#bcabae] text-white rounded-br-none'
                               : 'bg-white/10 text-white rounded-bl-none'
                           }`}
                         >
@@ -215,9 +215,9 @@ export default function ChatDrawer({ coupleId, onClose }: { coupleId: string; on
             className="flex items-center gap-2 text-white/60 text-xs px-2"
           >
             <span className="inline-flex items-center gap-1 bg-white/5 border border-white/10 rounded-full px-3 py-1.5">
-              <span className="w-1.5 h-1.5 bg-indigo-400 rounded-full animate-bounce" />
-              <span className="w-1.5 h-1.5 bg-indigo-400 rounded-full animate-bounce" style={{ animationDelay: '100ms' }} />
-              <span className="w-1.5 h-1.5 bg-indigo-400 rounded-full animate-bounce" style={{ animationDelay: '200ms' }} />
+              <span className="w-1.5 h-1.5 bg-[#bcabae] rounded-full animate-bounce" />
+              <span className="w-1.5 h-1.5 bg-[#bcabae] rounded-full animate-bounce" style={{ animationDelay: '100ms' }} />
+              <span className="w-1.5 h-1.5 bg-[#bcabae] rounded-full animate-bounce" style={{ animationDelay: '200ms' }} />
               Partner is typing...
             </span>
           </motion.div>
@@ -233,13 +233,13 @@ export default function ChatDrawer({ coupleId, onClose }: { coupleId: string; on
             value={text}
             onChange={(e) => { setText(e.target.value); setIsTyping(e.target.value.trim().length > 0); }}
             placeholder="Type a message..."
-            className="w-full bg-white/5 text-white border border-white/10 rounded-full py-3 pl-4 pr-24 focus:outline-none focus:ring-2 focus:ring-rose-500 placeholder:text-white/40"
+            className="w-full bg-white/5 text-white border border-white/10 rounded-full py-3 pl-4 pr-24 focus:outline-none focus:ring-2 focus:ring-[#bcabae] placeholder:text-white/40"
           />
           <div className="absolute right-2 top-2 flex items-center gap-1">
-            <Button variant="ghost" size="icon" onClick={() => setShowEmoji(!showEmoji)} aria-label="Emoji">
+            <Button variant="ghost" size="xs" onClick={() => setShowEmoji(!showEmoji)} aria-label="Emoji">
               <Smile className="w-4 h-4" />
             </Button>
-            <Button variant="primary" size="icon" type="submit" disabled={!text.trim()} aria-label="Send">
+            <Button variant="primary" size="xs" type="submit" disabled={!text.trim()} aria-label="Send">
               <Send className="w-4 h-4" />
             </Button>
           </div>
@@ -251,7 +251,7 @@ export default function ChatDrawer({ coupleId, onClose }: { coupleId: string; on
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 8 }}
-              className="absolute bottom-20 right-4 bg-slate-900 border border-white/10 rounded-2xl shadow-2xl p-3 grid grid-cols-8 gap-2 z-50"
+              className="absolute bottom-20 right-4 bg-#0f0f0f border border-white/10 rounded-2xl shadow-2xl p-3 grid grid-cols-8 gap-2 z-50"
             >
               {EMOJI_LIST.map((emoji) => (
                 <button key={emoji} type="button" onClick={() => { setText((t) => t + emoji); setShowEmoji(false); }} className="text-lg hover:scale-110 transition-transform">

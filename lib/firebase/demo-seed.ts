@@ -120,7 +120,7 @@ export const seed = {
     },
     "p2": {
       coupleId: DEMO_COUPLE_ID,
-      url: svgPhoto("Our Kitchen", "#6366f1", "#8b5cf6"),
+      url: svgPhoto("Our Kitchen", "#bcabae", "#8b5cf6"),
       caption: "First dinner we cooked together",
       createdAt: today - 22 * day,
       uploadedAt: today - 22 * day,

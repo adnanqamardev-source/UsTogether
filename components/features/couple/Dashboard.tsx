@@ -6,7 +6,7 @@ import { useAuth } from '@/components/providers';
 import { motion } from 'motion/react';
 import { Heart, Users, ArrowRight, Copy, Check } from 'lucide-react';
 import { doc } from '@/lib/firestore';
-import { db } from '@/lib/firebase/client';
+import { db, isDemo } from '@/lib/firebase/client';
 import { createPairingCode, getPairingCode, batchWrite } from '@/lib/firebase/client';
 import CoupleDashboard from './CoupleDashboard';
 import type { UserProfile } from '@/types';
@@ -27,7 +27,7 @@ export default function Dashboard() {
       if (user && !myCode && !dbUser?.pairedCoupleId) {
         const code = user.uid.substring(0, 8).toUpperCase();
         setMyCode(code);
-        if (process.env.NEXT_PUBLIC_DEMO_MODE !== 'true') {
+        if (!isDemo) {
           createPairingCode(user.uid).catch((err) => {
             console.error('Failed to create pairing code:', err);
           });
@@ -105,16 +105,13 @@ export default function Dashboard() {
     <div className="flex-1 flex flex-col font-sans p-4 sm:p-6 relative w-full h-full max-w-6xl mx-auto">
       <nav className="flex justify-between items-center mb-12 relative z-10 gap-4 mt-6">
         <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 bg-gradient-to-br from-rose-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-rose-500/20">
+          <div className="w-10 h-10 bg-gradient-to-br bg-lilac-ash rounded-xl flex items-center justify-center shadow-lg shadow-[#bcabae]/20">
             <span className="font-bold text-xl text-white">U</span>
           </div>
-          <span className="text-2xl font-light tracking-tight text-[#F8FAFC]">Us<span className="font-bold">Together</span></span>
+          <span className="text-2xl font-light tracking-tight text-white">Us<span className="font-bold">Together</span></span>
         </div>
         <div className="flex items-center gap-4">
-          {process.env.NEXT_PUBLIC_DEMO_MODE === 'true' && (
-            <span className="text-xs px-2 py-1 bg-rose-500/20 text-rose-300 font-mono tracking-widest rounded border border-rose-500/30">DEMO MODE</span>
-          )}
-          <span className="text-xs text-indigo-300 font-bold uppercase tracking-widest hidden sm:inline">{user?.displayName || user?.email?.split('@')[0]}</span>
+          <span className="text-xs text-[#bcabae] font-bold uppercase tracking-widest hidden sm:inline">{user?.displayName || user?.email?.split('@')[0]}</span>
         </div>
       </nav>
 
@@ -123,18 +120,18 @@ export default function Dashboard() {
           initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
           className="bg-white/5 backdrop-blur-md rounded-[40px] shadow-2xl border border-white/10 p-6 sm:p-8 md:p-12 text-center w-full max-w-2xl mx-auto relative overflow-hidden"
         >
-          <div className="absolute top-[-20%] right-[-10%] w-[60%] h-[60%] bg-rose-600/20 rounded-full blur-[80px] pointer-events-none"></div>
+          <div className="absolute top-[-20%] right-[-10%] w-[60%] h-[60%] bg-[#bcabae]/20 rounded-full blur-[80px] pointer-events-none"></div>
            
-          <div className="w-20 h-20 bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-inner shadow-indigo-500/20">
+          <div className="w-20 h-20 bg-[#2d2e2e]/20 text-[#bcabae] border border-[#2d2e2e]/30 rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-inner shadow-[#2d2e2e]/20">
             <Users className="w-10 h-10" />
           </div>
-          <h2 className="text-2xl sm:text-3xl font-serif italic mb-4 text-[#F8FAFC]">Connect with your Partner</h2>
-          <p className="text-sm sm:text-base text-indigo-200/80 mb-10 leading-relaxed font-light">
+          <h2 className="text-2xl sm:text-3xl font-serif italic mb-4 text-white">Connect with your Partner</h2>
+          <p className="text-sm sm:text-base text-[#bcabae]/80 mb-10 leading-relaxed font-light">
             Share your connection code with your partner, or enter theirs below to start playing.
           </p>
 
           <div className="bg-black/20 p-6 sm:p-8 rounded-3xl mb-10 border border-white/5 hover:scale-105 hover:bg-black/30 hover:border-white/10 hover:shadow-[0_0_20px_rgba(99,102,241,0.2)] transition-all duration-300 cursor-pointer group">
-            <p className="text-xs text-slate-400 mb-4 uppercase tracking-[0.2em] font-bold">Your Code</p>
+            <p className="text-xs text-#716969 mb-4 uppercase tracking-[0.2em] font-bold">Your Code</p>
             <div className="bg-black/30 rounded-xl p-4 mb-4 min-h-[80px] sm:min-h-[100px] flex items-center justify-center overflow-hidden">
               <p className="font-mono text-4xl sm:text-5xl md:text-6xl tracking-widest text-white font-light select-all word-break break-all text-center">{myCode || '........'}</p>
             </div>
@@ -146,8 +143,8 @@ export default function Dashboard() {
                 </>
               ) : (
                 <>
-                  <Copy className="w-4 h-4 text-indigo-300" />
-                  <span className="text-xs text-indigo-300 font-mono">Click to copy</span>
+                  <Copy className="w-4 h-4 text-[#bcabae]" />
+                  <span className="text-xs text-[#bcabae] font-mono">Click to copy</span>
                 </>
               )}
             </div>
@@ -175,7 +172,7 @@ export default function Dashboard() {
               <ArrowRight className="w-5 h-5" />
             </Button>
           </form>
-          {errorMsg && <p className="text-rose-400 text-xs uppercase tracking-widest font-bold mt-6">{errorMsg}</p>}
+          {errorMsg && <p className="text-[#bcabae] text-xs uppercase tracking-widest font-bold mt-6">{errorMsg}</p>}
         </motion.div>
       </main>
     </div>

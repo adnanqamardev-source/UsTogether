@@ -44,15 +44,8 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable}`} suppressHydrationWarning>
-      <body className="relative min-h-screen bg-editorial text-[#18131d] antialiased selection:bg-rose-200/60">
-        <div className="noise-bg pointer-events-none fixed inset-0 -z-10 opacity-80" aria-hidden="true" />
-
-        <div className="pointer-events-none fixed inset-0 -z-10" aria-hidden="true">
-          <div className="absolute -left-20 top-0 h-[28rem] w-[28rem] rounded-full bg-rose-300/30 blur-[120px]" />
-          <div className="absolute right-0 top-20 h-[30rem] w-[30rem] rounded-full bg-indigo-300/25 blur-[130px]" />
-          <div className="absolute bottom-0 left-1/3 h-[22rem] w-[22rem] rounded-full bg-amber-200/25 blur-[100px]" />
-        </div>
-
+      <body className="relative min-h-screen bg-onyx text-white antialiased">
+        <div className="noise-bg pointer-events-none fixed inset-0 -z-10" aria-hidden="true" />
         <div className="relative z-10">
           <Providers>{children}</Providers>
         </div>

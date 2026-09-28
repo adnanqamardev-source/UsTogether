@@ -140,7 +140,16 @@ export async function uploadBytesResumable(fileRef: StorageReference, file: Blob
 
 export async function deleteObject(_fileRef: StorageReference): Promise<void> {}
 
-// Mock Firestore helpers
+// ---------------------------------------------------------------------------
+// In-memory Firestore
+//
+// This used to be a set of no-op stubs: `addDoc` threw the written data away
+// and `onSnapshot` always emitted an empty snapshot. Anything that created a
+// document (e.g. "Fetch New Quiz") silently vanished, which is why the create
+// flows appeared to do nothing. It is now backed by a real store seeded from
+// `demo-seed`, and every write notifies the matching `onSnapshot` listeners.
+// ---------------------------------------------------------------------------
+
 export interface DemoDocSnapshot {
   exists: () => boolean;
   data: () => any;
@@ -150,6 +159,8 @@ export interface DemoDocSnapshot {
 export interface DemoQuerySnapshot {
   empty: boolean;
   docs: Array<{ id: string; data: () => any }>;
+  size: number;
+  forEach: (cb: (d: { id: string; data: () => any }) => void) => void;
 }
 
 export interface DemoTransaction {
@@ -159,81 +170,241 @@ export interface DemoTransaction {
   delete(ref: any): Promise<void>;
 }
 
-export async function getDoc(ref: any): Promise<DemoDocSnapshot> {
-  // Always return the mock user profile in Demo mode for any user fetch
+type DocMap = Map<string, any>;
+
+/** collection path -> (docId -> data) */
+const store = new Map<string, DocMap>();
+
+type Listener = { paths: Set<string>; emit: () => void };
+const listeners = new Set<Listener>();
+
+/** Deep clone so callers cannot mutate stored data by reference. */
+function clone<T>(value: T): T {
+  if (value === null || typeof value !== 'object') return value;
+  return JSON.parse(JSON.stringify(value));
+}
+
+function ensure(path: string): DocMap {
+  let docs = store.get(path);
+  if (!docs) {
+    docs = new Map();
+    store.set(path, docs);
+  }
+  return docs;
+}
+
+function seedStore() {
+  for (const [path, docs] of Object.entries(seed as Record<string, any>)) {
+    if (!docs || typeof docs !== 'object') continue;
+    const target = ensure(path);
+    for (const [id, data] of Object.entries(docs)) {
+      target.set(id, clone(data));
+    }
+  }
+}
+
+seedStore();
+
+/** Notify every listener whose watched paths intersect the changed path. */
+function notify(changedPath: string) {
+  for (const listener of [...listeners]) {
+    for (const watched of listener.paths) {
+      // A listener on `quizzes` cares about `quizzes`; a listener on
+      // `couples/c1/sessions` cares only about that subcollection.
+      if (watched === changedPath) {
+        listener.emit();
+        break;
+      }
+    }
+  }
+}
+
+function resolveCollectionPath(parent: any, path: string): string {
+  // `collection(db, 'quizzes')` -> 'quizzes'
+  // `collection(doc(db, 'couples', id), 'sessions')` -> 'couples/<id>/sessions'
+  if (parent && parent.__demoDoc && typeof parent.path === 'string') {
+    return `${parent.path}/${path}`;
+  }
+  return path;
+}
+
+function docPathOf(ref: any): string {
+  return ref && typeof ref.path === 'string' ? ref.path : '';
+}
+
+function makeDocSnapshot(id: string, data: any): DemoDocSnapshot {
   return {
-    exists: () => true,
-    data: () => seed.users[DEMO_USER_ID],
-    id: (ref as any)?.id ?? 'demo',
+    id,
+    exists: () => data !== undefined,
+    data: () => (data === undefined ? undefined : clone(data)),
   };
 }
 
-export async function setDoc(ref: any, data: any): Promise<void> {
-  // no-op
+function matches(data: any, constraints: any[]): boolean {
+  return constraints.every((c) => {
+    if (!c || !c.__demoWhere) return true;
+    const actual = data?.[c.field];
+    switch (c.op) {
+      case '==': return actual === c.value;
+      case '!=': return actual !== c.value;
+      case '>': return actual > c.value;
+      case '>=': return actual >= c.value;
+      case '<': return actual < c.value;
+      case '<=': return actual <= c.value;
+      case 'array-contains': return Array.isArray(actual) && actual.includes(c.value);
+      case 'in': return Array.isArray(c.value) && c.value.includes(actual);
+      default: return true;
+    }
+  });
 }
 
-export async function updateDoc(ref: any, data: any): Promise<void> {
-  // no-op
-}
+function buildQuerySnapshot(q: any): DemoQuerySnapshot {
+  const docs = ensure(q.path);
+  let entries = [...docs.entries()];
 
-export async function deleteDoc(ref: any): Promise<void> {
-  // no-op
+  for (const c of q.constraints || []) {
+    if (c && c.__demoWhere) {
+      entries = entries.filter(([, data]) => matches(data, [c]));
+    }
+  }
+
+  for (const c of q.constraints || []) {
+    if (c && c.__demoOrderBy) {
+      const dir = c.directionStr === 'desc' ? -1 : 1;
+      entries.sort(([, a], [, b]) => {
+        const av = a?.[c.field];
+        const bv = b?.[c.field];
+        if (av === bv) return 0;
+        if (av === undefined) return 1;
+        if (bv === undefined) return -1;
+        return av > bv ? dir : -dir;
+      });
+    }
+  }
+
+  const limitC = (q.constraints || []).find((c: any) => c && c.__demoLimit);
+  if (limitC) entries = entries.slice(0, limitC.n);
+
+  const out = entries.map(([id, data]) => makeDocSnapshot(id, data));
+  return {
+    empty: out.length === 0,
+    docs: out,
+    size: out.length,
+    forEach: (cb) => out.forEach(cb),
+  };
 }
 
 export function collection(parent: any, path: string): any {
-  return { __demoCollection: true, path };
+  return { __demoCollection: true, path: resolveCollectionPath(parent, path) };
 }
 
-export async function addDoc(collection: any, data: any): Promise<{ id: string }> {
-  return { id: Math.random().toString(36).substring(2, 15) };
+export function doc(db: any, path: string, ...pathSegments: string[]): any {
+  const segs = [path, ...pathSegments];
+  // `doc(collection(db, 'quizzes'), id)` is also valid in the real SDK.
+  if (db && db.__demoCollection) {
+    const full = `${db.path}/${segs.join('/')}`;
+    return { id: segs[segs.length - 1], path: full, __demoDoc: true };
+  }
+  const fullPath = segs.join('/');
+  return { id: segs[segs.length - 1], path: fullPath, __demoDoc: true };
+}
+
+export async function getDoc(ref: any): Promise<DemoDocSnapshot> {
+  const fullPath = docPathOf(ref);
+  const slash = fullPath.lastIndexOf('/');
+  const collPath = slash === -1 ? '' : fullPath.slice(0, slash);
+  const id = slash === -1 ? fullPath : fullPath.slice(slash + 1);
+  const data = ensure(collPath).get(id);
+  return makeDocSnapshot(id, data);
 }
 
 export function query(...args: any[]): any {
-  return { __demoQuery: true, args };
-}
-
-export async function getDocs(query: any): Promise<DemoQuerySnapshot> {
-  return { empty: true, docs: [] };
-}
-
-export function orderBy(field: string, directionStr?: 'asc' | 'desc'): any {
-  return { __demoOrderBy: true, field, directionStr };
+  const [collOrPath, ...rest] = args;
+  const path = typeof collOrPath === 'string'
+    ? collOrPath
+    : collOrPath?.__demoCollection
+      ? collOrPath.path
+      : '';
+  return { __demoQuery: true, path, constraints: rest };
 }
 
 export function where(field: string, opStr: string, value: any): any {
   return { __demoWhere: true, field, opStr, value };
 }
 
+export function orderBy(field: string, directionStr?: 'asc' | 'desc'): any {
+  return { __demoOrderBy: true, field, directionStr };
+}
+
 export function limit(n: number): any {
   return { __demoLimit: true, n };
 }
 
-export async function runTransaction(
-  firestore: any,
-  updateFunction: (tx: DemoTransaction) => Promise<any>
-): Promise<any> {
-  const tx: DemoTransaction = {
-    get: async (ref: any) => ({ exists: false, data: null }),
-    set: async (ref: any, data: any) => { },
-    update: async (ref: any, data: any) => { },
-    delete: async (ref: any) => { },
-  };
-  return await updateFunction(tx);
+export async function getDocs(q: any): Promise<DemoQuerySnapshot> {
+  return buildQuerySnapshot(q);
 }
 
-export function doc(db: any, path: string, ...pathSegments: string[]): any {
-  const fullPath = pathSegments.length > 0 ? `${path}/${pathSegments.join('/')}` : path;
-  const id = pathSegments.length > 0 ? pathSegments[pathSegments.length - 1] : path;
-  return { id, path: fullPath, __demoDoc: true };
+export async function addDoc(collRef: any, data: any): Promise<{ id: string }> {
+  const path = collRef?.__demoCollection ? collRef.path : String(collRef);
+  const id = Math.random().toString(36).substring(2, 15);
+  ensure(path).set(id, clone(data));
+  notify(path);
+  return { id };
+}
+
+export async function setDoc(ref: any, data: any): Promise<void> {
+  const fullPath = docPathOf(ref);
+  const slash = fullPath.lastIndexOf('/');
+  const collPath = slash === -1 ? '' : fullPath.slice(0, slash);
+  const id = slash === -1 ? fullPath : fullPath.slice(slash + 1);
+  ensure(collPath).set(id, clone(data));
+  notify(collPath);
+}
+
+export async function updateDoc(ref: any, data: any): Promise<void> {
+  const fullPath = docPathOf(ref);
+  const slash = fullPath.lastIndexOf('/');
+  const collPath = slash === -1 ? '' : fullPath.slice(0, slash);
+  const id = slash === -1 ? fullPath : fullPath.slice(slash + 1);
+  const docs = ensure(collPath);
+  const existing = docs.get(id) ?? {};
+  docs.set(id, { ...existing, ...clone(data) });
+  notify(collPath);
+}
+
+export async function deleteDoc(ref: any): Promise<void> {
+  const fullPath = docPathOf(ref);
+  const slash = fullPath.lastIndexOf('/');
+  const collPath = slash === -1 ? '' : fullPath.slice(0, slash);
+  const id = slash === -1 ? fullPath : fullPath.slice(slash + 1);
+  ensure(collPath).delete(id);
+  notify(collPath);
 }
 
 export function writeBatch(_db: any): any {
+  const pending: Array<() => void> = [];
   return {
-    set: (_ref: any, _data: any) => {},
-    update: (_ref: any, _data: any) => {},
-    delete: (_ref: any) => {},
-    commit: async () => {},
+    set: (ref: any, data: any) => { pending.push(() => { void setDoc(ref, data); }); },
+    update: (ref: any, data: any) => { pending.push(() => { void updateDoc(ref, data); }); },
+    delete: (ref: any) => { pending.push(() => { void deleteDoc(ref); }); },
+    commit: async () => { pending.splice(0).forEach((fn) => fn()); },
   };
+}
+
+export async function runTransaction(
+  _firestore: any,
+  updateFunction: (tx: DemoTransaction) => Promise<any>,
+): Promise<any> {
+  const tx: DemoTransaction = {
+    get: async (ref: any) => {
+      const snap = await getDoc(ref);
+      return { exists: snap.exists(), data: snap.data() };
+    },
+    set: async (ref: any, data: any) => { await setDoc(ref, data); },
+    update: async (ref: any, data: any) => { await updateDoc(ref, data); },
+    delete: async (ref: any) => { await deleteDoc(ref); },
+  };
+  return await updateFunction(tx);
 }
 
 export function serverTimestamp(): any {
@@ -241,19 +412,48 @@ export function serverTimestamp(): any {
 }
 
 export function onSnapshot(
-  _ref: any,
+  ref: any,
   callback: (snapshot: any) => void,
-  _onError?: (err: Error) => void
+  _onError?: (err: Error) => void,
 ): () => void {
-  // Immediately invoke callback with an empty snapshot so loading states resolve.
-  // The snapshot supports both document-style (.exists(), .data()) and
-  // collection-style (.docs) access patterns.
-  const snapshot = {
-    exists: () => false,
-    data: () => null,
-    docs: [] as Array<{ id: string; data: () => any }>,
-    empty: true,
+  // Document listeners watch a single path; query listeners watch a
+  // collection. Emitting immediately keeps loading states resolvable, and the
+  // stored snapshot supports both `.exists()`/`.data()` and `.docs` access.
+  const isDoc = !!(ref && ref.__demoDoc);
+  const path = isDoc ? docPathOf(ref) : (ref?.path ?? '');
+  const watched = isDoc
+    ? (path.includes('/') ? path.slice(0, path.lastIndexOf('/')) : '')
+    : path;
+
+  const emit = () => {
+    if (isDoc) {
+      void getDoc(ref).then((snap) => {
+        callback({
+          ...snap,
+          docs: snap.exists() ? [snap] : [],
+          empty: !snap.exists(),
+        });
+      });
+      return;
+    }
+    try {
+      callback(buildQuerySnapshot(ref));
+    } catch (err) {
+      if (_onError) _onError(err as Error);
+    }
   };
-  callback(snapshot);
-  return () => {};
+
+  const listener: Listener = { paths: new Set([watched]), emit };
+  listeners.add(listener);
+  emit();
+
+  return () => {
+    listeners.delete(listener);
+  };
+}
+
+/** Test helper: wipe everything written at runtime and restore the seed. */
+export function __resetDemoStore() {
+  store.clear();
+  seedStore();
 }
